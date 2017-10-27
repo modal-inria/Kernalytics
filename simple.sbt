@@ -1,8 +1,8 @@
-name := "Sernel"
+name := "Kernalitics"
 
 version := "1.0"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.3"
 
 libraryDependencies  ++= Seq(
   // Last stable release
@@ -18,3 +18,6 @@ libraryDependencies  ++= Seq(
   // It depends on LGPL code
   "org.scalanlp" %% "breeze-viz" % "0.13.2"
 )
+
+
+resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
