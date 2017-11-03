@@ -37,7 +37,7 @@ object CostMatrix {
   def nextColumn (currColumn: ColumnCostMatrix, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = currColumn.tauP + 1
     
-    val d = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) currColumn.d(tau) + kerEval(tau, tau) else 0.0)
+    val d = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) currColumn.d(tau) + kerEval(currColumn.tauP, currColumn.tauP) else 0.0)
     val a = DenseVector.tabulate[Real](currColumn.nObs)(tau => 0.0)
     val c = DenseVector.tabulate[Real](currColumn.nObs)(tau => 0.0)
     
