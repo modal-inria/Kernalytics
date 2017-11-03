@@ -23,9 +23,10 @@ object CostMatrix {
    */
   def firstColumn (nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = 1
+    val k00 = kerEval(0, 0)
     
-    val d = DenseVector.tabulate[Real](nObs)(tau => if (tau < tauP) kerEval(0, 0) else 0.0)
-    val a = DenseVector.tabulate[Real](nObs)(tau => 0.0)
+    val d = DenseVector.tabulate[Real](nObs)(tau => if (tau == 0) k00 else 0.0)
+    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0)
     val c = DenseVector.tabulate[Real](nObs)(tau => 0.0)
     
     return ColumnCostMatrix(c, d, a, nObs, tauP)
@@ -37,9 +38,16 @@ object CostMatrix {
   def nextColumn (currColumn: ColumnCostMatrix, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = currColumn.tauP + 1
     
-    val d = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) currColumn.d(tau) + kerEval(currColumn.tauP, currColumn.tauP) else 0.0)
-    val a = DenseVector.tabulate[Real](currColumn.nObs)(tau => 0.0)
-    val c = DenseVector.tabulate[Real](currColumn.nObs)(tau => 0.0)
+    val d = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) currColumn.d(tau) + kerEval(currColumn.tauP, currColumn.tauP) else 0.0) 
+    val a = DenseVector.tabulate[Real](currColumn.nObs)(i => i match {
+      case currColumn.tauP => kerEval(currColumn.tauP, currColumn.tauP)
+      case i if i < tauP => currColumn.a(i) + 2.0 * kerEval(i, currColumn.tauP)
+      case _ => 0.0
+    })
+    
+    val sumA = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) - 1.0 / (tauP - tau) * sum(a(tau to currColumn.tauP)) else 0.0)
+    
+    val c = d + a
     
     return ColumnCostMatrix(c, d, a, currColumn.nObs, tauP)
   }
