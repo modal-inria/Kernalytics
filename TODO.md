@@ -1,8 +1,20 @@
-# Short term
+# Roadmap
+
+- Iterative computation of the cost matrix, as a function that associates a column to a column
+- Iterative algorithm 3
+- Base tests with segments having two different distributions, for example exponential and gaussian with same expected value.
+
+# Long Term
+
+- in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
+
+# Legacy Sernel
+
+## Short term
 
 - In the kernel kmeans, take should not be used, as this might imply saving the results of the first iterations. Should drop and next be used instead ?
 
-# Medium term
+## Medium term
 
 - Gram matrix symmetry should be exploited to reduce computation times
 - BFGS might not be the best algorithm to exploit the quadratic nature of the Representer Theorem optimisation problem.
@@ -11,7 +23,7 @@
 - Get a better understanding of how Breeze optimization package works
 	- Termination conditions
 
-# Long term
+## Long term
 
 - Use the existing framework to implement other kernel methods:
     - k-means
