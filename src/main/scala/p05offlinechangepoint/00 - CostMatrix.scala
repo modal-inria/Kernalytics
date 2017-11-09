@@ -5,8 +5,15 @@ import p04various.TypeDef._
 
 object CostMatrix {
   /**
-   *  The cost Matrix can be computed iteratively, one column after another. Auxiliary quantities have to be tracked
-   *  to this effect.
+   * The cost Matrix can be computed iteratively, one column after another. Auxiliary quantities have to be tracked
+   * to this effect.
+   * The i-th element of the vector c contains the cost of the segment which starts at i and stops at tauP - 1 (included)
+   * 
+   * @param c value of the cost
+   * @param d value of intermediate quantity
+   * @param a value of intermediate quantity
+   * @param nObs total number of observations
+   * @param tauP start index of the segment AFTER the one for which the cost matrix provides the cost.
    */
   case class ColumnCostMatrix (
       val c: DenseVector[Real],
@@ -16,10 +23,11 @@ object CostMatrix {
       val tauP: Index)
   
   /** 
-   *  Initialize the CostMatrix computation by generating the first column. Corresponds to $C_{\tau, \tau'}, for $\tau = 0$ and $\tau' = 1$.
-   *  Note that only the first component of each vector c, d and a is non-zero.
+   * Initialize the CostMatrix computation by generating the first column. Corresponds to $C_{\tau, \tau'}, for $\tau = 0$ and $\tau' = 1$.
+   * This also corresponds to the cost of a segment composed only of the first observation.
+   * Note that only the first component of each vector c, d and a is non-zero.
    *  
-   *  @param kerEval function that takes indices of observations and returns the corresponding kernel evaluation. kerEval could contain the Gram matrix in cache or recompute value each time it is called. This should depend on the sample size.
+   * @param kerEval function that takes indices of observations and returns the corresponding kernel evaluation. kerEval could contain the Gram matrix in cache or recompute value each time it is called. This should depend on the sample size.
    */
   def firstColumn (nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = 1
@@ -33,7 +41,7 @@ object CostMatrix {
   }
   
   /**
-   *  Compute $C_{\tau, \tau' + 1}$ from $C_{\tau, \tau'}$.
+   * Compute $C_{\tau, \tau' + 1}$ from $C_{\tau, \tau'}$, for all $\tau$.
    */
   def nextColumn (currColumn: ColumnCostMatrix, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = currColumn.tauP + 1
