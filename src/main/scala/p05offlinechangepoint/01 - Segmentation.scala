@@ -7,7 +7,7 @@ object Segmentation {
   /**
    * Cost associated with a particular segmentation. Note that the segmentation is kept as a List which has to be reversed to be exploited.
    * */
-  case class segCost (val cost: Real, val seg: List[Index])
+  case class SegCost (val cost: Real, val seg: List[Index])
   
   /**
    * Accumulator used in Algorithm 3. The access pattern can be represented as the function segCost($\tau'$)(D) where $\tau'$. Inside are computed all the costs
@@ -15,7 +15,7 @@ object Segmentation {
    * Note that the 0 element of the Vector will never be accessed, as it corresponds to an empty sub-collection.
    * It is considered only to simplify notations and to avoid offsetting every index to access elements.
    */
-  type Accumulator = Vector[Array[segCost]]
+  type Accumulator = Vector[Array[SegCost]]
   
   /**
    * Cost of the segmentation with D segments of a sub-collection of the first $\tau'$ observations of a n long collection.
@@ -40,7 +40,7 @@ object Segmentation {
   def optimalCost(
       acc: Accumulator,
       D: Index,
-      ccm: CostMatrix.ColumnCostMatrix): segCost = {
+      ccm: CostMatrix.ColumnCostMatrix): SegCost = {
     val tauP = acc.size // Index of the last observation in the subdomain considered.
     val tauFirst = D - 1 // First value of tau for which a candidate cost is computed. This correspond to the case where all previous segments have one observation each, and the candidate segment contains all the remaining observations.
     val candidateCosts = DenseVector.tabulate(tauP - tauFirst + 1)(i => { // the last candidate is t = tauP, which corresponds to the case where last segment only contains the tauP observation
@@ -56,6 +56,22 @@ object Segmentation {
     val minCost = candidateCosts(minLocalIndex)
     val minGlobalIndex = minLocalIndex + tauFirst
     
-    return segCost(minCost, minGlobalIndex :: acc(minGlobalIndex)(D - 1).seg)
+    return SegCost(minCost, minGlobalIndex :: acc(minGlobalIndex)(D - 1).seg)
+  }
+  
+  /**
+   * Recursively compute the optimal segmentation for all allowed values of D, given $\tau'$ (the index of the last element of the subdomain considered), and the computed values from the previous subdomains.
+   * The results will be stored in an updated Accumulator, in the $\tau'$ + 1  element.
+   */
+  def costForEachD(
+      acc: Accumulator, 
+      ccm: CostMatrix.ColumnCostMatrix,
+      DMax: Index): Array[SegCost] = {
+    val tauP = acc.size
+    val minD = 1
+    val maxD = math.min(tauP + 1, DMax) // + 1 because observations are 0-based, while the number of segments is 1-based, so to speak.
+    Array.tabulate(maxD - minD + 1)(D => D match {
+      case 0 => SegCost(Real.PositiveInfinity, Nil) // this will never be used
+    })
   }
 }
