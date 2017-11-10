@@ -71,7 +71,9 @@ object Segmentation {
     val minD = 1
     val maxD = math.min(tauP + 1, DMax) // + 1 because observations are 0-based, while the number of segments is 1-based, so to speak.
     Array.tabulate(maxD - minD + 1)(D => D match {
-      case 0 => SegCost(Real.PositiveInfinity, Nil) // this will never be used
+      case 0 => SegCost(Real.PositiveInfinity, Nil) // this will never be used, hence the Real.PositiveInfinity to ensure it is never selected as an optimal solution
+      case 1 => SegCost(ccm.c(0), List(0)) // one segment containing all the observations, directly compute the cost of the subsegment, using ColumnCostMatrix, for $\tau$ = 0
+      case _ => optimalCost(acc, D, ccm) // recursive computation, using dynamical programming
     })
   }
 }
