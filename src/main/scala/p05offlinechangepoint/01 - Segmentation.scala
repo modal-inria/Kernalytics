@@ -10,12 +10,13 @@ object Segmentation {
   case class SegCost (val cost: Real, val seg: List[Index])
   
   /**
-   * Accumulator used in Algorithm 3. The access pattern can be represented as the function segCost($\tau'$)(D) where $\tau'$. Inside are computed all the costs
+   * Accumulator used in Algorithm 3. The access pattern can be represented as the function segCost($\tau'$)(D) where $\tau'$ is the index of the first element AFTER the subsegment considered.
+   * This follows the convention used in the article where the right bounds are open. The subsegment considered is therefore [0, $\tau'$[. Inside this storage are computed all the costs.
    * and corresponding segmentations for sub-collections containing observations from 0 to $\tau'$ - 1 (included).
    * Note that the 0 element of the Vector will never be accessed, as it corresponds to an empty sub-collection.
-   * It is considered only to simplify notations and to avoid offsetting every index to access elements.
+   * Note also that the article uses a 1-based indexing, while this implementation uses a 0-based indexing which is more natural.
    */
-  type Accumulator = Vector[Array[SegCost]]
+  case class Accumulator(val L: Vector[Array[SegCost]], val currCol: CostMatrix.ColumnCostMatrix)
   
   /**
    * Cost of the segmentation with D segments of a sub-collection of the first $\tau'$ observations of a n long collection.
@@ -29,51 +30,65 @@ object Segmentation {
   def candidateCost (
       acc: Accumulator,
       tau: Index,
-      D: Index,
-      ccm: CostMatrix.ColumnCostMatrix)
-  : Real = acc(tau)(D - 1).cost + ccm.c(tau)
+      D: Index)
+  : Real = acc.L(tau)(D - 1).cost + acc.currCol.c(tau)
   
   /**
    * Compute the candidate costs for a range of starting points, and return the segCost object describing the best segmentation containing D segments and finishing at $\tau'$.
    * This is used to fill the $\tau'$ + 1 element of the Accumulator.
    */
-  def optimalCost(
-      acc: Accumulator,
-      D: Index,
-      ccm: CostMatrix.ColumnCostMatrix): SegCost = {
-    val tauP = acc.size // Index of the last observation in the subdomain considered.
+  def loopOverTau(acc: Accumulator, D: Index): SegCost = {
+    val tauP = acc.L.size // Index of the last observation in the subdomain considered.
     val tauFirst = D - 1 // First value of tau for which a candidate cost is computed. This correspond to the case where all previous segments have one observation each, and the candidate segment contains all the remaining observations.
     val candidateCosts = DenseVector.tabulate(tauP - tauFirst + 1)(i => { // the last candidate is t = tauP, which corresponds to the case where last segment only contains the tauP observation
       val tau = i + tauFirst // translation from local index to observation index
       candidateCost (
     		  acc,
     		  tau,
-    		  D,
-    		  ccm)
+    		  D)
     }) 
     
     val minLocalIndex = argmin(candidateCosts)
     val minCost = candidateCosts(minLocalIndex)
     val minGlobalIndex = minLocalIndex + tauFirst
     
-    return SegCost(minCost, minGlobalIndex :: acc(minGlobalIndex)(D - 1).seg)
+    return SegCost(minCost, minGlobalIndex :: acc.L(minGlobalIndex)(D - 1).seg)
   }
   
   /**
    * Recursively compute the optimal segmentation for all allowed values of D, given $\tau'$ (the index of the last element of the subdomain considered), and the computed values from the previous subdomains.
    * The results will be stored in an updated Accumulator, in the $\tau'$ + 1  element.
    */
-  def costForEachD(
-      acc: Accumulator, 
-      ccm: CostMatrix.ColumnCostMatrix,
-      DMax: Index): Array[SegCost] = {
-    val tauP = acc.size
+  def loopOverD(acc: Accumulator, DMax: Index): Array[SegCost] = {
+    val tauP = acc.L.size // Index of the last observation in the subdomain considered.
     val minD = 1
     val maxD = math.min(tauP + 1, DMax) // + 1 because observations are 0-based, while the number of segments is 1-based, so to speak.
     Array.tabulate(maxD - minD + 1)(D => D match {
       case 0 => SegCost(Real.PositiveInfinity, Nil) // this will never be used, hence the Real.PositiveInfinity to ensure it is never selected as an optimal solution
-      case 1 => SegCost(ccm.c(0), List(0)) // one segment containing all the observations, directly compute the cost of the subsegment, using ColumnCostMatrix, for $\tau$ = 0
-      case _ => optimalCost(acc, D, ccm) // recursive computation, using dynamical programming
+      case 1 => SegCost(acc.currCol.c(0), List(0)) // one segment containing all the observations, directly compute the cost of the subsegment, using ColumnCostMatrix, for $\tau$ = 0
+      case _ => loopOverTau(acc, D) // recursive computation, using dynamical programming
     })
+  }
+  
+  /**
+   * Outer loop described in Algorithm 3, implemented using an iterate function.
+   */
+  def loopOverTauP(nObs: Index, kerEval: (Index, Index) => Real): Accumulator = {
+    val initialAccumulator = Accumulator(
+        Vector(Array[SegCost](), Array(SegCost(0, List(0)))), // The element 0 will never be accessed and is empty. The element 1 contains only cost of the segment consisting of the first element Which is 0
+        CostMatrix.firstColumn(nObs, kerEval))
+    
+    val res = p04various.Iterate.iterate(
+        initialAccumulator,
+        updateAccumulator,
+        (acc: Accumulator) => acc.L.size < nObs + 2) // A L with nObs + 1 elements covers the totality of observations
+    
+    return initialAccumulator
+  }
+  
+  def updateAccumulator(acc: Accumulator): Accumulator = {
+    // update the column and create a new accumulator with it
+    // pass to 
+    acc
   }
 }
