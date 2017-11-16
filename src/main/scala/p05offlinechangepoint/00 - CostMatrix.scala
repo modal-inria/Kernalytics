@@ -15,7 +15,7 @@ object CostMatrix {
    * @param nObs total number of observations
    * @param tauP start index of the segment AFTER the one for which the cost matrix provides the cost.
    */
-  case class ColumnCostMatrix (
+  case class ColumnCostMatrix(
       val c: DenseVector[Real],
       val d: DenseVector[Real],
       val a: DenseVector[Real],
@@ -29,7 +29,7 @@ object CostMatrix {
    *  
    * @param kerEval function that takes indices of observations and returns the corresponding kernel evaluation. kerEval could contain the Gram matrix in cache or recompute value each time it is called. This should depend on the sample size.
    */
-  def firstColumn (nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
+  def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = 1
     val k00 = kerEval(0, 0) // this is note the cost of the one observation segment, it is only used in the auxiliary quantities c, d and a
     
@@ -43,7 +43,7 @@ object CostMatrix {
   /**
    * Compute $C_{\tau, \tau' + 1}$ from $C_{\tau, \tau'}$, for all $\tau$.
    */
-  def nextColumn (currColumn: ColumnCostMatrix, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
+  def nextColumn(currColumn: ColumnCostMatrix, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = currColumn.tauP + 1
     
     val d = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) currColumn.d(tau) + kerEval(currColumn.tauP, currColumn.tauP) else 0.0) 

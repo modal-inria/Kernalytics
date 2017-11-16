@@ -7,7 +7,7 @@ object Segmentation {
   /**
    * Cost associated with a particular segmentation. Note that the segmentation is kept as a List which has to be reversed to be exploited.
    * */
-  case class SegCost (val cost: Real, val seg: List[Index])
+  case class SegCost(val cost: Real, val seg: List[Index])
   
   /**
    * Accumulator used in Algorithm 3. The access pattern can be represented as the function segCost($\tau'$)(D) where $\tau'$ is the index of the first element AFTER the subsegment considered.
@@ -27,7 +27,7 @@ object Segmentation {
    * @param D number of segments in the resulting segmentation
    * @param ccm Cost matrix used to compute the cost of the new segment.
    */
-  def candidateCost (
+  def candidateCost(
       acc: Accumulator,
       tau: Index,
       D: Index)
@@ -73,22 +73,32 @@ object Segmentation {
   /**
    * Outer loop described in Algorithm 3, implemented using an iterate function.
    */
-  def loopOverTauP(nObs: Index, kerEval: (Index, Index) => Real): Accumulator = {
+  def loopOverTauP(
+      nObs: Index,
+      kerEval: (Index, Index) => Real,
+      DMax: Index): Accumulator = {
     val initialAccumulator = Accumulator(
         Vector(Array[SegCost](), Array(SegCost(0, List(0)))), // The element 0 will never be accessed and is empty. The element 1 contains only cost of the segment consisting of the first element Which is 0
         CostMatrix.firstColumn(nObs, kerEval))
-    
+        
     val res = p04various.Iterate.iterate(
         initialAccumulator,
-        updateAccumulator,
+        updateAccumulator(
+            _: Accumulator,
+            kerEval,
+            DMax),
         (acc: Accumulator) => acc.L.size < nObs + 2) // A L with nObs + 1 elements covers the totality of observations
     
     return initialAccumulator
   }
   
-  def updateAccumulator(acc: Accumulator): Accumulator = {
-    // update the column and create a new accumulator with it
-    // pass to 
-    acc
+  def updateAccumulator(
+      acc: Accumulator,
+      kerEval: (Index, Index) => Real,
+      DMax: Index)
+  : Accumulator = {
+    val nextCol = CostMatrix.nextColumn(acc.currCol, kerEval)
+    val temporaryAcc = Accumulator(acc.L, nextCol) // update the column and create a new accumulator with it
+    return Accumulator(acc.L.updated(acc.L.size, loopOverD(temporaryAcc, DMax)), nextCol) // add result as the last element of the accumulator
   }
 }
