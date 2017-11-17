@@ -37,13 +37,12 @@ object DataGeneration {
     		p.ylabel = "value"
     		f.saveas("lines.png")
     }
-    
-    def kerEval(i: Index, j: Index): Real = {
+
+    def kerEval(i: Index, j: Index): Real = { // kerEval is defined here with a direct evaluation. An alternative would be to precompute the Gram matrix and then to access its elements. The function that generates a "cached" version of kerEval from a data set should be in p00rkhs
       p00rkhs.Kernel.R.gaussian(data(i), data(j), kernelSD)
     }
     
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
-    val cost = res.L.last(4).cost
-    println(cost)
+    Segmentation.printAccumulator(res)
   }
 }
