@@ -65,7 +65,7 @@ object Segmentation {
     val nextCol = CostMatrix.nextColumn(acc.currCol, kerEval)
     val temporaryAcc = Accumulator(acc.L, acc.tauP, nextCol) // update the column and create a new accumulator with it
     return Accumulator(
-        acc.L.updated(acc.L.size, loopOverD(temporaryAcc, DMax)), // new column is stored as the last element of the updated Vector
+        acc.L :+ loopOverD(temporaryAcc, DMax), // new column is stored as the last element of the updated Vector
         acc.tauP + 1,
         nextCol) // add result as the last element of the accumulator
   }
