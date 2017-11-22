@@ -35,7 +35,6 @@ object Segmentation {
       nObs: Index,
       kerEval: (Index, Index) => Real,
       DMax: Index): Accumulator = {
-    println("loopOverTauP")
     val initialAccumulator = Accumulator( // contains tauP = 0 and tauP = 1 to initialize the computation
         Vector(
             Array[SegCost](), // $\tau'$ = 0. The element 0 will never be accessed and is empty, it corresponds to a sub-segment that contains nothing
@@ -53,7 +52,7 @@ object Segmentation {
             DMax),
         (acc: Accumulator) => acc.tauP == nObs) // stop if the next observation would be outside the data. The last column corresponds to the case where the complete set of observations has been taken into account.
     
-    return initialAccumulator
+    return res
   }
   
   def updateAccumulator(
@@ -61,7 +60,6 @@ object Segmentation {
       kerEval: (Index, Index) => Real,
       DMax: Index)
   : Accumulator = {
-    println("updateAccumulator, input tauP: " + acc.tauP)
     val nextCol = CostMatrix.nextColumn(acc.currCol, kerEval)
     val temporaryAcc = Accumulator(acc.L, acc.tauP, nextCol) // update the column and create a new accumulator with it
     return Accumulator(
@@ -77,7 +75,6 @@ object Segmentation {
   def loopOverD(acc: Accumulator, DMax: Index): Array[SegCost] = {
     val maxD = math.min(acc.tauP + 1, DMax) // acc.tauP is the index of the observation that is going to be included in the current computation. The max number of segment is the number of obervations. Hence the +1 because indices are 0 based.
     Array.tabulate(maxD + 1)(D => { // tabulate over the interval [0, maxD]
-      	println(s"loopOverD, D: $D")
       	D match {
         	case 0 => SegCost(Real.PositiveInfinity, Nil) // this will never be used, hence the Real.PositiveInfinity to ensure it is never selected as an optimal solution, this is similar to what is found in the initialAccumulator
         	case 1 => SegCost(acc.currCol.c(0), List(0)) // one segment containing all the observations, directly compute the cost of the subsegment, using ColumnCostMatrix, for $\tau$ = 0
@@ -93,7 +90,6 @@ object Segmentation {
     val tauFirst = D - 1 // First value of tau for which a candidate cost is computed. This corresponds to the case where all previous segments have one observation each, and the candidate segment contains all the remaining observations. -1 because observations indices are 0-based.
     val candidateCosts = DenseVector.tabulate(acc.tauP - tauFirst + 1)(i => { // the last candidate is t = tauP, which corresponds to the case where last segment only contains the tauP observation
       val tau = i + tauFirst // translation from local index to observation index
-      println(s"loopOverTau, tau: $tau")
       candidateCost(
     		  acc,
     		  tau,
@@ -124,12 +120,12 @@ object Segmentation {
     acc.L(tau)(D - 1).cost + acc.currCol.c(tau) // D - 1 not because index is 0-based, but because of the formula
   }
   
-  def printAccumulator(acc: Accumulator) {
+  def printAccumulator(acc: Accumulator, accumulatorName: String) {
     (0 to acc.L.size - 1).foreach(tauP => {
-      (0 to acc.L(tauP).size - 1).foreach(s => {
-          val cost = acc.L(tauP)(s).cost
-          val partition = acc.L(tauP)(s).seg.mkString(", ")
-          println(s"tauP: $tauP, s: $s, s.cost: $cost, partition: $partition")
+      (0 to acc.L(tauP).size - 1).foreach(D => {
+          val cost = acc.L(tauP)(D).cost
+          val partition = acc.L(tauP)(D).seg.mkString(", ")
+          println(s"tauP: $tauP, D: $D, s.cost: $cost, partition: $partition")
         }) // complete output should be for tauP between 0 and nPoints - 1
     })
   }

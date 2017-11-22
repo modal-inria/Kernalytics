@@ -43,6 +43,6 @@ object DataGeneration {
     }
     
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
-    Segmentation.printAccumulator(res)
+    Segmentation.printAccumulator(res, "res")
   }
 }
