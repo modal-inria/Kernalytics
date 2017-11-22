@@ -13,12 +13,12 @@ object DataGeneration {
     val mean = 10.0
     val xVal = linspace(0.0, 10.0, nPoints)
     val interPoint = DenseVector[Double](2.5, 5.0, 7.5)
-    val exportData = false
+    val exportData = true
     val kernelSD = 1.0
     val dMax = 8
     
-    val lawA = breeze.stats.distributions.Gaussian(10.0, 1.0)
-    val lawB = breeze.stats.distributions.Gaussian( 5.0, 1.0)
+    val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
+    val lawB = breeze.stats.distributions.Gaussian(-10.0, 0.1)
     
     val data = DenseVector.tabulate(nPoints)(i => {
     	val x = i.toDouble / (nPoints - 1).toDouble * 10.0
@@ -44,5 +44,8 @@ object DataGeneration {
     
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
     Segmentation.printAccumulator(res, "res")
+    
+    val bestPartition = Segmentation.bestPartition(res)
+    Segmentation.printSegCost(bestPartition)
   }
 }

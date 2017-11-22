@@ -129,4 +129,17 @@ object Segmentation {
         }) // complete output should be for tauP between 0 and nPoints - 1
     })
   }
+  
+  def bestPartition(acc: Accumulator): SegCost = acc
+    .L
+    .last
+    .sortBy(_.cost)
+    .head
+
+    
+  def printSegCost(s: SegCost) = {
+    val cost = s.cost
+    val partition = s.seg.mkString(", ")
+    println(s"s.cost: $cost, partition: $partition")
+  }
 }

@@ -7,7 +7,7 @@ object CostMatrix {
   /**
    * The cost Matrix can be computed iteratively, one column after another. Auxiliary quantities have to be tracked
    * to this effect.
-   * The i-th element of the vector c contains the cost of the segment which starts at i and stops at tauP - 1 (included)
+   * The i-th element of the vector c contains the cost of the segment [i, tauP - 1], which corresponds in the article notation to the element $C_{i, \tau'}$
    * 
    * @param c value of the cost
    * @param d value of intermediate quantity

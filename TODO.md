@@ -1,12 +1,7 @@
-# Roadmap
-
-- Iterative computation of the cost matrix, as a function that associates a column to a column
-- Iterative algorithm 3
-- Base tests with segments having two different distributions, for example exponential and gaussian with same expected value.
-
 # Long Term
 
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
+- for small number of observations, compute the Gram matrix and include it in the closure of a "cached" kerEval
 
 # Legacy Sernel
 
