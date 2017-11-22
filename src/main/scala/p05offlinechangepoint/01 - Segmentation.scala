@@ -51,7 +51,7 @@ object Segmentation {
             _: Accumulator,
             kerEval,
             DMax),
-        (acc: Accumulator) => acc.tauP == nObs) // stop if the next observation would be outside the data
+        (acc: Accumulator) => acc.tauP == nObs) // stop if the next observation would be outside the data. The last column corresponds to the case where the complete set of observations has been taken into account.
     
     return initialAccumulator
   }
@@ -75,9 +75,8 @@ object Segmentation {
    * The results will be stored in an updated Accumulator, in the $\tau'$ + 1  element.
    */
   def loopOverD(acc: Accumulator, DMax: Index): Array[SegCost] = {
-    println("loopOverD")
     val maxD = math.min(acc.tauP + 1, DMax) // acc.tauP is the index of the observation that is going to be included in the current computation. The max number of segment is the number of obervations. Hence the +1 because indices are 0 based.
-    Array.tabulate(maxD)(D => { // TODO: why is there no index translation ?
+    Array.tabulate(maxD + 1)(D => { // tabulate over the interval [0, maxD]
       	println(s"loopOverD, D: $D")
       	D match {
         	case 0 => SegCost(Real.PositiveInfinity, Nil) // this will never be used, hence the Real.PositiveInfinity to ensure it is never selected as an optimal solution, this is similar to what is found in the initialAccumulator
@@ -91,7 +90,6 @@ object Segmentation {
    * tau corresponds to the index of the first element of the new segment.
    */
   def loopOverTau(acc: Accumulator, D: Index): SegCost = {
-    println("loopOverTau")
     val tauFirst = D - 1 // First value of tau for which a candidate cost is computed. This corresponds to the case where all previous segments have one observation each, and the candidate segment contains all the remaining observations. -1 because observations indices are 0-based.
     val candidateCosts = DenseVector.tabulate(acc.tauP - tauFirst + 1)(i => { // the last candidate is t = tauP, which corresponds to the case where last segment only contains the tauP observation
       val tau = i + tauFirst // translation from local index to observation index
