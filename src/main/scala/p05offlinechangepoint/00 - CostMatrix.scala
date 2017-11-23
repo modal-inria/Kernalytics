@@ -54,8 +54,18 @@ object CostMatrix {
       case _ => 0.0
     })
     
-    val sumA = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau <= tauP) - 1.0 / (tauP - tau + 1) * sum(a(tau to tauP)) else 0.0) // TODO: complete sum does not have to be recomputed for each tau, this should be possible using a scan
-    
+    val sumA = DenseVector.zeros[Real](currColumn.nObs)
+    val sumAb = DenseVector.zeros[Real](currColumn.nObs)
+    for (tau <- (tauP to 0 by -1)) { // TODO: could be computed functionaly using a scan, on the reversed data...
+      sumAb(tau) = tau match {
+        case _ if tau == tauP => a(tau)
+        case _ if tau < tauP  => a(tau) + sumAb(tau + 1)
+        case _ => 0.0
+      }
+      
+      sumA(tau) = - 1.0 / (tauP - tau + 1) * sumAb(tau)
+    }
+
     val c = d + sumA
     
     return ColumnCostMatrix(c, d, a, currColumn.nObs, tauP)
