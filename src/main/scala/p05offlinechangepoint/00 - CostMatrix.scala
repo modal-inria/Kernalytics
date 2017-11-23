@@ -35,7 +35,7 @@ object CostMatrix {
     val k00 = kerEval(0, 0) // this is note the cost of the one observation segment, it is only used in the auxiliary quantities c, d and a
     
     val d = DenseVector.tabulate[Real](nObs)(tau => if (tau == 0) k00 else 0.0)
-    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0) // TODO: really this value ?
+    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) k00 else 0.0) // for the first column, the submatrix associated to the cost only contains one element, that is why d = -a (for the only non zero element)
     val c = DenseVector.tabulate[Real](nObs)(tau => 0.0) // the cost of the one-observation segment is 0
     
     return ColumnCostMatrix(c, d, a, nObs, tauP)
@@ -54,7 +54,7 @@ object CostMatrix {
       case _ => 0.0
     })
     
-    val sumA = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau <= tauP) - 1.0 / (tauP - tau + 1) * sum(a(tau to tauP)) else 0.0) // TODO: complete sum does not have to be recomputed for each tau
+    val sumA = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau <= tauP) - 1.0 / (tauP - tau + 1) * sum(a(tau to tauP)) else 0.0) // TODO: complete sum does not have to be recomputed for each tau, this should be possible using a scan
     
     val c = d + sumA
     
