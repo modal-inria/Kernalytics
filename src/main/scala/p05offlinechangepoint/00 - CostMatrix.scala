@@ -30,26 +30,26 @@ object CostMatrix {
    *  
    * @param kerEval function that takes indices of observations and returns the corresponding kernel evaluation. kerEval could contain the Gram matrix in cache or recompute value each time it is called. This should depend on the sample size.
    */
-  def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
-    val tauP = 0 // index  of the first element in the segment not included in the column
-    
-    val d = DenseVector.zeros[Double](nObs)
-    val a = DenseVector.zeros[Double](nObs)
-    val c = DenseVector.zeros[Double](nObs)
-    
-    return ColumnCostMatrix(c, d, a, nObs, tauP)
-  }
-  
 //  def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
-//    val tauP = 1 // index  of the first element in the segment not included in the column
-//    val k00 = kerEval(0, 0) // this is note the cost of the one observation segment, it is only used in the auxiliary quantities c, d and a
+//    val tauP = -1 // index  of the last element included in the segment
 //    
-//    val d = DenseVector.tabulate[Real](nObs)(tau => if (tau == 0) k00 else 0.0)
-//    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0)
-//    val c = DenseVector.tabulate[Real](nObs)(tau => 0.0) // the cost of the one-observation segment is 0
+//    val d = DenseVector.zeros[Double](nObs)
+//    val a = DenseVector.zeros[Double](nObs)
+//    val c = DenseVector.zeros[Double](nObs)
 //    
 //    return ColumnCostMatrix(c, d, a, nObs, tauP)
 //  }
+  
+  def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
+    val tauP = 0 // index  of the last element included in the subsegment
+    val k00 = kerEval(0, 0) // this is note the cost of the one observation segment, it is only used in the auxiliary quantities c, d and a
+    
+    val d = DenseVector.tabulate[Real](nObs)(tau => if (tau == 0) k00 else 0.0)
+    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0)
+    val c = DenseVector.tabulate[Real](nObs)(tau => 0.0) // the cost of the one-observation segment is 0
+    
+    return ColumnCostMatrix(c, d, a, nObs, tauP)
+  }
   
   /**
    * Compute $C_{\tau, \tau' + 1}$ from $C_{\tau, \tau'}$, for all $\tau$.
