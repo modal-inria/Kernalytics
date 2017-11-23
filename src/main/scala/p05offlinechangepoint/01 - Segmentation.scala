@@ -115,8 +115,7 @@ object Segmentation {
       tau: Index,
       D: Index)
   : Real = {
-    println("tau: " + tau + ", currCol tauP: " + acc.currCol.tauP) // TODO: check that the $\tau$ and $\tau'$ are consistent with the values in the article.
-    acc.L(tau)(D - 1).cost + acc.currCol.c(tau) // D - 1 not because index is 0-based, but because the best segmentation with one less segment is considered
+    acc.L(tau)(D - 1).cost + acc.currCol.c(tau) // D - 1 because the best segmentation with one less segment is considered (not because index is 0-based)
   }
   
   def printAccumulator(acc: Accumulator, accumulatorName: String) {

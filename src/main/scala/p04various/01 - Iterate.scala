@@ -6,7 +6,7 @@ object Iterate {
   /**
    * @param a state
    * @param f function applied to state at each iteration
-   * @param condition condition(a) is true the computation is over
+   * @param condition condition(a) is true the computation is over before applying f to a
    */
   @tailrec
   def iterate[A](

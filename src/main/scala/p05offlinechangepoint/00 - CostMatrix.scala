@@ -29,23 +29,13 @@ object CostMatrix {
    * Note that only the first component of each vector c, d and a is non-zero.
    *  
    * @param kerEval function that takes indices of observations and returns the corresponding kernel evaluation. kerEval could contain the Gram matrix in cache or recompute value each time it is called. This should depend on the sample size.
-   */
-//  def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
-//    val tauP = -1 // index  of the last element included in the segment
-//    
-//    val d = DenseVector.zeros[Double](nObs)
-//    val a = DenseVector.zeros[Double](nObs)
-//    val c = DenseVector.zeros[Double](nObs)
-//    
-//    return ColumnCostMatrix(c, d, a, nObs, tauP)
-//  }
-  
+   */  
   def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
     val tauP = 0 // index  of the last element included in the subsegment
     val k00 = kerEval(0, 0) // this is note the cost of the one observation segment, it is only used in the auxiliary quantities c, d and a
     
     val d = DenseVector.tabulate[Real](nObs)(tau => if (tau == 0) k00 else 0.0)
-    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0)
+    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0) // TODO: really this value ?
     val c = DenseVector.tabulate[Real](nObs)(tau => 0.0) // the cost of the one-observation segment is 0
     
     return ColumnCostMatrix(c, d, a, nObs, tauP)
@@ -55,18 +45,18 @@ object CostMatrix {
    * Compute $C_{\tau, \tau' + 1}$ from $C_{\tau, \tau'}$, for all $\tau$.
    */
   def nextColumn(currColumn: ColumnCostMatrix, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
-    val tauP = currColumn.tauP + 1
+    val tauP = currColumn.tauP + 1 // last element included in the segments [tau, tauP] corresponding to the current column
     
-    val d = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) currColumn.d(tau) + kerEval(currColumn.tauP, currColumn.tauP) else 0.0) 
+    val d = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau <= tauP) currColumn.d(tau) + kerEval(tauP, tauP) else 0.0) 
     val a = DenseVector.tabulate[Real](currColumn.nObs)(i => i match {
-      case currColumn.tauP => kerEval(currColumn.tauP, currColumn.tauP)
-      case i if i < tauP => currColumn.a(i) + 2.0 * kerEval(i, currColumn.tauP)
+      case _ if i < tauP  => currColumn.a(i) + 2.0 * kerEval(i, tauP)
+      case _ if i == tauP => kerEval(tauP, tauP)
       case _ => 0.0
     })
     
-    val sumA = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau < tauP) - 1.0 / (tauP - tau) * sum(a(tau to currColumn.tauP)) else 0.0)
+    val sumA = DenseVector.tabulate[Real](currColumn.nObs)(tau => if (tau <= tauP) - 1.0 / (tauP - tau + 1) * sum(a(tau to tauP)) else 0.0) // TODO: complete sum does not have to be recomputed for each tau
     
-    val c = d + a
+    val c = d + sumA
     
     return ColumnCostMatrix(c, d, a, currColumn.nObs, tauP)
   }
@@ -78,16 +68,12 @@ object CostMatrix {
     val nObs = observations.size
     val gram = p00rkhs.Gram.generate(observations, kernel)
     
-    val CostMatrix = DenseMatrix.tabulate[Real](nObs, nObs + 1)((tauFirst: Index, tauLast: Index) => tauLast match {
-      case _ if tauLast == 0 => 0.0
-      
-      case _ => {
-    	    val subMat = gram(tauFirst to tauLast - 1, tauFirst to tauLast - 1)
-    			trace(subMat) - 1.0 / (tauLast - tauFirst) * sum(subMat)
-      }
+    val CostMatrix = DenseMatrix.tabulate[Real](nObs, nObs)((tauFirst: Index, tauLast: Index) => {
+      val subMat = gram(tauFirst to tauLast, tauFirst to tauLast)
+    		trace(subMat) - 1.0 / (tauLast - tauFirst + 1) * sum(subMat)
     })
     
-    return CostMatrix // TODO: return correct matrix
+    return CostMatrix
   }
   
   /**
@@ -100,7 +86,7 @@ object CostMatrix {
     val costVector = Iterate.iterate(
         initialCostVector,
         (v: Vector[ColumnCostMatrix]) => v :+ nextColumn(v.last, kerEval),
-        (v: Vector[ColumnCostMatrix]) => v.last.tauP == nObs)
+        (v: Vector[ColumnCostMatrix]) => v.last.tauP == nObs - 1)
         
     val costMatrix = DenseMatrix.tabulate(nObs, nObs)((i, j) => costVector(j).c(i))
     

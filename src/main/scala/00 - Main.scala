@@ -5,6 +5,6 @@ object Main extends App {
 //  p02kmeans.SimpleExample.main
 //  p03twosampletest.Base.testSamplePartition
 //  p03twosampletest.SimpleExample.main
-  p05offlinechangepoint.DataGeneration.expAndNormal
-//  p05offlinechangepoint.DataGeneration.compareCostMatrix
+//  p05offlinechangepoint.DataGeneration.expAndNormal
+  p05offlinechangepoint.DataGeneration.compareCostMatrix
 }
