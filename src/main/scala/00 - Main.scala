@@ -6,4 +6,5 @@ object Main extends App {
 //  p03twosampletest.Base.testSamplePartition
 //  p03twosampletest.SimpleExample.main
   p05offlinechangepoint.DataGeneration.expAndNormal
+//  p05offlinechangepoint.DataGeneration.compareCostMatrix
 }

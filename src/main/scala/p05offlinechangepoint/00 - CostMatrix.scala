@@ -1,7 +1,8 @@
 package p05offlinechangepoint
 
-import breeze.linalg._
+import breeze.linalg.{DenseVector, DenseMatrix, sum, trace}
 import p04various.TypeDef._
+import p04various.Iterate
 
 object CostMatrix {
   /**
@@ -30,15 +31,25 @@ object CostMatrix {
    * @param kerEval function that takes indices of observations and returns the corresponding kernel evaluation. kerEval could contain the Gram matrix in cache or recompute value each time it is called. This should depend on the sample size.
    */
   def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
-    val tauP = 1
-    val k00 = kerEval(0, 0) // this is note the cost of the one observation segment, it is only used in the auxiliary quantities c, d and a
+    val tauP = 0 // index  of the first element in the segment not included in the column
     
-    val d = DenseVector.tabulate[Real](nObs)(tau => if (tau == 0) k00 else 0.0)
-    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0)
-    val c = DenseVector.tabulate[Real](nObs)(tau => 0.0) // the cost of the one-observation segment is 0
+    val d = DenseVector.zeros[Double](nObs)
+    val a = DenseVector.zeros[Double](nObs)
+    val c = DenseVector.zeros[Double](nObs)
     
     return ColumnCostMatrix(c, d, a, nObs, tauP)
   }
+  
+//  def firstColumn(nObs: Index, kerEval: (Index, Index) => Real): ColumnCostMatrix = {
+//    val tauP = 1 // index  of the first element in the segment not included in the column
+//    val k00 = kerEval(0, 0) // this is note the cost of the one observation segment, it is only used in the auxiliary quantities c, d and a
+//    
+//    val d = DenseVector.tabulate[Real](nObs)(tau => if (tau == 0) k00 else 0.0)
+//    val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) -k00 else 0.0)
+//    val c = DenseVector.tabulate[Real](nObs)(tau => 0.0) // the cost of the one-observation segment is 0
+//    
+//    return ColumnCostMatrix(c, d, a, nObs, tauP)
+//  }
   
   /**
    * Compute $C_{\tau, \tau' + 1}$ from $C_{\tau, \tau'}$, for all $\tau$.
@@ -58,5 +69,41 @@ object CostMatrix {
     val c = d + a
     
     return ColumnCostMatrix(c, d, a, currColumn.nObs, tauP)
+  }
+  
+  /**
+   * Direct computation of the cost matrix, for debugging purposes on small cases.
+   */
+  def completeCostMatrix[Data](observations: DenseVector[Data], kernel: (Data, Data) => Real): DenseMatrix[Real] = {
+    val nObs = observations.size
+    val gram = p00rkhs.Gram.generate(observations, kernel)
+    
+    val CostMatrix = DenseMatrix.tabulate[Real](nObs, nObs + 1)((tauFirst: Index, tauLast: Index) => tauLast match {
+      case _ if tauLast == 0 => 0.0
+      
+      case _ => {
+    	    val subMat = gram(tauFirst to tauLast - 1, tauFirst to tauLast - 1)
+    			trace(subMat) - 1.0 / (tauLast - tauFirst) * sum(subMat)
+      }
+    })
+    
+    return CostMatrix // TODO: return correct matrix
+  }
+  
+  /**
+   * Computation of the cost matrix using the iterative method, for debugging purposes on small cases
+   */
+  def completeMatrixViaColumn(nObs: Index, kerEval: (Index, Index) => Real): DenseMatrix[Real] = {
+    val fc = firstColumn(nObs, kerEval)
+    val initialCostVector = Vector[ColumnCostMatrix](fc)
+    
+    val costVector = Iterate.iterate(
+        initialCostVector,
+        (v: Vector[ColumnCostMatrix]) => v :+ nextColumn(v.last, kerEval),
+        (v: Vector[ColumnCostMatrix]) => v.last.tauP == nObs)
+        
+    val costMatrix = DenseMatrix.tabulate(nObs, nObs)((i, j) => costVector(j).c(i))
+    
+    return costMatrix
   }
 }
