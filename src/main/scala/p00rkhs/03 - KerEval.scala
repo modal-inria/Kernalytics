@@ -22,11 +22,9 @@ object KerEval {
     (i, j) => kernel(data(i), data(j))
   }
   
-  def linearCombKerEval(kArray: Array[(Index, Index) => Real], weights: Array[Real]): (Index, Index) => Real = {
-    (i, j) => kArray
-      .map(_(i, j)) // evaluate each fonction in the array
-      .zip(weights) // associate the correct weight
-      .map(p => p._1 * p._2) // product of evaluation with  weight
-      .reduce(_ + _) // overall sum
-  } 
+  def linearCombKerEval(kArray: Array[(Index, Index) => Real], weights: DenseVector[Real]): (Index, Index) => Real =
+    (i, j) => {
+      val evaluationResult = DenseVector.tabulate[Real](kArray.size)(i => kArray(i)(i, j)) // evaluate the various kernels
+      evaluationResult.dot(weights) // weight the results
+    }
 }
