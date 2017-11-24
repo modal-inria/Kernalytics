@@ -14,19 +14,22 @@ object MultiKernel {
   sealed trait DenseVectorRoot
   case class DenseVectorReal(val d: DenseVector[Real]) extends DenseVectorRoot
   
-  val sd = 1.0
+  sealed trait ParameterRoot
+  case class ParameterGaussian(val sd: Real) extends ParameterRoot
+  case class ParameterProduct() extends ParameterRoot
+  
   val baseDir = "data/p05offlinechangepoint/04-MultiKernel"
   
   def detectDenseVectorType(
-      data: Array[DenseVectorRoot],
-      pos: Index,
+      data: DenseVectorRoot,
+      param: ParameterRoot,
       kStr: String)
-  : (Index, Index) => Real = data(pos) match {
-    case DenseVectorReal(d) if kStr == "product" => KerEval.generateKerEval(
+  : (Index, Index) => Real = (data, param) match {
+    case (DenseVectorReal(d), ParameterProduct()) if kStr == "product" => KerEval.generateKerEval(
         d,
         Kernel.R.product,
         true)
-    case DenseVectorReal(d) if kStr == "gaussian" => KerEval.generateKerEval(
+    case (DenseVectorReal(d), ParameterGaussian(sd))  if kStr == "gaussian" => KerEval.generateKerEval(
         d,
         Kernel.R.gaussian(_: Real, _: Real, sd),
         true)
@@ -38,10 +41,10 @@ object MultiKernel {
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 		
-		val data = TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir)
+		val data = DenseVectorReal(TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir))
 		
-		val kerEval0 = detectDenseVectorType(Array(DenseVectorReal(data)), 0, "gaussian")
-		val kerEval1 = detectDenseVectorType(Array(DenseVectorReal(data)), 0, "product")
+		val kerEval0 = detectDenseVectorType(data, ParameterGaussian(kernelSD), "gaussian")
+		val kerEval1 = detectDenseVectorType(data, ParameterProduct ()        , "product" )
 		
 		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
     
