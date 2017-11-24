@@ -13,34 +13,37 @@ import p04various.TypeDef._
  * https://medium.com/@sinisalouc/overcoming-type-erasure-in-scala-8f2422070d20
  */
 object MultiKernel {
+  sealed trait DenseVectorRoot
+  case class DenseVectorReal(val d: DenseVector[Real]) extends DenseVectorRoot
+  
   val sd = 0.1
   val baseDir = "data/p05offlinechangepoint/04-MultiKernel"
   
   def detectDenseVectorType(
-      data: Array[Any], // DenseVector is invariant in the generic type, therefore it is not possible to use data: DenseVector[Any]
+      data: Array[DenseVectorRoot],
       pos: Index,
       kStr: String)
-  : (Index, Index) => Real = kStr match {
-    case "product" => KerEval.generateKerEval(
-        data(pos).asInstanceOf[DenseVector[Real]], // TODO: asInstanceOf is unsafe. Is there a more elegant approach to this ?
+  : (Index, Index) => Real = data(pos) match {
+    case DenseVectorReal(d) if kStr == "product" => KerEval.generateKerEval(
+        d,
         Kernel.R.product,
         true)
-    case "gaussian" => KerEval.generateKerEval(
-        data(pos).asInstanceOf[DenseVector[Real]],
+    case DenseVectorReal(d) if kStr == "gaussian" => KerEval.generateKerEval(
+        d,
         Kernel.R.gaussian(_: Real, _: Real, sd),
         true)
   }
   
   def main {
-    	val nPoints = 1000
+    val nPoints = 1000
 		val kernelSD = 1.0
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 		
 		val data = TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir)
 		
-		val kerEval0 = detectDenseVectorType(Array(data), 0, "gaussian")
-		val kerEval1 = detectDenseVectorType(Array(data), 0, "product")
+		val kerEval0 = detectDenseVectorType(Array(DenseVectorReal(data)), 0, "gaussian")
+		val kerEval1 = detectDenseVectorType(Array(DenseVectorReal(data)), 0, "product")
 		
 		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), Array(0.8, 0.2))
     
