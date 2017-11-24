@@ -1,8 +1,9 @@
 package p05offlinechangepoint
 
-import breeze.linalg.{linspace, max, DenseVector, DenseMatrix}
+import breeze.linalg.{csvwrite, linspace, max, DenseVector, DenseMatrix}
 import breeze.numerics._
 import breeze.plot._
+import java.io.File
 import p00rkhs.{Gram, Kernel}
 import p04various.TypeDef._
 
@@ -10,6 +11,8 @@ import p04various.TypeDef._
  * Simple data generation for the first tests of the algorithm.
  */
 object TestNormalSignal {
+  val baseDir = "data/p05offlinechangepoint/02-TestNormalSignal"
+  
   def expAndNormalData(nPoints: Index, interPoint: DenseVector[Real]): DenseVector[Real] = {
     val xVal = linspace(interPoint(0), interPoint(interPoint.size - 1), nPoints)
     
@@ -33,10 +36,12 @@ object TestNormalSignal {
     		p += plot(xVal, data)
     		p.xlabel = "time"
     		p.ylabel = "value"
-    		f.saveas("lines.png")
+    		f.saveas(baseDir + "/lines.png")
+    		
+    		csvwrite(new File(baseDir + "/data.csv"), data.asDenseMatrix.t)
     }
     
-    data
+    return data
   }
   
   def expAndNormal {
