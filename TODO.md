@@ -23,5 +23,7 @@
 ## Offline change point detection
 
 - a Vector is used to enforce immutability when manipulating L. Switching to a mutable matrix might improve the performances. Encapsulating this in a monad would preserve functional purity.
-- the loop over D for a given tauP can be parallelized
+- the loop over D for a given tauP can be parallelized.
+    - Will the gain outweight the overhead for thread spawning ?
+    - That would depend on the value of DMax.
 - Gram matrix symmetry should be exploited to reduce computation times
