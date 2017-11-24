@@ -33,7 +33,7 @@ object TestNormalSignal {
     val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
     
     val data = DenseVector.tabulate(nPoints)(i => {
-    	val x = i.toDouble / (nPoints - 1).toDouble * lastPoint
+    	val x = i.toDouble / (nPoints - 1).toDouble * lastPoint // TODO: is there a way to replace toDouble with something that only depends on Real
     	x match {
     			case x if x <= interPoint(1)                       => lawA.sample()
     			case x if interPoint(1) <= x  && x < interPoint(2) => lawB.sample()

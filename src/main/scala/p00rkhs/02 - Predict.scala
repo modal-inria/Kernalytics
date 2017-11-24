@@ -1,6 +1,7 @@
 package p00rkhs
 
 import breeze.linalg._
+import p04various.TypeDef._
 
 object Predict {
   /**
@@ -8,12 +9,12 @@ object Predict {
    * */
   def evaluateMinimize[Data](
       predictSample: DenseVector[Data],
-      coefficients: DenseVector[Double],
+      coefficients: DenseVector[Real],
       learnSample: DenseVector[Data],
-      kernel: (Data, Data) => Double)
-  : DenseVector[Double] = {
+      kernel: (Data, Data) => Real)
+  : DenseVector[Real] = {
     predictSample.map({x =>
-      val eval = DenseVector.tabulate[Double](learnSample.length)(i => kernel(learnSample(i), x)) // evaluate learn sample at each point of learn predict
+      val eval = DenseVector.tabulate[Real](learnSample.length)(i => kernel(learnSample(i), x)) // evaluate learn sample at each point of learn predict
       coefficients dot eval
     })
   }
