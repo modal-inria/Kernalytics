@@ -2,6 +2,7 @@ package p05offlinechangepoint
 
 import breeze.linalg.{argmin, DenseVector} // not imported using _ to avoid masking Scala Vector with Breeze Vector
 import p04various.TypeDef._
+import p00rkhs.Gram
 
 /**
  * The index of the first observation is 0 and not 1 as in the article.
@@ -23,7 +24,7 @@ object Segmentation {
       val L: Vector[Array[SegCost]],
       val tauP: Index,
       val currCol: CostMatrix.ColumnCostMatrix)
-  
+      
   /**
    * Outer loop in Algorithm 3, implemented using the recursive function iterate.
    */
@@ -122,7 +123,7 @@ object Segmentation {
     (0 to acc.L.size - 1).foreach(tauP => {
       (0 to acc.L(tauP).size - 1).foreach(D => {
           val cost = acc.L(tauP)(D).cost
-          val partition = acc.L(tauP)(D).seg.mkString(", ")
+          val partition = acc.L(tauP)(D).seg.reverse.mkString(", ")
           println(s"tauP: $tauP, D: $D, s.cost: $cost, partition: $partition")
         }) // complete output should be for tauP between 0 and nPoints - 1
     })
@@ -137,7 +138,7 @@ object Segmentation {
     
   def printSegCost(s: SegCost) = {
     val cost = s.cost
-    val partition = s.seg.mkString(", ")
+    val partition = s.seg.reverse.mkString(", ")
     println(s"s.cost: $cost, partition: $partition")
   }
 }

@@ -79,8 +79,9 @@ object CostMatrix {
     val gram = p00rkhs.Gram.generate(observations, kernel)
     
     val CostMatrix = DenseMatrix.tabulate[Real](nObs, nObs)((tauFirst: Index, tauLast: Index) => {
+      val factor = if (tauLast - tauFirst + 1 != 0) - 1.0 / (tauLast - tauFirst + 1) else 0.0
       val subMat = gram(tauFirst to tauLast, tauFirst to tauLast)
-    		trace(subMat) - 1.0 / (tauLast - tauFirst + 1) * sum(subMat)
+    		trace(subMat) + factor * sum(subMat)
     })
     
     return CostMatrix

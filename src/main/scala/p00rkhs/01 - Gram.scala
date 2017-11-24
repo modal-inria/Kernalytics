@@ -1,6 +1,7 @@
 package p00rkhs
 
 import breeze.linalg._
+import p04various.TypeDef._
 
 object Gram {
   /**
@@ -9,11 +10,11 @@ object Gram {
    * */
   def generate[Data](
       observations: DenseVector[Data],
-      kernel: (Data, Data) => Double)
-  : DenseMatrix[Double] = {
+      kernel: (Data, Data) => Real)
+  : DenseMatrix[Real] = {
     val nObs = observations.length
     
-    return DenseMatrix.tabulate[Double](nObs, nObs)((i, j) => kernel(observations(i), observations(j)))
+    return DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => kernel(observations(i), observations(j)))
   }
   
   /**
@@ -23,23 +24,41 @@ object Gram {
    * @param y coefficients for the second vector
    * */
   def scalarProduct(
-      gram: DenseMatrix[Double],
-      x: DenseVector[Double],
-      y: DenseVector[Double])
-  : Double = {
+      gram: DenseMatrix[Real],
+      x: DenseVector[Real],
+      y: DenseVector[Real])
+  : Real = {
     val nElem = x.length
-    val intermediate = DenseMatrix.tabulate[Double](nElem, nElem)((i, j) => x(i) * y(j) * gram(i, j))
+    val intermediate = DenseMatrix.tabulate[Real](nElem, nElem)((i, j) => x(i) * y(j) * gram(i, j))
     return sum(intermediate)
   }
   
   def generateTest {
-    val obs = DenseVector[DenseVector[Double]](
-        DenseVector[Double](1.0, 2.0),
-        DenseVector[Double](3.0, 4.0),
-        DenseVector[Double](5.0, 6.0))
+    val obs = DenseVector[DenseVector[Real]](
+        DenseVector[Real](1.0, 2.0),
+        DenseVector[Real](3.0, 4.0),
+        DenseVector[Real](5.0, 6.0))
         
     val gram = generate(obs, Kernel.Rn.linear)
     
     println(gram)
+  }
+  
+  /**
+   * Generate the kerEval function from the data. If gramCache argument is true, the Gram matrix will be 
+   * 
+   * @param data data vector
+   * @param kernel kernel function
+   * @param gramCache */
+  def generateKerEval[Data](
+      data: DenseVector[Data],
+      kernel: (Data, Data) => Real,
+      gramCache: Boolean)
+  : (Index, Index) => Real = if (gramCache) {
+    val gram = Gram.generate(data, kernel)
+    (i, j) => gram(i, j)
+  }
+  else {
+    (i, j) => kernel(data(i), data(j))
   }
 }

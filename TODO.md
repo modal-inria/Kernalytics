@@ -3,6 +3,10 @@
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
 - for small number of observations, compute the Gram matrix and include it in the closure of a "cached" kerEval
 
+# Performances
+
+- a Vector is used to enforce immutability when manipulating L. Switching to a mutable matrix might improve the performances. Encapsulating this in a monad would preserve functional purity.
+
 # Legacy Sernel
 
 ## Short term
@@ -12,7 +16,7 @@
 ## Medium term
 
 - Gram matrix symmetry should be exploited to reduce computation times
-- BFGS might not be the best algorithm to exploit the quadratic nature of the Representer Theorem optimisation problem.
+- BFGS might not be the best algorithm to exploit the quadratic nature of the Representer Theorem optimization problem.
     - A more specialized algorithm might help enhance performances.
     - There is a quadratic optimizer in Scala Breeze
 - Get a better understanding of how Breeze optimization package works

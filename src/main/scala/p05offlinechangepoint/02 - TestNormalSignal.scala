@@ -1,15 +1,16 @@
 package p05offlinechangepoint
 
-import breeze.linalg.{linspace, DenseVector, DenseMatrix}
+import breeze.linalg.{linspace, max, DenseVector, DenseMatrix}
+import breeze.numerics._
 import breeze.plot._
-import p00rkhs.Kernel
+import p00rkhs.{Gram, Kernel}
 import p04various.TypeDef._
 
 /**
  * Simple data generation for the first tests of the algorithm.
  */
-object DataGeneration {
-  def expAndNormalData(nPoints: Index, interPoint: DenseVector[Real]) = {
+object TestNormalSignal {
+  def expAndNormalData(nPoints: Index, interPoint: DenseVector[Real]): DenseVector[Real] = {
     val xVal = linspace(interPoint(0), interPoint(interPoint.size - 1), nPoints)
     
     val exportData = true
@@ -44,11 +45,10 @@ object DataGeneration {
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 
-		val data = expAndNormalData(nPoints, interPoint) 
+		val data = expAndNormalData(nPoints, interPoint)
+		val kernel = Kernel.R.gaussian(_: Real, _: Real, kernelSD)
     
-    def kerEval(i: Index, j: Index): Real = { // kerEval is defined here with a direct evaluation. An alternative would be to precompute the Gram matrix and then to access its elements. The function that generates a "cached" version of kerEval from a data set should be in p00rkhs
-      p00rkhs.Kernel.R.gaussian(data(i), data(j), kernelSD)
-    }
+		val kerEval = Gram.generateKerEval(data, kernel, false)
     
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
     Segmentation.printAccumulator(res, "res")
@@ -75,5 +75,8 @@ object DataGeneration {
 		val costIterate = CostMatrix.completeMatrixViaColumn(nPoints, kerEval)
 		println("Cost with iterated computation")
 		println(costIterate)
+		
+		val maxRelativeError = max(abs(costIterate - costDirect))
+		println(s"maxRelativeError: $maxRelativeError")
   }
 }
