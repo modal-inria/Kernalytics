@@ -14,15 +14,23 @@ object TestNormalSignal {
   val baseDir = "data/p05offlinechangepoint/02-TestNormalSignal"
   
   def expAndNormalData(nPoints: Index, interPoint: DenseVector[Real]): DenseVector[Real] = {
-    val xVal = linspace(interPoint(0), interPoint(interPoint.size - 1), nPoints)
+    val firstPoint = interPoint(0)
+    val lastPoint = interPoint(interPoint.size - 1)
+    
+    val xVal = linspace(firstPoint, lastPoint, nPoints)
     
     val exportData = true
 
-    val lawA = breeze.stats.distributions.Gaussian( 10.0, 0.1)
-    val lawB = breeze.stats.distributions.Gaussian(-10.0, 0.1)
+    // different mean, same variance
+//    val lawA = breeze.stats.distributions.Gaussian( 10.0, 0.1)
+//    val lawB = breeze.stats.distributions.Gaussian(-10.0, 0.1)
+    
+    // same mean, different variance
+    val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
+    val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
     
     val data = DenseVector.tabulate(nPoints)(i => {
-    	val x = i.toDouble / (nPoints - 1).toDouble * 10.0
+    	val x = i.toDouble / (nPoints - 1).toDouble * lastPoint
     	x match {
     			case x if x <= interPoint(1)                       => lawA.sample()
     			case x if interPoint(1) <= x  && x < interPoint(2) => lawB.sample()
@@ -44,8 +52,8 @@ object TestNormalSignal {
     return data
   }
   
-  def expAndNormal {
-	  val nPoints = 100
+  def main {
+	  val nPoints = 1000000
 		val kernelSD = 1.0
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
@@ -60,28 +68,5 @@ object TestNormalSignal {
     
     val bestPartition = Segmentation.bestPartition(res)
     Segmentation.printSegCost(bestPartition)
-  }
-  
-  def compareCostMatrix {
-    val nPoints = 10
-    val kernelSD = 1.0
-		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
-
-		val data = expAndNormalData(nPoints, interPoint)
-		
-		def kerEval(i: Index, j: Index): Real = { // kerEval is defined here with a direct evaluation. An alternative would be to precompute the Gram matrix and then to access its elements. The function that generates a "cached" version of kerEval from a data set should be in p00rkhs
-      Kernel.R.gaussian(data(i), data(j), kernelSD)
-    }
-		
-		val costDirect = CostMatrix.completeCostMatrix(data, Kernel.R.gaussian(_: Real, _: Real, kernelSD))
-		println("Cost with direct computation")
-		println(costDirect)
-		
-		val costIterate = CostMatrix.completeMatrixViaColumn(nPoints, kerEval)
-		println("Cost with iterated computation")
-		println(costIterate)
-		
-		val maxRelativeError = max(abs(costIterate - costDirect))
-		println(s"maxRelativeError: $maxRelativeError")
   }
 }
