@@ -29,7 +29,7 @@ object MultiKernel {
         d,
         Kernel.R.product,
         true)
-    case (DenseVectorReal(d), ParameterGaussian(sd))  if kStr == "gaussian" => KerEval.generateKerEval(
+    case (DenseVectorReal(d), ParameterGaussian(sd)) if kStr == "gaussian" => KerEval.generateKerEval(
         d,
         Kernel.R.gaussian(_: Real, _: Real, sd),
         true)
