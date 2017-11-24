@@ -4,7 +4,7 @@ import breeze.linalg.{csvwrite, linspace, max, DenseVector, DenseMatrix}
 import breeze.numerics._
 import breeze.plot._
 import java.io.File
-import p00rkhs.{Gram, Kernel}
+import p00rkhs.{Gram, KerEval, Kernel}
 import p04various.TypeDef._
 
 /**
@@ -13,7 +13,10 @@ import p04various.TypeDef._
 object TestNormalSignal {
   val baseDir = "data/p05offlinechangepoint/02-TestNormalSignal"
   
-  def expAndNormalData(nPoints: Index, interPoint: DenseVector[Real]): DenseVector[Real] = {
+  def expAndNormalData(
+      nPoints: Index,
+      interPoint: DenseVector[Real],
+      baseDir: String): DenseVector[Real] = {
     val firstPoint = interPoint(0)
     val lastPoint = interPoint(interPoint.size - 1)
     
@@ -58,10 +61,10 @@ object TestNormalSignal {
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 
-		val data = expAndNormalData(nPoints, interPoint)
+		val data = expAndNormalData(nPoints, interPoint, baseDir)
 		val kernel = Kernel.R.gaussian(_: Real, _: Real, kernelSD)
     
-		val kerEval = Gram.generateKerEval(data, kernel, false)
+		val kerEval = KerEval.generateKerEval(data, kernel, false)
     
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
     Segmentation.printAccumulator(res, "res")

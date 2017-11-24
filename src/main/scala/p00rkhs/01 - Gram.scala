@@ -43,22 +43,4 @@ object Gram {
     
     println(gram)
   }
-  
-  /**
-   * Generate the kerEval function from the data. If gramCache argument is true, the Gram matrix will be 
-   * 
-   * @param data data vector
-   * @param kernel kernel function
-   * @param gramCache */
-  def generateKerEval[Data](
-      data: DenseVector[Data],
-      kernel: (Data, Data) => Real,
-      gramCache: Boolean)
-  : (Index, Index) => Real = if (gramCache) {
-    val gram = Gram.generate(data, kernel)
-    (i, j) => gram(i, j)
-  }
-  else {
-    (i, j) => kernel(data(i), data(j))
-  }
 }
