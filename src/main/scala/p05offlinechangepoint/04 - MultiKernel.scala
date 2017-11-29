@@ -8,7 +8,7 @@ import p00rkhs.{Gram, KerEval, Kernel}
 import p04various.TypeDef._
 
 /**
- * Small tests to combine data types.
+ * Small tests to combine kernels.
  * 
  * https://medium.com/@sinisalouc/overcoming-type-erasure-in-scala-8f2422070d20
  */

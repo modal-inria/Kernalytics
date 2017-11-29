@@ -1,5 +1,7 @@
 # Short Term
 
+- Implement section 4.3 of the article: "Performance assessment"
+
 # Long Term
 
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
