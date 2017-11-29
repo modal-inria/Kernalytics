@@ -11,7 +11,7 @@ import p04various.TypeDef._
  * Small tests to combine data types.
  */
 object MultiKernel {
-  sealed trait DenseVectorRoot
+  sealed trait DenseVectorRoot // Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example)
   case class DenseVectorReal(val d: DenseVector[Real]) extends DenseVectorRoot
   
   sealed trait ParameterRoot
@@ -22,14 +22,13 @@ object MultiKernel {
   
   def detectDenseVectorType(
       data: DenseVectorRoot,
-      param: ParameterRoot,
-      kStr: String)
+      param: ParameterRoot)
   : (Index, Index) => Real = (data, param) match {
-    case (DenseVectorReal(d), ParameterProduct()) if kStr == "product" => KerEval.generateKerEval(
+    case (DenseVectorReal(d), ParameterProduct()) => KerEval.generateKerEval(
         d,
         Kernel.R.product,
         true)
-    case (DenseVectorReal(d), ParameterGaussian(sd)) if kStr == "gaussian" => KerEval.generateKerEval(
+    case (DenseVectorReal(d), ParameterGaussian(sd)) => KerEval.generateKerEval(
         d,
         Kernel.R.gaussian(_: Real, _: Real, sd),
         true)
@@ -43,8 +42,8 @@ object MultiKernel {
 		
 		val data = DenseVectorReal(TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir))
 		
-		val kerEval0 = detectDenseVectorType(data, ParameterGaussian(kernelSD), "gaussian")
-		val kerEval1 = detectDenseVectorType(data, ParameterProduct ()        , "product" )
+		val kerEval0 = detectDenseVectorType(data, ParameterGaussian(kernelSD))
+		val kerEval1 = detectDenseVectorType(data, ParameterProduct ()        )
 		
 		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
     
