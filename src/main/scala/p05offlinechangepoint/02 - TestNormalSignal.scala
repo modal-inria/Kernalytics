@@ -56,7 +56,7 @@ object TestNormalSignal {
   }
   
   def main {
-	  val nPoints = 1000000
+	  val nPoints = 1000
 		val kernelSD = 1.0
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
