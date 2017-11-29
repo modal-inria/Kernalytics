@@ -8,41 +8,45 @@ import p00rkhs.{Gram, KerEval, Kernel}
 import p04various.TypeDef._
 
 /**
- * Small tests to combine kernels.
- * 
- * https://medium.com/@sinisalouc/overcoming-type-erasure-in-scala-8f2422070d20
+ * Small tests to combine data types.
  */
 object MultiKernel {
-  val sd = 0.1
+  sealed trait DenseVectorRoot
+  case class DenseVectorReal(val d: DenseVector[Real]) extends DenseVectorRoot
+  
+  sealed trait ParameterRoot
+  case class ParameterGaussian(val sd: Real) extends ParameterRoot
+  case class ParameterProduct() extends ParameterRoot
+  
   val baseDir = "data/p05offlinechangepoint/04-MultiKernel"
   
   def detectDenseVectorType(
-      data: Array[Any], // DenseVector is invariant in the generic type, therefore it is not possible to use data: DenseVector[Any]
-      pos: Index,
+      data: DenseVectorRoot,
+      param: ParameterRoot,
       kStr: String)
-  : (Index, Index) => Real = kStr match {
-    case "product" => KerEval.generateKerEval(
-        data(pos).asInstanceOf[DenseVector[Real]], // TODO: asInstanceOf is unsafe. Is there a more elegant approach to this ?
+  : (Index, Index) => Real = (data, param) match {
+    case (DenseVectorReal(d), ParameterProduct()) if kStr == "product" => KerEval.generateKerEval(
+        d,
         Kernel.R.product,
         true)
-    case "gaussian" => KerEval.generateKerEval(
-        data(pos).asInstanceOf[DenseVector[Real]],
+    case (DenseVectorReal(d), ParameterGaussian(sd)) if kStr == "gaussian" => KerEval.generateKerEval(
+        d,
         Kernel.R.gaussian(_: Real, _: Real, sd),
         true)
   }
   
   def main {
-    	val nPoints = 1000
+    val nPoints = 1000
 		val kernelSD = 1.0
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 		
-		val data = TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir)
+		val data = DenseVectorReal(TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir))
 		
-		val kerEval0 = detectDenseVectorType(Array(data), 0, "gaussian")
-		val kerEval1 = detectDenseVectorType(Array(data), 0, "product")
+		val kerEval0 = detectDenseVectorType(data, ParameterGaussian(kernelSD), "gaussian")
+		val kerEval1 = detectDenseVectorType(data, ParameterProduct ()        , "product" )
 		
-		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), Array(0.8, 0.2))
+		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
     
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
     Segmentation.printAccumulator(res, "res")
