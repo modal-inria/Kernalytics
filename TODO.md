@@ -2,7 +2,10 @@
 
 ## Short Term
 
-- Implement section 4.3 of the article: "Performance assessment"
+- Implement kernels based on vector product, distances... They should take the norm or distance as an argument, and could be applied to more generic spaces thant $R^n$.
+- Implement selection of number of segments using penalized criterion.
+- Distances of matrices.
+- kernels on distributions (Chi-squared).
 
 ## Long Term
 
@@ -12,6 +15,10 @@
 - Automate the choice of kernel using an error function to be minimized
     - the error function should be provided as a parameter
     - the kernels could be provided as a list of kernels
+    
+## Theory
+
+- How to avoid "over-segmentation" ? Is there something similar to the BIC that would penalize overly complex segmentations ?
 
 ## Performances
 
@@ -34,3 +41,4 @@
     - There is a quadratic optimizer in Scala Breeze
 - Get a better understanding of how Breeze optimization package works
 	- Termination conditions
+- Every algorithms p01, p02, p03 could be switched to using KerEval instead of directly manipulating the data.

@@ -20,17 +20,17 @@ object MultiKernel {
   
   val baseDir = "data/p05offlinechangepoint/04-MultiKernel"
   
-  def detectDenseVectorType(
+  def detectDenseVectorType( // TODO: this function should return an Option to take into consideration the case when parameters type do not match data type
       data: DenseVectorRoot,
       param: ParameterRoot)
   : (Index, Index) => Real = (data, param) match {
     case (DenseVectorReal(d), ParameterProduct()) => KerEval.generateKerEval(
         d,
-        Kernel.R.product,
+        Kernel.Legacy.R.product,
         true)
     case (DenseVectorReal(d), ParameterGaussian(sd)) => KerEval.generateKerEval(
         d,
-        Kernel.R.gaussian(_: Real, _: Real, sd),
+        Kernel.Legacy.R.gaussian(_: Real, _: Real, sd),
         true)
   }
   

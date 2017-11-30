@@ -7,7 +7,7 @@ import p04various.Iterate
 
 object SimpleExample {
   def main {
-    val kernel: (DenseVector[Double], DenseVector[Double]) => Double = Kernel.Rn.linear
+    val kernel: (DenseVector[Double], DenseVector[Double]) => Double = Kernel.Legacy.Rn.linear
     val sd = 10.0
     
     val proportion = DenseVector[Double](0.3, 0.7)

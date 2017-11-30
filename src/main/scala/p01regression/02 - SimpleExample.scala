@@ -8,7 +8,7 @@ import p00rkhs.{Gram, Kernel, Predict}
 object SimpleExample {
   def main {
 //    val kernel = Kernel.product(_, _)
-    val kernel = (x: Double, y: Double) => Kernel.R.gaussian(x, y, 1.0)
+    val kernel = (x: Double, y: Double) => Kernel.Legacy.R.gaussian(x, y, 1.0)
     val min = -3.0
     val max = 18.0
     

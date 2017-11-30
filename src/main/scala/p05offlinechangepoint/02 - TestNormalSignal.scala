@@ -24,7 +24,7 @@ object TestNormalSignal {
     
     val exportData = true
 
-    // different mean, same variance
+//    // different mean, same variance
 //    val lawA = breeze.stats.distributions.Gaussian( 10.0, 0.1)
 //    val lawB = breeze.stats.distributions.Gaussian(-10.0, 0.1)
     
@@ -57,12 +57,18 @@ object TestNormalSignal {
   
   def main {
 	  val nPoints = 1000
-		val kernelSD = 1.0
+		val kernelSD = 0.5
 		val dMax = 8
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 
 		val data = expAndNormalData(nPoints, interPoint, baseDir)
-		val kernel = Kernel.R.gaussian(_: Real, _: Real, kernelSD)
+//		val kernel = Kernel.R.gaussian(_: Real, _: Real, kernelSD)
+//		val kernel = Kernel.R.product(_: Real, _: Real)
+		val kernel = Kernel.Metric.gaussian(
+		    _: Real,
+		    _: Real,
+		    Kernel.Metric.InnerProductToMetric(Kernel.InnerProduct.R), // use the metric derived from the inner product in R
+		    kernelSD)
     
 		val kerEval = KerEval.generateKerEval(data, kernel, false)
     
