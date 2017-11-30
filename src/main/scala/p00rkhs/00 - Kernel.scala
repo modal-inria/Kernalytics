@@ -44,7 +44,18 @@ object Kernel {
 		: Real = {val diff = numeric.minus(x, y); math.exp(- innerProduct(diff, diff) / (2.0 * math.pow(sd, 2.0)))}
 	}
 	
+	object Norm {}
+	
 	object Metric {
+	  def NormToMetric[Data](norm: Data => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real =
+	    (x, y) => norm(numeric.minus(x, y))
+	  
+	  	/**
+	   * Compute the metric derived from an inner product, as the norm of the difference of the vectors.
+	   */
+		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
+		  (x, y) => {val diff = numeric.minus(x, y); math.sqrt(ip(diff, diff))}
+	  
 	  /**
 	   * Must be used as a metric for the laplacian kernel to get the ChiSquared metric.
 	   * 
@@ -57,12 +68,6 @@ object Kernel {
 	    
 	    return sum(elements)
 	  }
-	  
-	  /**
-	   * Compute the metric derived from an inner product, as the norm of the difference of the vectors.
-	   */
-		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
-		  (x, y) => {val diff = numeric.minus(x, y); math.sqrt(ip(diff, diff))}
 		  
 		def gaussian[Data](
 		    x: Data,
@@ -80,11 +85,6 @@ object Kernel {
 	      metric: (Data, Data) => Real,
 	      alpha: Real)(implicit numeric: Numeric[Data])
 	  : Real = math.exp(- alpha * metric(x, y))
-	}
-	
-	object SquaredMetric {
-
-	    
 	}
 
   /**
