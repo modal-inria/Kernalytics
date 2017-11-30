@@ -46,6 +46,19 @@ object Kernel {
 	
 	object Metric {
 	  /**
+	   * Must be used as a metric for the laplacian kernel to get the ChiSquared metric.
+	   * 
+	   * TODO: implement other squared norm based kernels, like Jensen divergence or Total Variation.
+	   */
+	  	def ChiSquared(x: DenseVector[Real], y: DenseVector[Real]): Real = {
+	    val elements = DenseVector.tabulate(x.size)(i => {
+	      math.pow(x(i) - y(i), 2.0) / (x(i) + y(i))
+	    })
+	    
+	    return sum(elements)
+	  }
+	  
+	  /**
 	   * Compute the metric derived from an inner product, as the norm of the difference of the vectors.
 	   */
 		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
@@ -69,8 +82,9 @@ object Kernel {
 	  : Real = math.exp(- alpha * metric(x, y))
 	}
 	
-	object SquareMetric {
-	  
+	object SquaredMetric {
+
+	    
 	}
 
   /**

@@ -1,7 +1,5 @@
 # Short Term
 
-- Kernels based on vector product, distances... They should take the norm or distance as an argument, and could be applied to more generic spaces than $R^n$.
-- Kernels on distributions (Chi-squared).
 - Distances of matrices.
 - Selection of number of segments using penalized criterion.
 - IO to be able to use data and parameters from disk.
