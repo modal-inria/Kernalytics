@@ -5,10 +5,11 @@ import p04various.TypeDef._
 import Numeric._
 
 /**
- * Note that only here are the data types known. In the Gram package, everything occurs in the RKHS, and the data types need to to be nown since
- * only the kernel evaluations are required.
+ * This is the only point in the algorithm where the data types have to be known. Beyond that, only the kernel is evaluated, usually via KerEval.
+ * 
  * Bibliography:
- * -	https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space#Examples
+ * - https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space#Examples
+ * - https://en.wikipedia.org/wiki/Positive-definite_kernel , for the notations used in the kernels
  */
 object Kernel {
 	object InnerProduct {
@@ -16,13 +17,21 @@ object Kernel {
 	  def Rn(x: DenseVector[Real], y: DenseVector[Real]): Real = x dot y
 	  
 	  /**
-	   * A bit useless because the inner product could be called directly instead.
+	   * A useless example because the inner product could be called directly instead.
 	   */
 	  def linear[Data](
 	      x: Data,
 	      y: Data,
 	      innerProduct: (Data, Data) => Real)
 	  : Real = innerProduct(x, y)
+	  
+	  def polynomial[Data](
+	      x: Data,
+	      y: Data,
+	      innerProduct: (Data, Data) => Real,
+	      c: Real,
+	      d: Integer)
+	  : Real = math.pow(innerProduct(x, y) + c, d)
 	  
 	  /**
 	   * Same as Metric.gaussian, except that ((_)^(1/2))^(1/2) is removed as it is useless and time-consuming.
@@ -48,6 +57,20 @@ object Kernel {
 		    metric: (Data, Data) => Real,
 		    sd: Real)
 		: Real = math.exp(- math.pow(metric(x, y), 2.0) / (2.0 * math.pow(sd, 2.0)))
+		
+	  /**
+	   * Note the condition alpha > 0.
+	   */
+	  def laplacian[Data](
+	      x: Data,
+	      y: Data,
+	      metric: (Data, Data) => Real,
+	      alpha: Real)(implicit numeric: Numeric[Data])
+	  : Real = math.exp(- alpha * metric(x, y))
+	}
+	
+	object SquareMetric {
+	  
 	}
 
   /**
