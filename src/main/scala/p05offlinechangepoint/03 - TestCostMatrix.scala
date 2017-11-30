@@ -6,6 +6,7 @@ import breeze.plot._
 import java.io.File
 import p00rkhs.{Gram, Kernel}
 import p04various.TypeDef._
+import p00rkhs.KerEval
 
 /**
  * Simple data generation for the first tests of the algorithm.
@@ -20,11 +21,15 @@ object TestCostMatrix {
 
 		val data = TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir)
 		
-		def kerEval(i: Index, j: Index): Real = { // kerEval is defined here with a direct evaluation. An alternative would be to precompute the Gram matrix and then to access its elements. The function that generates a "cached" version of kerEval from a data set should be in p00rkhs
-      Kernel.Legacy.R.gaussian(data(i), data(j), kernelSD)
-    }
+		val kernel = Kernel.InnerProduct.gaussian(
+		    _: Real,
+		    _: Real,
+		    Kernel.InnerProduct.R,
+		    kernelSD)
 		
-		val costDirect = CostMatrix.completeCostMatrix(data, Kernel.Legacy.R.gaussian(_: Real, _: Real, kernelSD))
+		val kerEval = KerEval.generateKerEval(data, kernel, true)	
+
+		val costDirect = CostMatrix.completeCostMatrix(data, kernel)
 		println("Cost with direct computation")
 		println(costDirect)
 		

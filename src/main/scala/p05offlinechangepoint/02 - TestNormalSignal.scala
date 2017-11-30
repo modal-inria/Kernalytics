@@ -62,12 +62,11 @@ object TestNormalSignal {
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 
 		val data = expAndNormalData(nPoints, interPoint, baseDir)
-//		val kernel = Kernel.R.gaussian(_: Real, _: Real, kernelSD)
-//		val kernel = Kernel.R.product(_: Real, _: Real)
-		val kernel = Kernel.Metric.gaussian(
+		
+		val kernel = Kernel.InnerProduct.gaussian(
 		    _: Real,
 		    _: Real,
-		    Kernel.Metric.InnerProductToMetric(Kernel.InnerProduct.R), // use the metric derived from the inner product in R
+		    Kernel.InnerProduct.R,
 		    kernelSD)
     
 		val kerEval = KerEval.generateKerEval(data, kernel, false)

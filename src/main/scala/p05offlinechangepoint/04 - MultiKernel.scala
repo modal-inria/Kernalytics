@@ -26,11 +26,15 @@ object MultiKernel {
   : (Index, Index) => Real = (data, param) match {
     case (DenseVectorReal(d), ParameterProduct()) => KerEval.generateKerEval(
         d,
-        Kernel.Legacy.R.product,
+        Kernel.InnerProduct.R,
         true)
     case (DenseVectorReal(d), ParameterGaussian(sd)) => KerEval.generateKerEval(
         d,
-        Kernel.Legacy.R.gaussian(_: Real, _: Real, sd),
+        Kernel.InnerProduct.gaussian(
+        		_: Real,
+        		_: Real,
+        		Kernel.InnerProduct.R,
+        		sd),
         true)
   }
   

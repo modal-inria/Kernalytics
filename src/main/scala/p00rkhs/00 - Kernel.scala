@@ -15,18 +15,31 @@ object Kernel {
 	  def R(x: Real, y: Real): Real = x * y
 	  def Rn(x: DenseVector[Real], y: DenseVector[Real]): Real = x dot y
 	  
+	  /**
+	   * A bit useless because the inner product could be called directly instead.
+	   */
 	  def linear[Data](
 	      x: Data,
 	      y: Data,
 	      innerProduct: (Data, Data) => Real)
 	  : Real = innerProduct(x, y)
+	  
+	  /**
+	   * Same as Metric.gaussian, except that ((_)^(1/2))^(1/2) is removed as it is useless and time-consuming.
+	   */
+	  def gaussian[Data](
+		    x: Data,
+		    y: Data,
+		    innerProduct: (Data, Data) => Real,
+		    sd: Real)(implicit numeric: Numeric[Data])
+		: Real = {val diff = numeric.minus(x, y); math.exp(- innerProduct(diff, diff) / (2.0 * math.pow(sd, 2.0)))}
 	}
 	
 	object Metric {
 	  /**
 	   * Compute the metric derived from an inner product, as the norm of the difference of the vectors.
 	   */
-		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space
+		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
 		  (x, y) => {val diff = numeric.minus(x, y); math.sqrt(ip(diff, diff))}
 		  
 		def gaussian[Data](
@@ -34,12 +47,13 @@ object Kernel {
 		    y: Data,
 		    metric: (Data, Data) => Real,
 		    sd: Real)
-		: Real = math.exp(- math.pow(metric(x, y), 2.0) / (2.0 * math.pow(sd, 2.0))) // TODO: for metrics derived from inner product, it is suboptimal to compute the sqrt in InnerProductToMetric and then square it here. Actually the optimized version should be part of InnerProduct, and the generic version be here.
+		: Real = math.exp(- math.pow(metric(x, y), 2.0) / (2.0 * math.pow(sd, 2.0)))
 	}
 
   /**
-   * Previous kernel system, not based on algebraic structures.
+   * Previous kernel system, not based on algebraic structures. Should not be used anymore.
    */
+	@deprecated("Use algebra-based kernels instead.")
 	object Legacy {
 		object R {
 			def product(x: Real, y: Real): Real = x * y
