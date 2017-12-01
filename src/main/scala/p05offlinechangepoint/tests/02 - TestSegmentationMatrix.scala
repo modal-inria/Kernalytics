@@ -30,7 +30,7 @@ object TestSegmentationMatrix {
       laws(seg).map(_.sample)
     })
     
-    return DenseVector[DenseMatrix[Real]]()
+    return data
   }
   
   def frobeniusNorm(m: DenseMatrix[Real]): Real = math.sqrt(sum(m.map(math.pow(_, 2))))
@@ -53,11 +53,11 @@ object TestSegmentationMatrix {
 		    kernelSD)
     
 		val kerEval = KerEval.generateKerEval(data, kernel, false)
-    
-    val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
-    Segmentation.printAccumulator(res, "res")
-    
-    val bestPartition = Segmentation.bestPartition(res)
-    Segmentation.printSegCost(bestPartition)
+
+		val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
+		Segmentation.printAccumulator(res, "res")
+
+		val bestPartition = Segmentation.bestPartition(res)
+		Segmentation.printSegCost(bestPartition)
   }
 }
