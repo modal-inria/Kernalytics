@@ -1,17 +1,18 @@
-package p05offlinechangepoint
+package p05offlinechangepoint.tests
 
-import breeze.linalg.{csvwrite, linspace, max, DenseVector, DenseMatrix}
+import breeze.linalg.{csvwrite, linspace, DenseVector}
 import breeze.numerics._
 import breeze.plot._
 import java.io.File
-import p00rkhs.{Gram, KerEval, Kernel}
+import p00rkhs.{KerEval, Kernel}
 import p04various.TypeDef._
+import p05offlinechangepoint.Segmentation
 
 /**
  * Simple data generation for the first tests of the algorithm.
  */
-object TestNormalSignal {
-  val baseDir = "data/p05offlinechangepoint/02-TestNormalSignal"
+object TestSegmentationNormal {
+  val baseDir = "data/p05offlinechangepoint/00-TestSegmentationNormal"
   
   def expAndNormalData(
       nPoints: Index,
@@ -68,6 +69,13 @@ object TestNormalSignal {
 		    _: Real,
 		    Kernel.InnerProduct.R,
 		    kernelSD)
+		 
+	  // same kernel as previous one except that the distance is deduced from the scala product.
+//		val kernel = Kernel.Metric.gaussian(
+//		    _: Real,
+//		    _: Real,
+//		    Kernel.Metric.InnerProductToMetric(Kernel.InnerProduct.R),
+//		    kernelSD)
     
 		val kerEval = KerEval.generateKerEval(data, kernel, false)
     

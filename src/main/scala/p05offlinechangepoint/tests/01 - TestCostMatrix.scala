@@ -1,25 +1,24 @@
-package p05offlinechangepoint
+package p05offlinechangepoint.tests
 
-import breeze.linalg.{csvwrite, linspace, max, DenseVector, DenseMatrix}
+import breeze.linalg.{max, DenseVector}
 import breeze.numerics._
 import breeze.plot._
-import java.io.File
-import p00rkhs.{Gram, Kernel}
+import p00rkhs.{KerEval, Kernel}
 import p04various.TypeDef._
-import p00rkhs.KerEval
+import p05offlinechangepoint.CostMatrix
 
 /**
  * Simple data generation for the first tests of the algorithm.
  */
 object TestCostMatrix {
-  val baseDir = "data/p05offlinechangepoint/03-TestCostMatrix"
+  val baseDir = "data/p05offlinechangepoint/01-TestCostMatrix"
   
   def main {
     val nPoints = 10
     val kernelSD = 1.0
 		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
 
-		val data = TestNormalSignal.expAndNormalData(nPoints, interPoint, baseDir)
+		val data = TestSegmentationNormal.expAndNormalData(nPoints, interPoint, baseDir)
 		
 		val kernel = Kernel.InnerProduct.gaussian(
 		    _: Real,

@@ -40,21 +40,32 @@ object Kernel {
 		    x: Data,
 		    y: Data,
 		    innerProduct: (Data, Data) => Real,
-		    sd: Real)(implicit numeric: Numeric[Data])
-		: Real = {val diff = numeric.minus(x, y); math.exp(- innerProduct(diff, diff) / (2.0 * math.pow(sd, 2.0)))}
+		    sd: Real)(implicit sub: Sub[Data])
+		: Real = {val diff = sub.-(x, y); math.exp(- innerProduct(diff, diff) / (2.0 * math.pow(sd, 2.0)))}
 	}
 	
-	object Norm {}
+	object Norm {
+	  /**
+	   * Generate the norm deduced from an inner product as the function: x -> $\sqrt{<x, x>}$.
+	   */
+	  def InnerProductToNorm[Data](ip: (Data, Data) => Real): Data => Real =
+	    x => math.sqrt(ip(x, x))
+	}
 	
 	object Metric {
-	  def NormToMetric[Data](norm: Data => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real =
-	    (x, y) => norm(numeric.minus(x, y))
+	  	/**
+	   * Generate the metric deduced from a norm as the function: (x, y) -> ||x - y||. Note that for convenience the - operation
+	   * does not need to be provided and is deduced using implicits.
+	   */
+	  def NormToMetric[Data](norm: Data => Real)(implicit sub: Sub[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
+	    (x, y) => norm(sub.-(x, y)) // ||x - y||
 	  
 	  	/**
-	   * Compute the metric derived from an inner product, as the norm of the difference of the vectors.
+	   * Compute the metric derived from an inner product, (x, y) -> $$||x - y||
 	   */
-		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit numeric: Numeric[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
-		  (x, y) => {val diff = numeric.minus(x, y); math.sqrt(ip(diff, diff))}
+		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit sub: Sub[Data]): (Data, Data) => Real = 
+//		  (x, y) => {val diff = numeric.minus(x, y); math.sqrt(ip(diff, diff))}
+		  NormToMetric[Data](Norm.InnerProductToNorm[Data](ip))(sub)
 	  
 	  /**
 	   * Must be used as a metric for the laplacian kernel to get the ChiSquared metric.
@@ -85,6 +96,22 @@ object Kernel {
 	      metric: (Data, Data) => Real,
 	      alpha: Real)(implicit numeric: Numeric[Data])
 	  : Real = math.exp(- alpha * metric(x, y))
+	}
+	
+	/**
+	 * The substraction is defined here to avoid having to pass it as an argument each time it is required. This is the case for the computation of
+	 * ||x - y|| for example, when a distance is deduced from a norm.
+	 */
+	trait Sub[T]{
+		def -(x: T, y: T): T
+	}
+
+	implicit object SubReal extends Sub[Real] {
+		def -(x: Real, y: Real): Real = x - y
+	}
+
+	implicit object SubDenseMatrixReal extends Sub[DenseMatrix[Real]] {
+		def -(x: DenseMatrix[Real], y: DenseMatrix[Real]): DenseMatrix[Real] = x - y
 	}
 
   /**
