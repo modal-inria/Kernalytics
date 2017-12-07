@@ -5,7 +5,10 @@ import p04various.TypeDef._
 
 object KerEval {
     /**
-   * Generate the kerEval function from the data. If gramCache argument is true, the Gram matrix will be computed and accessed.
+   * Generate the kerEval function from the data.
+   * It differs from the kernel fonction in the sense that it is a function from a pair of indices to R. It corresponds
+   * to the evaluation of the kernel on specific observations.
+   * If gramCache argument is true, the Gram matrix will be computed and accessed.
    * 
    * @param data data vector
    * @param kernel kernel function

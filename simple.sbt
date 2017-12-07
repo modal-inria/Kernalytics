@@ -23,3 +23,5 @@ libraryDependencies  ++= Seq(
 libraryDependencies += "commons-io" % "commons-io" % "2.6"
 
 resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+
