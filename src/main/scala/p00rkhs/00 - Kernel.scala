@@ -2,7 +2,6 @@ package p00rkhs
 
 import breeze.linalg._
 import p04various.TypeDef._
-import Numeric._
 
 /**
  * This is the only point in the algorithm where the data types have to be known. Beyond that, only the kernel is evaluated, usually via KerEval.
@@ -40,7 +39,7 @@ object Kernel {
 		    x: Data,
 		    y: Data,
 		    innerProduct: (Data, Data) => Real,
-		    sd: Real)(implicit sub: Sub[Data])
+		    sd: Real)(implicit sub: Algebra.VectorSpace[Data])
 		: Real = {val diff = sub.-(x, y); math.exp(- innerProduct(diff, diff) / (2.0 * math.pow(sd, 2.0)))}
 	}
 	
@@ -57,13 +56,13 @@ object Kernel {
 	   * Generate the metric deduced from a norm as the function: (x, y) -> ||x - y||. Note that for convenience the - operation
 	   * does not need to be provided and is deduced using implicits.
 	   */
-	  def NormToMetric[Data](norm: Data => Real)(implicit sub: Sub[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
+	  def NormToMetric[Data](norm: Data => Real)(implicit sub: Algebra.VectorSpace[Data]): (Data, Data) => Real = // TODO: requirement here is to have - defined, not to be a vector space. The type system could be strenghtened to fully manage algebraic structures.
 	    (x, y) => norm(sub.-(x, y)) // ||x - y||
 	  
 	  	/**
 	   * Compute the metric derived from an inner product, (x, y) -> $$||x - y||
 	   */
-		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit sub: Sub[Data]): (Data, Data) => Real = 
+		def InnerProductToMetric[Data](ip: (Data, Data) => Real)(implicit sub: Algebra.VectorSpace[Data]): (Data, Data) => Real = 
 //		  (x, y) => {val diff = numeric.minus(x, y); math.sqrt(ip(diff, diff))}
 		  NormToMetric[Data](Norm.InnerProductToNorm[Data](ip))(sub)
 	  
@@ -96,22 +95,6 @@ object Kernel {
 	      metric: (Data, Data) => Real,
 	      alpha: Real)(implicit numeric: Numeric[Data])
 	  : Real = math.exp(- alpha * metric(x, y))
-	}
-	
-	/**
-	 * The substraction is defined here to avoid having to pass it as an argument each time it is required. This is the case for the computation of
-	 * ||x - y|| for example, when a distance is deduced from a norm.
-	 */
-	trait Sub[T]{
-		def -(x: T, y: T): T
-	}
-
-	implicit object SubReal extends Sub[Real] {
-		def -(x: Real, y: Real): Real = x - y
-	}
-
-	implicit object SubDenseMatrixReal extends Sub[DenseMatrix[Real]] {
-		def -(x: DenseMatrix[Real], y: DenseMatrix[Real]): DenseMatrix[Real] = x - y
 	}
 
   /**
