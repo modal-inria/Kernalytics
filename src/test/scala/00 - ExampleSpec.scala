@@ -38,4 +38,11 @@ class ExampleSpec extends FlatSpec with Matchers {
     
     norm(theta - computedTheta) should === (0.0 +- 1.0e-8)
   }
+  
+  "logBinomial" should "provide a good approximate of log(binomial)" in {
+    val n = 100
+    val k = 20
+    
+    Math.logBinomial(n, k) should === (math.log(Math.binomial(n, k)) +- 1.0e-8)
+  }
 }

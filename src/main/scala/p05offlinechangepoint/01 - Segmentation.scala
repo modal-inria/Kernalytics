@@ -135,7 +135,6 @@ object Segmentation {
     .sortBy(_.cost)
     .head
 
-    
   def printSegCost(s: SegCost) = {
     val cost = s.cost
     val partition = s.seg.reverse.mkString(", ")

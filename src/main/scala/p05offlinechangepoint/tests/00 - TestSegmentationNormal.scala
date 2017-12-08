@@ -7,6 +7,7 @@ import java.io.File
 import p00rkhs.{KerEval, Kernel}
 import p04various.TypeDef._
 import p05offlinechangepoint.Segmentation
+import p05offlinechangepoint.NumberSegmentSelection
 
 /**
  * Simple data generation for the first tests of the algorithm.
@@ -84,5 +85,9 @@ object TestSegmentationNormal {
     
     val bestPartition = Segmentation.bestPartition(res)
     Segmentation.printSegCost(bestPartition)
+    
+    val costs = res.L.last.map(_.cost)
+    val bestD = NumberSegmentSelection.optimalNumberSegments(costs, nPoints)
+    println(s"Optimal number of segments: $bestD")
   }
 }
