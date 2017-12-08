@@ -6,8 +6,7 @@ import breeze.plot._
 import java.io.File
 import p00rkhs.{KerEval, Kernel}
 import p04various.TypeDef._
-import p05offlinechangepoint.Segmentation
-import p05offlinechangepoint.NumberSegmentSelection
+import p05offlinechangepoint.{Segmentation, NumberSegmentSelection}
 
 /**
  * Simple data generation for the first tests of the algorithm.
@@ -24,7 +23,7 @@ object TestSegmentationNormal {
     
     val xVal = linspace(firstPoint, lastPoint, nPoints)
     
-    val exportData = true
+    val exportData = false
 
 //    // different mean, same variance
 //    val lawA = breeze.stats.distributions.Gaussian( 10.0, 0.1)

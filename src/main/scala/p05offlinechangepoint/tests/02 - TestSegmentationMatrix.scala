@@ -5,7 +5,7 @@ import breeze.numerics._
 import breeze.plot._
 import p00rkhs.{KerEval, Kernel}
 import p04various.TypeDef._
-import p05offlinechangepoint.Segmentation
+import p05offlinechangepoint.{Segmentation, NumberSegmentSelection}
 
 /**
  * More advanced segmentation test. The signal here is composed of observations of matrices.
@@ -59,5 +59,9 @@ object TestSegmentationMatrix {
 
 		val bestPartition = Segmentation.bestPartition(res)
 		Segmentation.printSegCost(bestPartition)
+		
+		val costs = res.L.last.map(_.cost)
+    val bestD = NumberSegmentSelection.optimalNumberSegments(costs, nPoints)
+    println(s"Optimal number of segments: $bestD")
   }
 }

@@ -15,10 +15,8 @@ object NumberSegmentSelection {
     
     val funcs = Array[Index => Real](
         D => D.toDouble / n.toDouble,
-        D => math.log(Math.binomial(n - 1, D - 1)),
+        D => Math.logBinomial(n - 1, D - 1),
         D => 1.0)
-        
-    println(Math.binomial(1000 - 1, 8 - 1))
         
     val x = DenseMatrix.tabulate[Real](DMax - DMin + 1, 3)((i, j) => {
       val D = i + DMin
@@ -37,11 +35,6 @@ object NumberSegmentSelection {
       val penalty = DenseVector(funcs.map(_(D))).dot(C)
       cost(D) + penalty
     })
-    println(x)
-    println(y)
-    println(beta)
-    println(C)
-    println(penalizedCost)
 
     return argmin(penalizedCost) // TODO: replace with penalized cost
   }
