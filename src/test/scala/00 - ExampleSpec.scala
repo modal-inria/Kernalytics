@@ -1,3 +1,5 @@
+import breeze.linalg._
+import breeze.stats.distributions._
 import collection.mutable.Stack
 import org.scalactic._
 import org.scalatest._
@@ -14,5 +16,26 @@ class ExampleSpec extends FlatSpec with Matchers {
   "binomial" should "compute binomial"  in {
     (Math.binomial(5, 0)) should === (1)
     (Math.binomial(7, 3) + Math.binomial(7, 4)) should === (Math.binomial(8, 4))
+  }
+  
+  "linear regression" should "estimate a linear regression using least squares" in {
+    val nObs = 30
+    val nVar = 2
+    
+    val theta = DenseVector[Real](3.0, -12.0)
+    
+    val nonLinearFunctions = Array[Real => Real](
+        x => math.pow(x, 2) + 24.0,
+        x => 3.0 * math.log(x))
+    
+    val sampledDistribution = Uniform(10.0, 20.0)
+    val x = DenseMatrix.fill[Real](nObs, nVar)(sampledDistribution.sample)
+    
+    val xFuncApplied = DenseMatrix.tabulate[Real](nObs, nVar)((i, j) => nonLinearFunctions(j)(x(i, j)))
+    val y = xFuncApplied(*, ::).map(r => theta dot r)
+    
+    val computedTheta = Math.linearRegression(xFuncApplied, y)
+    
+    norm(theta - computedTheta) should === (0.0 +- 1.0e-8)
   }
 }
