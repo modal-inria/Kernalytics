@@ -18,10 +18,8 @@ object Math {
     val n = nInt.toDouble
     val m = mInt.toDouble
     
-    println("log(n!) " + math.log(factorial(nInt)) + ", n log(n) - n: " + (n * math.log(n) - n))
-    println("log(m!) " + math.log(factorial(mInt)) + ", m log(m) - m: " + (m * math.log(m) - m))
-    
-    return n * math.log(n) - m * math.log(m) - (n - m) * math.log(n - m)
+//    return n * math.log(n) - m * math.log(m) - (n - m) * math.log(n - m)
+    return (n + 0.5) * math.log(n) - (m + 0.5) * math.log(m) - (n - m + 0.5) * math.log(n - m) - 0.5 * math.log(2.0 * math.Pi)
   }
   
   def linearRegression(x: DenseMatrix[TypeDef.Real], y: DenseVector[TypeDef.Real]): DenseVector[TypeDef.Real] = {
