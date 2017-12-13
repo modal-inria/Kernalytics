@@ -18,13 +18,13 @@ object Kernel {
 	  def linear[Data](
 	      x: Data,
 	      y: Data,
-	      i: Algebra.InnerProductSpace[Data])
+	      i: Algebra.Traits.InnerProductSpace[Data])
 	  : Real = i.ip(x, y)
 	  
 	  def polynomial[Data](
 	      x: Data,
 	      y: Data,
-	      i: Algebra.InnerProductSpace[Data],
+	      i: Algebra.Traits.InnerProductSpace[Data],
 	      c: Real,
 	      d: Integer)
 	  : Real = math.pow(i.ip(x, y) + c, d)
@@ -35,7 +35,7 @@ object Kernel {
 	  def gaussian[Data](
 		    x: Data,
 		    y: Data,
-		    ip: Algebra.InnerProductSpace[Data],
+		    ip: Algebra.Traits.InnerProductSpace[Data],
 		    sd: Real)
 		: Real = {val diff = ip.-(x, y); math.exp(-ip.ip(diff, diff) / (2.0 * math.pow(sd, 2.0)))}
 	}
@@ -44,7 +44,7 @@ object Kernel {
 		def gaussian[Data](
 		    x: Data,
 		    y: Data,
-		    n: Algebra.MetricSpace[Data],
+		    n: Algebra.Traits.MetricSpace[Data],
 		    sd: Real)
 		: Real = math.exp(- math.pow(n.distance(x, y), 2.0) / (2.0 * math.pow(sd, 2.0)))
 		
@@ -54,7 +54,7 @@ object Kernel {
 	  def laplacian[Data](
 	      x: Data,
 	      y: Data,
-	      n: Algebra.MetricSpace[Data],
+	      n: Algebra.Traits.MetricSpace[Data],
 	      alpha: Real)
 	  : Real = math.exp(- alpha * n.distance(x, y))
 	}

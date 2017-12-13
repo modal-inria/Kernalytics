@@ -51,11 +51,7 @@ object NumberSegmentSelection {
       val regressedCost =
         DenseVector.tabulate[Real](cost.size)(D => {
           DenseVector(funcs.map(_(D))).dot(beta)
-        })      
-      
-      println(s"cost: ${cost.mkString(", ")}")
-      println(s"regressedCost: $regressedCost")
-      println(s"penalizedCost: $penalizedCost")
+        })
       
       val f = Figure()
     	  val p = f.subplot(0)
@@ -63,7 +59,7 @@ object NumberSegmentSelection {
     		p += plot(
     		    (1 to DMax).map(_.toDouble),
     		    penalizedCost(1 to DMax),
-    		    name = "Penalized Cost") // TODO: why NaN and -Infinity for D = 0 and D = 1 ?
+    		    name = "Penalized Cost")
     		    
     		p += plot(
     		    (1 to DMax).map(_.toDouble),
@@ -78,8 +74,6 @@ object NumberSegmentSelection {
     		p.xlabel = "D"
     		p.ylabel = "Cost"
     		f.saveas(baseDir + "/lines.png")
-    		
-//    		csvwrite(new File(baseDir + Def.sep +"penalizedCost.csv"), penalizedCost.asDenseMatrix.t)
     }
 
     return argmin(penalizedCost)

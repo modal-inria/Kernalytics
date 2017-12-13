@@ -1,9 +1,7 @@
 # Short Term
 
-- Selection of number of segments using penalized criterion.
+- Metric to compare partitions
 - IO to be able to use data and parameters from disk.
-- The whole algebra structures should be objects.
-    - replace the higher order functions on operations with functions on algebra objects. For example create a function that transforms a normed space to a metric space.
 
 # Long Term
 
@@ -19,3 +17,9 @@
     - Will the gain outweight the overhead for thread spawning ?
     - That would depend on the value of DMax.
 - Gram matrix symmetry should be exploited to reduce computation times
+- using MetricSpaceFromNormedSpace and MetricSpaceFromInnerProductSpace seem to considerably slow down the execution of the analysis, why ?
+    - check on small cases, not complete analysis, to understand where the slowdown comes from.
+    
+# Architecture
+
+- Real and Index types are defined to avoid setting the types directly. However, .toInt and .toDouble are used for conversion. Any mention to Int and Double should be removed.
