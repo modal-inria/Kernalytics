@@ -68,14 +68,9 @@ object Algebra {
   object DenseMatrixReal {
 	  object InnerProductSpace extends Traits.InnerProductSpace[DenseMatrix[Real]] {
 		  def -(x: DenseMatrix[Real], y: DenseMatrix[Real]): DenseMatrix[Real] = x - y
-			def ip(x: DenseMatrix[Real], y: DenseMatrix[Real]): Real = trace(x.t * y) // this computes a lot of useless coefficients (every non-diagonal terms), hence the direct definition of the normed space below, using Frobenius norm from Breeze
+			def ip(x: DenseMatrix[Real], y: DenseMatrix[Real]): Real = Math.frobeniusInnerProduct(x, y) // because trace(x.t * y) computes a lot of useless coefficients (every non-diagonal terms)
 	  }
 	  
-	  object NormedSpace extends Traits.NormedSpace[DenseMatrix[Real]] {
-	    val ipSpace = InnerProductSpace
-	    def norm(x: DenseMatrix[Real]): Real = Math.frobeniusNorm(x)
-	  }
-	  
-	  val MetricSpace = Traits.MetricSpaceFromNormedSpace(NormedSpace)
+	  val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
   }
 }

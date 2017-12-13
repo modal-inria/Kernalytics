@@ -39,5 +39,9 @@ object Math {
     return inv(xt * x) * xt * y
   }
   
-  def frobeniusNorm(m: DenseMatrix[TypeDef.Real]): TypeDef.Real = math.sqrt(sum(m.map(math.pow(_, 2))))
+  def frobeniusNorm(m: DenseMatrix[TypeDef.Real]): TypeDef.Real =
+    math.sqrt(sum(m.map(math.pow(_, 2))))
+  
+  def frobeniusInnerProduct(x: DenseMatrix[TypeDef.Real], y: DenseMatrix[TypeDef.Real]): TypeDef.Real =
+    sum(x *:* y)
 }
