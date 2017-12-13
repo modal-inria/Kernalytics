@@ -5,6 +5,7 @@ import org.scalactic._
 import org.scalatest._
 import p04various.Math
 import p04various.TypeDef._
+import p00rkhs.Algebra
 
 // http://www.scalatest.org/user_guide/using_matchers
 
@@ -59,5 +60,14 @@ class Math extends FlatSpec with Matchers {
     val approximate = k.map(Math.logBinomial(n, _))
     
     norm(direct - approximate) should === (0.0 +- 0.1)
+  }
+  
+  "segmentationMatrix" should "provide a matrix which Frobenius norm is the square of the number of segments" in {
+    val seg = List(7, 5, 2, 0)
+    val nObs = 10
+    
+    val res = Math.segmentationMatrix(seg, nObs)
+    
+    math.pow(Algebra.DenseMatrixReal.NormedSpace.norm(res), 2.0) should === (4.0 +- 1.0e-4)
   }
 }

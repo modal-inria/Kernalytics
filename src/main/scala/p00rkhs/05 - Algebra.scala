@@ -62,6 +62,8 @@ object Algebra {
 			def ip(x: Real, y: Real): Real = x * y
 	  }
 	  
+	  val NormedSpace = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
+	  
 	  val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
   }
 
@@ -70,6 +72,8 @@ object Algebra {
 		  def -(x: DenseMatrix[Real], y: DenseMatrix[Real]): DenseMatrix[Real] = x - y
 			def ip(x: DenseMatrix[Real], y: DenseMatrix[Real]): Real = Math.frobeniusInnerProduct(x, y) // because trace(x.t * y) computes a lot of useless coefficients (every non-diagonal terms)
 	  }
+	  
+	  val NormedSpace = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
 	  
 	  val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
   }

@@ -2,6 +2,7 @@ package p04various
 
 import breeze.linalg._
 import breeze.numerics._
+import p04various.TypeDef._
 
 object Math {
   def factorial(i: TypeDef.Integer): TypeDef.Integer =
@@ -13,10 +14,8 @@ object Math {
   /**
    * For debug purposes only.
    */
-  def logBinomialExact(nInt: TypeDef.Integer, mInt: TypeDef.Integer): TypeDef.Real = {
-    println(s"nInt: $nInt, mInt: $mInt, binomial(nInt, mInt): ${binomial(nInt, mInt)}")
+  def logBinomialExact(nInt: TypeDef.Integer, mInt: TypeDef.Integer): TypeDef.Real =
     math.log(binomial(nInt, mInt))
-  }
   
   /**
    * This version computes the log of the binomial coefficients, and using the Stirling approximation avoids the numerical overflow of integers.
@@ -39,9 +38,30 @@ object Math {
     return inv(xt * x) * xt * y
   }
   
-  def frobeniusNorm(m: DenseMatrix[TypeDef.Real]): TypeDef.Real =
-    math.sqrt(sum(m.map(math.pow(_, 2))))
-  
   def frobeniusInnerProduct(x: DenseMatrix[TypeDef.Real], y: DenseMatrix[TypeDef.Real]): TypeDef.Real =
     sum(x *:* y)
+    
+  /**
+   * Segmentation matrix as defined in section 4.3.2 of the article. Note that the straightforard implementation is not functional and
+   * use a mutated matrix.
+   * 
+   * The segmentation must be provided in reverse, just like it is output from the algorithm.
+   * 
+   * TODO: provide an immutable implementation of this computation
+   */
+  def segmentationMatrix(seg: List[Index], nObs: Index): DenseMatrix[Real] = {
+    val nSeg = seg.size
+    val totalSeg = (nObs :: seg).reverse // add first point outside data as boundary for last segment
+    
+    val bounds = totalSeg.zip(totalSeg.tail)
+    
+    val segMat = DenseMatrix.zeros[Real](nObs, nObs)
+    
+    for (currBounds <- bounds) {
+      val segSize = (currBounds._2 - currBounds._1).toDouble
+      segMat(currBounds._1 to currBounds._2 - 1, currBounds._1 to currBounds._2 - 1) += 1.0 / segSize
+    }
+    
+    return segMat
+  }
 }
