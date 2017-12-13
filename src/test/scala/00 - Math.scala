@@ -8,7 +8,7 @@ import p04various.TypeDef._
 
 // http://www.scalatest.org/user_guide/using_matchers
 
-class ExampleSpec extends FlatSpec with Matchers {
+class Math extends FlatSpec with Matchers {
   "factorial" should "compute factorial values correctly" in {
     (0 to 5).toList.map(Math.factorial) should === (List(1, 1, 2, 6, 24, 120))
   }
@@ -49,5 +49,15 @@ class ExampleSpec extends FlatSpec with Matchers {
     val expectedValue = 47.73
     
     Math.logBinomial(n, k) should === (expectedValue +- 0.01)
+  }
+  
+  "logBinomial" should "provide a good approximate of log(binomial) even for small values of k" in {
+    val n = 10
+    val k = DenseVector[Index](0, 1, 2, 3)
+    
+    val direct = k.map(Math.logBinomialExact(n, _))
+    val approximate = k.map(Math.logBinomial(n, _))
+    
+    norm(direct - approximate) should === (0.0 +- 0.1)
   }
 }

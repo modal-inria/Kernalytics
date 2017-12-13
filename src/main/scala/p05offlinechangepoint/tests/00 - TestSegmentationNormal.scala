@@ -4,7 +4,7 @@ import breeze.linalg.{csvwrite, linspace, DenseVector}
 import breeze.numerics._
 import breeze.plot._
 import java.io.File
-import p00rkhs.{KerEval, Kernel}
+import p00rkhs.{Algebra, KerEval, Kernel}
 import p04various.TypeDef._
 import p05offlinechangepoint.{Segmentation, NumberSegmentSelection}
 
@@ -12,7 +12,7 @@ import p05offlinechangepoint.{Segmentation, NumberSegmentSelection}
  * Simple data generation for the first tests of the algorithm.
  */
 object TestSegmentationNormal {
-  val baseDir = "data/p05offlinechangepoint/00-TestSegmentationNormal"
+  val baseDir = "data/p05offlinechangepoint/tests/00 - TestSegmentationNormal"
   
   def expAndNormalData(
       nPoints: Index,
@@ -64,18 +64,20 @@ object TestSegmentationNormal {
 
 		val data = expAndNormalData(nPoints, interPoint, baseDir)
 		
-		val kernel = Kernel.InnerProduct.gaussian(
-		    _: Real,
-		    _: Real,
-		    Kernel.InnerProduct.R,
-		    kernelSD)
-		 
-	  // same kernel as previous one except that the distance is deduced from the scala product.
-//		val kernel = Kernel.Metric.gaussian(
+//		val kernel =
+//		  Kernel.InnerProduct.gaussian(
 //		    _: Real,
 //		    _: Real,
-//		    Kernel.Metric.InnerProductToMetric(Kernel.InnerProduct.R),
+//		    Algebra.R.InnerProductSpace,
 //		    kernelSD)
+		 
+// same kernel as previous one except that the distance is deduced from the scala product.
+		val kernel =
+		  Kernel.Metric.gaussian(
+		    _: Real,
+		    _: Real,
+		    Algebra.R.MetricSpace,
+		    kernelSD)
     
 		val kerEval = KerEval.generateKerEval(data, kernel, false)
     
@@ -86,7 +88,7 @@ object TestSegmentationNormal {
     Segmentation.printSegCost(bestPartition)
     
     val costs = res.L.last.map(_.cost)
-    val bestD = NumberSegmentSelection.optimalNumberSegments(costs, nPoints)
+    val bestD = NumberSegmentSelection.optimalNumberSegments(costs, nPoints, true, baseDir)
     println(s"Optimal number of segments: $bestD")
   }
 }

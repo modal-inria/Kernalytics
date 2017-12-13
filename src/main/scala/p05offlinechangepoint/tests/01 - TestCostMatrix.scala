@@ -3,7 +3,7 @@ package p05offlinechangepoint.tests
 import breeze.linalg.{max, DenseVector}
 import breeze.numerics._
 import breeze.plot._
-import p00rkhs.{KerEval, Kernel}
+import p00rkhs.{Algebra, KerEval, Kernel}
 import p04various.TypeDef._
 import p05offlinechangepoint.CostMatrix
 
@@ -11,7 +11,7 @@ import p05offlinechangepoint.CostMatrix
  * Simple data generation for the first tests of the algorithm.
  */
 object TestCostMatrix {
-  val baseDir = "data/p05offlinechangepoint/01-TestCostMatrix"
+  val baseDir = "data/p05offlinechangepoint/tests/01 - TestCostMatrix"
   
   def main {
     val nPoints = 10
@@ -20,10 +20,11 @@ object TestCostMatrix {
 
 		val data = TestSegmentationNormal.expAndNormalData(nPoints, interPoint, baseDir)
 		
-		val kernel = Kernel.InnerProduct.gaussian(
+		val kernel =
+		  Kernel.InnerProduct.gaussian(
 		    _: Real,
 		    _: Real,
-		    Kernel.InnerProduct.R,
+		    Algebra.R.InnerProductSpace,
 		    kernelSD)
 		
 		val kerEval = KerEval.generateKerEval(data, kernel, true)	

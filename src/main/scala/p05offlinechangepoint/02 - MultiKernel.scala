@@ -4,7 +4,7 @@ import breeze.linalg.{csvwrite, linspace, max, DenseVector, DenseMatrix}
 import breeze.numerics._
 import breeze.plot._
 import java.io.File
-import p00rkhs.{Gram, KerEval, Kernel}
+import p00rkhs.{Algebra, Gram, KerEval, Kernel}
 import p04various.TypeDef._
 import p05offlinechangepoint.tests.TestSegmentationNormal
 
@@ -13,7 +13,7 @@ import p05offlinechangepoint.tests.TestSegmentationNormal
  */
 object MultiKernel {
   sealed trait DenseVectorRoot // Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example)
-  case class DenseVectorReal(val d: DenseVector[Real]) extends DenseVectorRoot
+  case class DenseVectorReal(val data: DenseVector[Real]) extends DenseVectorRoot
   
   sealed trait ParameterRoot
   case class ParameterGaussian(val sd: Real) extends ParameterRoot
@@ -23,18 +23,21 @@ object MultiKernel {
       data: DenseVectorRoot,
       param: ParameterRoot)
   : Option[(Index, Index) => Real] = (data, param) match {
-    case (DenseVectorReal(d), ParameterProduct()) => Some(KerEval.generateKerEval(
-        d,
-        Kernel.InnerProduct.R,
-        true))
+    case (DenseVectorReal(data), ParameterProduct()) => Some(KerEval.generateKerEval(
+    		data,
+    		Kernel.InnerProduct.linear(
+    				_: Real,
+    				_: Real,
+    				Algebra.R.InnerProductSpace),
+    		true))
     case (DenseVectorReal(d), ParameterGaussian(sd)) => Some(KerEval.generateKerEval(
-        d,
-        Kernel.InnerProduct.gaussian(
-        		_: Real,
-        		_: Real,
-        		Kernel.InnerProduct.R,
-        		sd),
-        true))
+    		d,
+    		Kernel.InnerProduct.gaussian(
+    				_: Real,
+    				_: Real,
+    				Algebra.R.InnerProductSpace,
+    				sd),
+    		true))
     case _ => None
   }
 }
