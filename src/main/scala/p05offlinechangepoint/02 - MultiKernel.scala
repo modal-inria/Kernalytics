@@ -6,7 +6,6 @@ import breeze.plot._
 import java.io.File
 import p00rkhs.{Algebra, Gram, KerEval, Kernel}
 import p04various.TypeDef._
-import p05offlinechangepoint.tests.TestSegmentationNormal
 
 /**
  * Small tests to combine data types.

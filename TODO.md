@@ -1,6 +1,8 @@
 # Short Term
 
-- Metric to compare partitions
+- uncomment tests in p05offlinechangepoint and move them to unit test, non deterministic
+- factor out the data generation in Test object, to be reused among all tests, including the two above
+- Use frobeniusMatrix for deterministic unit test
 - IO to be able to use data and parameters from disk.
 
 # Long Term
