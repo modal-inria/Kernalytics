@@ -9,7 +9,7 @@ import p00rkhs.Algebra
 
 // http://www.scalatest.org/user_guide/using_matchers
 
-class Math extends FlatSpec with Matchers {
+class MathSpec extends FlatSpec with Matchers {
   "factorial" should "compute factorial values correctly" in {
     (0 to 5).toList.map(Math.factorial) should === (List(1, 1, 2, 6, 24, 120))
   }
