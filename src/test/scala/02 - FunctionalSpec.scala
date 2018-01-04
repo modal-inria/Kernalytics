@@ -34,7 +34,7 @@ class FunctionalSpec extends FlatSpec with Matchers {
 
 		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
 		val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
-		val seg = Test.segment(kerEval, dMax, nPoints, segPoints)
+		val seg = Test.segment(kerEval, dMax, nPoints, segPoints, false, "")
 		      
 		 (segPoints) should === (seg)
   }
@@ -65,7 +65,7 @@ class FunctionalSpec extends FlatSpec with Matchers {
 
 		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
 		val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorMatrixReal(data), KerEval.ParameterGaussian(0.5)).get
-		val seg = Test.segment(kerEval, dMax, nPoints, segPoints)
+		val seg = Test.segment(kerEval, dMax, nPoints, segPoints, false, "")
 		      
 		(segPoints) should === (seg)
   }
@@ -96,7 +96,7 @@ class FunctionalSpec extends FlatSpec with Matchers {
 		val kerEval0 = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
 		val kerEval1 = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterProduct ()   ).get		
 		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
-		val seg = Test.segment(kerEval, dMax, nPoints, segPoints)
+		val seg = Test.segment(kerEval, dMax, nPoints, segPoints, false, "")
 		
 		(segPoints) should === (seg)
 	}

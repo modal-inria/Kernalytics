@@ -70,7 +70,8 @@ object NumberSegmentSelection {
     		    (1 to DMax).map(_.toDouble),
     		    regressedCost(1 to DMax),
     		    name = "Regressed Cost")
-    		    
+    		
+    		p.title = "Penalized Cost"
     		p.xlabel = "D"
     		p.ylabel = "Cost"
     		f.saveas(baseDir + "/lines.png")
