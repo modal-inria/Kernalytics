@@ -11,12 +11,16 @@ import p05offlinechangepoint.{Test}
  */
 class FunctionalSpec extends FlatSpec with Matchers {
   "normal" should "compute segmentation for a univariate float signal" in {
+    val dMax = 8
+    val nPoints = 1000
+    val segPoints = Array(0, 250, 500, 750)
+    
     val sampleLawDeterministic = Array[() => Real]( // TODO: use stochastic laws, once the setting of random seed is possible
         () => -10.0,
         () => 10.0,
         () => -10.0,
         () => 10.0)
-        
+
     val sampleLawsStochastic = {
       val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
       val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
@@ -27,40 +31,20 @@ class FunctionalSpec extends FlatSpec with Matchers {
           () => lawA.sample,
           () => lawB.sample)
     }
-        
-    val kernel =
-		  Kernel.Metric.gaussian(
-		    _: Real,
-		    _: Real,
-		    Algebra.R.MetricSpace,
-		    0.5)
-		    
-		val dMax = 8
-		
-		val nPoints = 1000
-		
-		val segPoints = Array(0, 250, 500, 750)
-		
-		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-		
-		val kerEval =
-		  KerEval.generateKerEval(
-		      data,
-		      kernel,
-		      true)
-		
-		val seg =
-		  Test.segment(
-		      kerEval,
-		      dMax,
-		      nPoints,
-		      segPoints)
+
+		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
+		val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
+		val seg = Test.segment(kerEval, dMax, nPoints, segPoints)
 		      
 		 (segPoints) should === (seg)
   }
   
   "matrix" should "compute segmentation for a univariate float signal"  in {
-	  val unitMat = DenseMatrix.ones[Real](3, 3)
+    val dMax = 8
+    val nPoints = 1000
+    val segPoints = Array(0, 250, 500, 750)
+	  
+    val unitMat = DenseMatrix.ones[Real](3, 3)
 
 		val sampleLawDeterministic = Array[() => DenseMatrix[Real]]( // TODO: use stochastic laws, once the setting of random seed is possible
 				() => -10.0 *:* unitMat, // *:* is the element-wise product
@@ -78,39 +62,32 @@ class FunctionalSpec extends FlatSpec with Matchers {
 	    .fill(4)(matLaw)
 	    .map(s => () => s.map(_.sample)) // for each segment, generate the function that sample every element of the corresponding matLaw
 	  }
-				
-		val kernel =
-		  Kernel.Metric.gaussian(
-		    _: DenseMatrix[Real],
-		    _: DenseMatrix[Real],
-		    Algebra.DenseMatrixReal.MetricSpace,
-		    0.5)
-		    
-		val dMax = 8
-		
-		val nPoints = 1000
-		
-		val segPoints = Array(0, 250, 500, 750)
-		
-		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-		
-		val kerEval =
-    		KerEval.generateKerEval(
-    				data,
-    				kernel,
-    				true)
-		
-		val seg =
-		  Test.segment(
-		      kerEval,
-		      dMax,
-		      nPoints,
-		      segPoints)
+
+		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
+		val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorMatrixReal(data), KerEval.ParameterGaussian(0.5)).get
+		val seg = Test.segment(kerEval, dMax, nPoints, segPoints)
 		      
 		(segPoints) should === (seg)
   }
   
 //	"multiKernel" should "perform a segmentation" in { // TODO: rewrite using Test.segment, like the other tests
+//    val sampleLawDeterministic = Array[() => Real]( // TODO: use stochastic laws, once the setting of random seed is possible
+//        () => -10.0,
+//        () => 10.0,
+//        () => -10.0,
+//        () => 10.0)
+//        
+//    val sampleLawsStochastic = {
+//      val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
+//      val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
+//      
+//      Array[() => Real](
+//          () => lawA.sample,
+//          () => lawB.sample,
+//          () => lawA.sample,
+//          () => lawB.sample)
+//    }
+//    
 //		val nPoints = 1000
 //		val kernelSD = 1.0
 //		val dMax = 8

@@ -6,6 +6,7 @@ import p04various.TypeDef._
 object KerEval {
   sealed trait DenseVectorRoot // Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example)
   case class DenseVectorReal(val data: DenseVector[Real]) extends DenseVectorRoot
+  case class DenseVectorMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DenseVectorRoot
   
   sealed trait ParameterRoot
   case class ParameterGaussian(val sd: Real) extends ParameterRoot
@@ -54,15 +55,27 @@ object KerEval {
     				  _: Real,
     				  Algebra.R.InnerProductSpace),
     		  true))
-    case (DenseVectorReal(d), ParameterGaussian(sd)) =>
+    		  
+    case (DenseVectorReal(data), ParameterGaussian(sd)) =>
       Some(KerEval.generateKerEval(
-    		  d,
+    		  data,
     		  Kernel.InnerProduct.gaussian(
     				  _: Real,
     				  _: Real,
     				  Algebra.R.InnerProductSpace,
     				  sd),
     		  true))
+    	
+    case (DenseVectorMatrixReal(data), ParameterGaussian(sd)) =>
+      Some(KerEval.generateKerEval(
+    		  data,
+    		  Kernel.Metric.gaussian(
+    				  _: DenseMatrix[Real],
+    				  _: DenseMatrix[Real],
+    				  Algebra.DenseMatrixReal.MetricSpace,
+    				  sd),
+    		  true))
+    		  
     case _ => None
   }
 }
