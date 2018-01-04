@@ -12,31 +12,44 @@ import p05offlinechangepoint.{CostMatrix, Test}
  * A mix of various unit tests put here until a better place is found.
  */
 class VariousSpec extends FlatSpec with Matchers {
-//	"nextColumn" should "compute the cost matrix next column" in {
-//		val nPoints = 10
-//		val kernelSD = 1.0
-//		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
-//
-//		val data = TestSegmentationNormal.expAndNormalData(nPoints, interPoint, baseDir)
-//
-//		val kernel =
-//		  Kernel.InnerProduct.gaussian(
-//				  _: Real,
-//				  _: Real,
-//				  Algebra.R.InnerProductSpace,
-//				  kernelSD)
-//
-//		val kerEval = KerEval.generateKerEval(data, kernel, true)	
-//
-//		val costDirect = CostMatrix.completeCostMatrix(data, kernel)
+	"nextColumn" should "compute the cost matrix next column" in {
+		val nPoints = 12
+		val kernelSD = 1.0
+		val segPoints = Array(0, 3, 6, 9)
+		
+    val sampleLawsStochastic = {
+      val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
+      val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
+      
+      Array[() => Real](
+          () => lawA.sample,
+          () => lawB.sample,
+          () => lawA.sample,
+          () => lawB.sample)
+    }
+
+		val data = Test.generateData(sampleLawsStochastic, nPoints, segPoints)	
+
+		val kernel =
+		  Kernel.InnerProduct.gaussian(
+				  _: Real,
+				  _: Real,
+				  Algebra.R.InnerProductSpace,
+				  kernelSD)
+
+		val kerEval = KerEval.generateKerEval(data, kernel, true)	
+
+		val costDirect = CostMatrix.completeCostMatrix(data, kernel)
 //		println("Cost with direct computation")
 //		println(costDirect)
-//
-//		val costIterate = CostMatrix.completeMatrixViaColumn(nPoints, kerEval)
+
+		val costIterate = CostMatrix.completeMatrixViaColumn(nPoints, kerEval)
 //		println("Cost with iterated computation")
 //		println(costIterate)
-//
-//		val maxRelativeError = max(abs(costIterate - costDirect))
+
+		val maxRelativeError = max(abs(costIterate - costDirect))
+		
+		maxRelativeError should === (0.0 +- 1e-8)
 //		println(s"maxRelativeError: $maxRelativeError")
-//	}
+	}
 }
