@@ -11,24 +11,25 @@ import scala.reflect.ClassTag
  * @param dataGenerator one function per segment that 
  */
 object Test {
+  def generateData[A: ClassTag](
+      sampleLaws: Array[() => A],
+      nPoints: Index,
+      segPoints: Array[Index])
+  : DenseVector[A] = 
+    DenseVector.tabulate[A](nPoints)(i => {
+    	  val seg = (segPoints.size - 1 to 0 by -1).find(segPoints(_) <= i).get
+    	  sampleLaws(seg)()
+    })
+  
   /**
    * Take laws and segments description as arguments. Generate the data, perform the segmentation and export the best segmentation.
    */
   def segment[A: ClassTag]( // TODO: understand why ClassTag is needed
-      sampleLaws: Array[() => A],
-      kernel: (A, A) => Real,
+      kerEval: (Index, Index) => Real,
       dMax: Index,
       nPoints: Index,
       segPoints: Array[Index])
-  : Array[Index] = {
-    val data =
-      DenseVector.tabulate[A](nPoints)(i => {
-        val seg = (segPoints.size - 1 to 0 by -1).find(segPoints(_) <= i).get
-        sampleLaws(seg)()
-      })
-    
-    val kerEval = KerEval.generateKerEval(data, kernel, false)
-    
+  : Array[Index] = {    
 		val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
 //		Segmentation.printAccumulator(res, "res")
 

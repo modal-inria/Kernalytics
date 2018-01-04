@@ -1,12 +1,10 @@
 import breeze.linalg._
 import breeze.stats.distributions._
-import collection.mutable.Stack
 import org.scalactic._
 import org.scalatest._
-
-import p00rkhs.{Algebra, Kernel}
+import p00rkhs.{Algebra, KerEval, Kernel}
 import p04various.TypeDef._
-import p05offlinechangepoint.Test
+import p05offlinechangepoint.{Test}
 
 /**
  * This class contains functional tests. This means that those tests check entire segmentations.
@@ -43,10 +41,17 @@ class FunctionalSpec extends FlatSpec with Matchers {
 		
 		val segPoints = Array(0, 250, 500, 750)
 		
+		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+		
+		val kerEval =
+		  KerEval.generateKerEval(
+		      data,
+		      kernel,
+		      true)
+		
 		val seg =
 		  Test.segment(
-		      sampleLawDeterministic,
-		      kernel,
+		      kerEval,
 		      dMax,
 		      nPoints,
 		      segPoints)
@@ -87,14 +92,41 @@ class FunctionalSpec extends FlatSpec with Matchers {
 		
 		val segPoints = Array(0, 250, 500, 750)
 		
+		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+		
+		val kerEval =
+    		KerEval.generateKerEval(
+    				data,
+    				kernel,
+    				true)
+		
 		val seg =
 		  Test.segment(
-		      sampleLawDeterministic,
-		      kernel,
+		      kerEval,
 		      dMax,
 		      nPoints,
 		      segPoints)
 		      
 		(segPoints) should === (seg)
   }
+  
+//	"multiKernel" should "perform a segmentation" in { // TODO: rewrite using Test.segment, like the other tests
+//		val nPoints = 1000
+//		val kernelSD = 1.0
+//		val dMax = 8
+//		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
+//
+//		val data = KernelManagement.DenseVectorReal(TestSegmentationNormal.expAndNormalData(nPoints, interPoint, baseDir))
+//
+//		val kerEval0 = KernelManagement.detectDenseVectorType(data, KernelManagement.ParameterGaussian(kernelSD)).get // TODO: manage None return
+//		val kerEval1 = KernelManagement.detectDenseVectorType(data, KernelManagement.ParameterProduct ()        ).get
+//
+//		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
+//
+//		val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
+//		Segmentation.printAccumulator(res, "res")
+//
+//		val bestPartition = Segmentation.bestPartition(res)
+//		Segmentation.printSegCost(bestPartition)
+//	}
 }
