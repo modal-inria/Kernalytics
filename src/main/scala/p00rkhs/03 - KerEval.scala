@@ -36,7 +36,7 @@ object KerEval {
   
   def linearCombKerEval(kArray: Array[(Index, Index) => Real], weights: DenseVector[Real]): (Index, Index) => Real =
     (i, j) => {
-      val evaluationResult = DenseVector.tabulate[Real](kArray.size)(i => kArray(i)(i, j)) // evaluate the various kernels TODO: parallel evaluation
+      val evaluationResult = DenseVector.tabulate[Real](kArray.size)(k => kArray(k)(i, j)) // evaluate the various kernels TODO: parallel evaluation
       evaluationResult.dot(weights) // weight the results
     }
     

@@ -70,40 +70,34 @@ class FunctionalSpec extends FlatSpec with Matchers {
 		(segPoints) should === (seg)
   }
   
-//	"multiKernel" should "perform a segmentation" in { // TODO: rewrite using Test.segment, like the other tests
-//    val sampleLawDeterministic = Array[() => Real]( // TODO: use stochastic laws, once the setting of random seed is possible
-//        () => -10.0,
-//        () => 10.0,
-//        () => -10.0,
-//        () => 10.0)
-//        
-//    val sampleLawsStochastic = {
-//      val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
-//      val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
-//      
-//      Array[() => Real](
-//          () => lawA.sample,
-//          () => lawB.sample,
-//          () => lawA.sample,
-//          () => lawB.sample)
-//    }
-//    
-//		val nPoints = 1000
-//		val kernelSD = 1.0
-//		val dMax = 8
-//		val interPoint = DenseVector[Real](0.0, 2.5, 5.0, 7.5, 10.0)
-//
-//		val data = KernelManagement.DenseVectorReal(TestSegmentationNormal.expAndNormalData(nPoints, interPoint, baseDir))
-//
-//		val kerEval0 = KernelManagement.detectDenseVectorType(data, KernelManagement.ParameterGaussian(kernelSD)).get // TODO: manage None return
-//		val kerEval1 = KernelManagement.detectDenseVectorType(data, KernelManagement.ParameterProduct ()        ).get
-//
-//		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
-//
-//		val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
-//		Segmentation.printAccumulator(res, "res")
-//
-//		val bestPartition = Segmentation.bestPartition(res)
-//		Segmentation.printSegCost(bestPartition)
-//	}
+	"multiKernel" should "perform a segmentation" in { // TODO: rewrite using Test.segment, like the other test
+	  val dMax = 8
+    val nPoints = 1000
+    val segPoints = Array(0, 250, 500, 750)
+    
+    val sampleLawDeterministic = Array[() => Real]( // TODO: use stochastic laws, once the setting of random seed is possible
+        () => -10.0,
+        () => 10.0,
+        () => -10.0,
+        () => 10.0)
+
+    val sampleLawsStochastic = {
+      val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
+      val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
+      
+      Array[() => Real](
+          () => lawA.sample,
+          () => lawB.sample,
+          () => lawA.sample,
+          () => lawB.sample)
+    }
+
+		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
+		val kerEval0 = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
+		val kerEval1 = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterProduct ()   ).get		
+		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
+		val seg = Test.segment(kerEval, dMax, nPoints, segPoints)
+		
+		(segPoints) should === (seg)
+	}
 }
