@@ -12,6 +12,11 @@ object KerEval {
   case class ParameterGaussian(val sd: Real) extends ParameterRoot
   case class ParameterProduct ()             extends ParameterRoot
   
+  class VarDescription(
+      val weight: Real, 
+      val data: DenseVectorRoot,
+      val param: ParameterRoot)
+  
   /**
    * Generate the kerEval function from the data.
    * It differs from the kernel fonction in the sense that it is a function from a pair of indices to R. It corresponds
@@ -77,5 +82,17 @@ object KerEval {
     		  true))
     		  
     case _ => None
+  }
+  
+  /**
+   * Take data description and generate the corresponding KerEval.
+   */
+  def multivariateKerEval(data: Array[VarDescription]): (Index, Index) => Real = {
+    val nVar = data.size
+    val weights = DenseVector.tabulate[Real](nVar)(i => data(i).weight)
+    
+    val kArray = data.map(v => KerEval.paramToKerEval(v.data, v.param).get)
+    
+    return KerEval.linearCombKerEval(kArray, weights)
   }
 }

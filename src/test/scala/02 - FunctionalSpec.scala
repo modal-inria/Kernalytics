@@ -100,4 +100,39 @@ class FunctionalSpec extends FlatSpec with Matchers {
 		
 		(segPoints) should === (seg)
 	}
+	
+	"multiVariable" should "perform a segmentation" in { // TODO: rewrite using Test.segment, like the other test
+	  val dMax = 8
+    val nPoints = 1000
+    val segPoints = Array(0, 250, 500, 750)
+    
+    val sampleLawDeterministic = Array[() => Real]( // TODO: use stochastic laws, once the setting of random seed is possible
+        () => -10.0,
+        () => 10.0,
+        () => -10.0,
+        () => 10.0)
+
+    val sampleLawsStochastic = {
+      val lawA = breeze.stats.distributions.Gaussian(10.0, 0.1)
+      val lawB = breeze.stats.distributions.Gaussian(10.0, 1.0)
+      
+      Array[() => Real](
+          () => lawA.sample,
+          () => lawB.sample,
+          () => lawA.sample,
+          () => lawB.sample)
+    }
+
+		val data0 = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+		val data1 = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+		
+		val varDescription =
+		  Array(
+		      new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data0), KerEval.ParameterGaussian(0.5)),
+		      new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data1), KerEval.ParameterProduct ()   ))
+		val kerEval = KerEval.multivariateKerEval(varDescription)
+		val seg = Test.segment(kerEval, dMax, nPoints, segPoints, false, "")
+		
+		(segPoints) should === (seg)
+	}
 }
