@@ -23,7 +23,15 @@ object Read {
   class ParsedVar(val name: String, val data: KerEval.DenseVectorRoot) // type is not necessary, as data has been parsed into the correct type
   class ParsedParam(val name: String, val weight: Real, val kernel: KerEval.ParameterRoot)
   
-  def parseData(fileName: String): Try[Array[ParsedVar]] =
+  def readNoParse(fileName: String): Array[Array[String]] =
+    Source
+    .fromFile(fileName)
+    .getLines
+    .toArray
+    .map(_.split(Def.csvSep))
+    .transpose
+  
+  def readAndParse(fileName: String): Try[Array[ParsedVar]] =
     readVars(fileName)
     .flatMap(a => a.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flaMap passes the error on.
     .map(l => l.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
