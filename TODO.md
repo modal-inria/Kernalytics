@@ -1,16 +1,10 @@
 # Short Term
 
-- uncomment tests in p05offlinechangepoint and move them to unit test, non deterministic
-- factor out the data generation in Test object, to be reused among all tests, including the two above
-- Use frobeniusMatrix for deterministic unit test
-- IO to be able to use data and parameters from disk.
-
 # Long Term
 
-- tests in p05offlinechangepoint.tests should be moved to ScalaTest, one way or another...
-    - functional tests should be separated from unit tests and a metric should be used to compare the partitions. One seems to be provided in the article. In that case it should be implemented.
+- R interface via rscala
+- IO to be able to use data and parameters from disk.
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
-- Create new kernels from addition, product of kernels, to support heterogeneous multivariate data automatically
 
 # Performances
 
@@ -27,3 +21,5 @@
 # Architecture
 
 - Real and Index types are defined to avoid setting the types directly. However, .toInt and .toDouble methods are used for conversion. Any mention to Int and Double should be removed.
+- Use TypeTag instead of encapsulating types in KerEval, for example
+- Better management of Option, when .get is used

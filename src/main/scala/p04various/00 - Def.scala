@@ -5,5 +5,6 @@ import util.Properties
 
 object Def {
   val eol = Properties.lineSeparator
-  val sep = File.separator
+  val folderSep = File.separator
+  val csvSep = ";"
 }

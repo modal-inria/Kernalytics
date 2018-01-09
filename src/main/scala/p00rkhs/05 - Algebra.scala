@@ -21,7 +21,7 @@ object Algebra {
 		}
 
 		def NormedSpaceFromInnerProductSpace[T](v: InnerProductSpace[T]): NormedSpace[T] = {
-				object NormedSpace extends NormedSpace[T] {
+		  object NormedSpace extends NormedSpace[T] {
 					val ipSpace = v
 							def norm(x: T) = math.sqrt(v.ip(x, x))
 				}

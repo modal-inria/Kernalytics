@@ -101,6 +101,9 @@ class FunctionalSpec extends FlatSpec with Matchers {
 		(segPoints) should === (seg)
 	}
 	
+	/**
+	 * Similar to previous utest, except that here variable descriptions are used, which are similar to what would be used with real data.
+	 */
 	"multiVariable" should "perform a segmentation" in { // TODO: rewrite using Test.segment, like the other test
 	  val dMax = 8
     val nPoints = 1000
