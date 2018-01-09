@@ -1,0 +1,99 @@
+\documentclass{beamer}
+
+\mode<presentation> {
+	\usetheme{CambridgeUS}      % or try Darmstadt, Madrid, Warsaw, ...
+	\usecolortheme{default} % or try albatross, beaver, crane, ...
+	\usefonttheme{default}  % or try serif, structurebold, ...
+	\setbeamertemplate{navigation symbols}{}
+	\setbeamertemplate{caption}[numbered]
+}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{alltt}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+
+\usepackage{makecell}
+
+\usepackage[fixlanguage]{babelbib}
+\selectbiblanguage{french}
+
+\title[Kernalitics]{Kernalitics - Méthodes à noyaux et modélisation}
+\author[VK]{Vincent KUBICKI - InriaTech}
+\institute[Inria]{Inria Lille - Nord Europe}
+% \date{17 Octobre 2017}
+
+\begin{document}
+
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{Kernalitics - Généralités}
+	\begin{itemize}
+		\item Utilisation de méthode à noyaux.
+		\item Gestion des noyaux multivariés.
+		\item Objectif: grande modularité et facilité d'ajout de fonctionnalités.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Modularité}
+% présenter la modularité liée à la séparation entre méthodes partagées (calcul matrice de Gram par exemple), noyaux adaptés à chaque type de données, et algorithmes (regression, calcul de distributions)
+% faire les trois colonnes
+\end{frame}
+
+\begin{frame}{Segmentation à noyaux}
+	\begin{itemize}
+		\item Implémentation utilisant la programmation dynamique.
+		\item Sélection du nombre optimal de segments via une heuristique de pente.
+	\end{itemize}
+\end{frame}
+\begin{frame}{Programmation fonctionnelle}
+% exemple avec la composition de noyaux ?
+\end{frame}
+
+\begin{frame}{Structures algébriques}
+	\begin{itemize}
+		\item Noyaux génériques, par exemples nécessitant une structure d'espace normé, d'espace métrique,...
+		\item Les données et la structure algébriques sont fournies séparément pour générer le noyau.
+		\item Exemple: la segmentation de matrice a été implémenté rapidement en donnant le produit de Frobenius de matrice.
+		\item Le système peut déduire des structures algébriques, par exemple une norme canonique à partir d'un produit scalaire.
+		\item Axe de modularité supplémentaire.
+	\end{itemize}
+
+% injection de la structure algébrique dans la création du noyau
+% rapidité pour implémenter la segmentation de matrice en ne fournissant que l'espace préhilbertien sur les matrices
+\end{frame}
+
+\begin{frame}{Avantages divers}
+	\begin{itemize}
+		\item Utilisation d'une librairie de calcul / statistiques: Breeze, pour ne pas réinventer la roue.
+		\item Code est compilé: beaucoup de vérifications sont effectuées lors de la compilation, rapidité d'exécution.
+		\item Simplicité d'intégration d'un nouveau noyau, sous la forme d'une fonction $(X, X) \rightarrow \mathbb{R}$, disponible immédiatement pour tous les algorithmes.
+		\item Simplicité pour ajouter un nouveau type de données, sous la forme d'une fonction $\text{Chaîne de caractères} \rightarrow X$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Utilisation}
+	\begin{itemize}
+		\item Fichiers d'entrée séparés entre données et description
+		% mettre un exemple, ou deux colonnes pour présenter le format
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{A faire}
+	\begin{itemize}
+		\item Entrée / sortie sur le disque.
+		\item Paquet R en utilisant rscala (wrapper léger).
+	\end{itemize}
+\end{frame}
+
+\end{document}
