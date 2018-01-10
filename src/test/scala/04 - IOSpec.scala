@@ -84,6 +84,7 @@ class IOSpec extends FlatSpec with Matchers {
 	  
 	  val readData = Read.readAndParse(fileName)
 	  val errorData = Array[Read.ParsedVar]()
+	  val zeroVec = DenseVector.zeros[Real](4)
 	  
 	  val (errorMessage, parsedData) = readData match {
 	    case Failure(m) => (m.toString, errorData)
@@ -91,5 +92,59 @@ class IOSpec extends FlatSpec with Matchers {
 	  }
 	  
 	  errorMessage should === ("")
+	  
+    parsedData(0).name should === ("GaussData1")
+    val parsedVec0 = parsedData(0).data match {
+	    case DenseVectorReal(vec) => vec
+	    case _ => zeroVec
+	  }
+	  val expected0 = DenseVector[Real](
+			  3.0,
+			  5.6,
+			  2.453453,
+			  7.9856)
+		norm(parsedVec0 - expected0) should === (0.0 +- 1.0e-8)
+		
+    parsedData(1).name should === ("GaussData2")
+    val parsedVec1 = parsedData(1).data match {
+	    case DenseVectorReal(vec) => vec
+	    case _ => zeroVec
+	  }
+	  val expected1 = DenseVector[Real](
+			  12.0,
+			  653.24,
+			  -232.56,
+			  1243.54)
+		norm(parsedVec1 - expected1) should === (0.0 +- 1.0e-8)
+  }
+  
+  "parseData" should "detect a type error in multivariate data" in {
+	  val fileName = "data/p07io/04 - 2VarsRealTypeError.csv"
+	  
+	  val readData = Read.readAndParse(fileName)
+	  val errorData = Array[Read.ParsedVar]()
+	  val zeroVec = DenseVector.zeros[Real](4)
+	  
+	  val (errorMessage, parsedData) = readData match {
+	    case Failure(m) => (m.toString, errorData)
+	    case Success(s) => ("", s)
+	  }
+	  
+	  errorMessage should === ("scala.MatchError: Rael (of class java.lang.String)")
+  }
+  
+  "parseData" should "detect when multiple variables do not have the same number of observations" in {
+	  val fileName = "data/p07io/05 - 2VarsUnevenObs.csv"
+	  
+	  val readData = Read.readAndParse(fileName)
+	  val errorData = Array[Read.ParsedVar]()
+	  val zeroVec = DenseVector.zeros[Real](4)
+	  
+	  val (errorMessage, parsedData) = readData match {
+	    case Failure(m) => (m.toString, errorData)
+	    case Success(s) => ("", s)
+	  }
+	  
+	  errorMessage should === ("java.lang.Exception: All data must have the same number of observations.")
   }
 }

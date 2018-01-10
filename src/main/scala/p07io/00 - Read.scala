@@ -47,6 +47,15 @@ object Read {
         .toArray
         .map(_.split(Def.csvSep))
         .transpose)
+     .flatMap(checkObservationNumber)
+        
+  def checkObservationNumber(data: Array[Array[String]]): Try[Array[Array[String]]] = {
+    val length = data.map(_.size)
+    if (length.forall(_ == length(0)))
+      Success(data)
+    else
+      Failure(new Exception("All data must have the same number of observations."))
+  }
   
   /**
    * Loop to parse all the vars.
