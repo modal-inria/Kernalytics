@@ -40,4 +40,56 @@ class IOSpec extends FlatSpec with Matchers {
 	  nameString should === ("MyGaussianData")
 	  norm(expectedVec - dataVector) should === (0.0 +- 1.0e-8)
 	}
+	
+	"parseData" should "detect a malformed value" in {
+	  val fileName = "data/p07io/01 - 1VarRealFormatError.csv"
+	  
+	  val data = Read.readAndParse(fileName)
+	  val zeroVec = DenseVector.zeros[Real](4)
+	  
+	  val (nameString, dataVector) = data match {
+	    case Failure(m) => (m.toString, zeroVec)
+	    case Success(s) => (
+	        s(0).name,
+	        s(0).data match {
+	          case DenseVectorReal(vec) => vec
+	          case _ => zeroVec
+	        })
+	    }
+	  
+	  nameString should === ("java.lang.NumberFormatException: For input string: \"toto\"")
+	}
+	
+  "parseData" should "detect a non existing data type" in {
+	  val fileName = "data/p07io/02 - 1VarRealTypeError.csv"
+	  
+	  val data = Read.readAndParse(fileName)
+	  val zeroVec = DenseVector.zeros[Real](4)
+	  
+	  val (nameString, dataVector) = data match {
+	    case Failure(m) => (m.toString, zeroVec)
+	    case Success(s) => (
+	        s(0).name,
+	        s(0).data match {
+	          case DenseVectorReal(vec) => vec
+	          case _ => zeroVec
+	        })
+	    }
+	  
+	  nameString should === ("scala.MatchError: NonExistingType (of class java.lang.String)")
+  }
+
+  "parseData" should "parse multivariate data" in {
+	  val fileName = "data/p07io/03 - 2VarsReal.csv"
+	  
+	  val readData = Read.readAndParse(fileName)
+	  val errorData = Array[Read.ParsedVar]()
+	  
+	  val (errorMessage, parsedData) = readData match {
+	    case Failure(m) => (m.toString, errorData)
+	    case Success(s) => ("", s)
+	  }
+	  
+	  errorMessage should === ("")
+  }
 }
