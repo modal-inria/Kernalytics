@@ -9,7 +9,6 @@ import p00rkhs.{Algebra, KerEval, Kernel}
 import p04various.TypeDef._
 import p05offlinechangepoint.{CostMatrix, Test}
 import p07io.ReadVar
-import p00rkhs.KerEval.DenseVectorReal
 
 /**
  * Test IO, using data present on file.
@@ -26,7 +25,7 @@ class IOSpec extends FlatSpec with Matchers {
 	    case Success(s) => (
 	        s(0).name,
 	        s(0).data match {
-	          case DenseVectorReal(vec) => vec
+	          case KerEval.DenseVectorReal(vec) => vec
 	          case _ => zeroVec
 	        })
 	    }
@@ -52,7 +51,7 @@ class IOSpec extends FlatSpec with Matchers {
 	    case Success(s) => (
 	        s(0).name,
 	        s(0).data match {
-	          case DenseVectorReal(vec) => vec
+	          case KerEval.DenseVectorReal(vec) => vec
 	          case _ => zeroVec
 	        })
 	    }
@@ -71,7 +70,7 @@ class IOSpec extends FlatSpec with Matchers {
 	    case Success(s) => (
 	        s(0).name,
 	        s(0).data match {
-	          case DenseVectorReal(vec) => vec
+	          case KerEval.DenseVectorReal(vec) => vec
 	          case _ => zeroVec
 	        })
 	    }
@@ -95,7 +94,7 @@ class IOSpec extends FlatSpec with Matchers {
 	  
     parsedData(0).name should === ("GaussData1")
     val parsedVec0 = parsedData(0).data match {
-	    case DenseVectorReal(vec) => vec
+	    case KerEval.DenseVectorReal(vec) => vec
 	    case _ => zeroVec
 	  }
 	  val expected0 = DenseVector[Real](
@@ -107,7 +106,7 @@ class IOSpec extends FlatSpec with Matchers {
 		
     parsedData(1).name should === ("GaussData2")
     val parsedVec1 = parsedData(1).data match {
-	    case DenseVectorReal(vec) => vec
+	    case KerEval.DenseVectorReal(vec) => vec
 	    case _ => zeroVec
 	  }
 	  val expected1 = DenseVector[Real](
@@ -146,5 +145,20 @@ class IOSpec extends FlatSpec with Matchers {
 	  }
 	  
 	  errorMessage should === ("java.lang.Exception: All data must have the same number of observations.")
+  }
+  
+  "parseData" should "detect when multiple variables have the same name" in {
+	  val fileName = "data/p07io/06 - 2VarsSameName.csv"
+	  
+	  val readData = ReadVar.readAndParseVars(fileName)
+	  val errorData = Array[ReadVar.ParsedVar]()
+	  val zeroVec = DenseVector.zeros[Real](4)
+	  
+	  val (errorMessage, parsedData) = readData match {
+	    case Failure(m) => (m.toString, errorData)
+	    case Success(s) => ("", s)
+	  }
+	  
+	  errorMessage should === ("java.lang.Exception: Variable names are not unique.")
   }
 }

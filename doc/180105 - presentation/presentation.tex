@@ -57,7 +57,11 @@
 	\end{itemize}
 \end{frame}
 \begin{frame}{Programmation fonctionnelle}
-% exemple avec la composition de noyaux ?
+	\begin{itemize}
+		\item Raisonnements similaires aux raisonnements mathématiques.
+		\item Objets proches, par exemple composition de noyaux.
+		\item Tests unitaires très faciles à implémenter.
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{Structures algébriques}
@@ -73,12 +77,13 @@
 % rapidité pour implémenter la segmentation de matrice en ne fournissant que l'espace préhilbertien sur les matrices
 \end{frame}
 
-\begin{frame}{Avantages divers}
+\begin{frame}{Génie logiciel}
 	\begin{itemize}
 		\item Utilisation d'une librairie de calcul / statistiques: Breeze, pour ne pas réinventer la roue.
-		\item Code est compilé: beaucoup de vérifications sont effectuées lors de la compilation, rapidité d'exécution.
+		\item Code est compilé: beaucoup de vérifications sont effectuées lors de la compilation, et l'exécution est rapide.
 		\item Simplicité d'intégration d'un nouveau noyau, sous la forme d'une fonction $(X, X) \rightarrow \mathbb{R}$, disponible immédiatement pour tous les algorithmes.
 		\item Simplicité pour ajouter un nouveau type de données, sous la forme d'une fonction $\text{Chaîne de caractères} \rightarrow X$.
+		\item Code compilé pour la JVM, facilité de déploiement multiplateforme.
 	\end{itemize}
 \end{frame}
 
@@ -91,8 +96,7 @@
 
 \begin{frame}{A faire}
 	\begin{itemize}
-		\item Entrée / sortie sur le disque.
-		\item Paquet R en utilisant rscala (wrapper léger).
+		\item Paquet R en utilisant rscala (wrapper léger, prototype déjà testé).
 	\end{itemize}
 \end{frame}
 

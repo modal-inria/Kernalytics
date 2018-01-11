@@ -51,7 +51,7 @@ object KerEval {
   def paramToKerEval(
       data: DenseVectorRoot,
       param: ParameterRoot)
-  : Option[(Index, Index) => Real] = (data, param) match {
+  : Option[(Index, Index) => Real] = (data, param) match { // TODO: return a Try instead of an Option, as it would mix better with the rest of the exception handling
     case (DenseVectorReal(data), ParameterProduct()) =>
       Some(KerEval.generateKerEval(
     		  data,

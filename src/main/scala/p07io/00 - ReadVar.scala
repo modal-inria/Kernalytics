@@ -27,8 +27,9 @@ object ReadVar {
   
   def readAndParseVars(fileName: String): Try[Array[ParsedVar]] =
     readVars(fileName)
-    .flatMap(a => a.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flaMap passes the error on.
-    .map(l => l.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
+    .flatMap(_.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flaMap passes the error on.
+    .flatMap(checkUnicity)
+    .map(_.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
   
   /**
    * Format the data var by var, without parsing the individual values.
@@ -67,4 +68,16 @@ object ReadVar {
   
   def parseReal(data: String): Real =
     data.toDouble
+  
+  /**
+   * All variables must have different names.
+   */
+  def checkUnicity(data: List[ParsedVar]): Try[List[ParsedVar]] = {
+    val allNames = data.map(_.name)
+    
+    if (allNames.toSet.size < allNames.size)
+      Failure(new Exception("Variable names are not unique."))
+    else
+      Success(data)
+  }
 }
