@@ -8,7 +8,7 @@ import scala.util.{Try, Success, Failure}
 import p00rkhs.{Algebra, KerEval, Kernel}
 import p04various.TypeDef._
 import p05offlinechangepoint.{CostMatrix, Test}
-import p07io.Read
+import p07io.ReadVar
 import p00rkhs.KerEval.DenseVectorReal
 
 /**
@@ -18,7 +18,7 @@ class IOSpec extends FlatSpec with Matchers {
 	"parseData" should "read correctly formatted data on drive" in {
 	  val fileName = "data/p07io/00 - 1VarReal.csv"
 	  
-	  val data = Read.readAndParse(fileName)
+	  val data = ReadVar.readAndParseVars(fileName)
 	  val zeroVec = DenseVector.zeros[Real](4)
 	  
 	  val (nameString, dataVector) = data match {
@@ -44,7 +44,7 @@ class IOSpec extends FlatSpec with Matchers {
 	"parseData" should "detect a malformed value" in {
 	  val fileName = "data/p07io/01 - 1VarRealFormatError.csv"
 	  
-	  val data = Read.readAndParse(fileName)
+	  val data = ReadVar.readAndParseVars(fileName)
 	  val zeroVec = DenseVector.zeros[Real](4)
 	  
 	  val (nameString, dataVector) = data match {
@@ -63,7 +63,7 @@ class IOSpec extends FlatSpec with Matchers {
   "parseData" should "detect a non existing data type" in {
 	  val fileName = "data/p07io/02 - 1VarRealTypeError.csv"
 	  
-	  val data = Read.readAndParse(fileName)
+	  val data = ReadVar.readAndParseVars(fileName)
 	  val zeroVec = DenseVector.zeros[Real](4)
 	  
 	  val (nameString, dataVector) = data match {
@@ -82,8 +82,8 @@ class IOSpec extends FlatSpec with Matchers {
   "parseData" should "parse multivariate data" in {
 	  val fileName = "data/p07io/03 - 2VarsReal.csv"
 	  
-	  val readData = Read.readAndParse(fileName)
-	  val errorData = Array[Read.ParsedVar]()
+	  val readData = ReadVar.readAndParseVars(fileName)
+	  val errorData = Array[ReadVar.ParsedVar]()
 	  val zeroVec = DenseVector.zeros[Real](4)
 	  
 	  val (errorMessage, parsedData) = readData match {
@@ -121,8 +121,8 @@ class IOSpec extends FlatSpec with Matchers {
   "parseData" should "detect a type error in multivariate data" in {
 	  val fileName = "data/p07io/04 - 2VarsRealTypeError.csv"
 	  
-	  val readData = Read.readAndParse(fileName)
-	  val errorData = Array[Read.ParsedVar]()
+	  val readData = ReadVar.readAndParseVars(fileName)
+	  val errorData = Array[ReadVar.ParsedVar]()
 	  val zeroVec = DenseVector.zeros[Real](4)
 	  
 	  val (errorMessage, parsedData) = readData match {
@@ -136,8 +136,8 @@ class IOSpec extends FlatSpec with Matchers {
   "parseData" should "detect when multiple variables do not have the same number of observations" in {
 	  val fileName = "data/p07io/05 - 2VarsUnevenObs.csv"
 	  
-	  val readData = Read.readAndParse(fileName)
-	  val errorData = Array[Read.ParsedVar]()
+	  val readData = ReadVar.readAndParseVars(fileName)
+	  val errorData = Array[ReadVar.ParsedVar]()
 	  val zeroVec = DenseVector.zeros[Real](4)
 	  
 	  val (errorMessage, parsedData) = readData match {

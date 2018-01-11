@@ -11,7 +11,8 @@ import p04various.TypeDef._
  * Read multivariate external data from csv, instead of generating it.
  */
 object ExternalData {
-  def readData(fileName: String): Array[String] = {
+  def writeData(fileName: String,
+     ): Array[String] = {
     return Array[String]()
   }
 }
