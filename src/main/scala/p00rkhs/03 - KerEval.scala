@@ -51,37 +51,38 @@ object KerEval {
   def paramToKerEval(
       data: DenseVectorRoot,
       param: ParameterRoot)
-  : Option[(Index, Index) => Real] = (data, param) match { // TODO: return a Try instead of an Option, as it would mix better with the rest of the exception handling
-    case (DenseVectorReal(data), ParameterProduct()) =>
-      Some(KerEval.generateKerEval(
-    		  data,
-    		  Kernel.InnerProduct.linear(
-    				  _: Real,
-    				  _: Real,
-    				  Algebra.R.InnerProductSpace),
-    		  true))
-    		  
-    case (DenseVectorReal(data), ParameterGaussian(sd)) =>
-      Some(KerEval.generateKerEval(
-    		  data,
-    		  Kernel.InnerProduct.gaussian(
-    				  _: Real,
-    				  _: Real,
-    				  Algebra.R.InnerProductSpace,
-    				  sd),
-    		  true))
-    	
-    case (DenseVectorMatrixReal(data), ParameterGaussian(sd)) =>
-      Some(KerEval.generateKerEval(
-    		  data,
-    		  Kernel.Metric.gaussian(
-    				  _: DenseMatrix[Real],
-    				  _: DenseMatrix[Real],
-    				  Algebra.DenseMatrixReal.MetricSpace,
-    				  sd),
-    		  true))
-    		  
-    case _ => None
+  : Option[(Index, Index) => Real] = // TODO: return a Try instead of an Option, as it would mix better with the rest of the exception handling
+    (data, param) match {
+      case (DenseVectorReal(data), ParameterProduct()) =>
+        Some(KerEval.generateKerEval(
+      		  data,
+      		  Kernel.InnerProduct.linear(
+      				  _: Real,
+      				  _: Real,
+      				  Algebra.R.InnerProductSpace),
+      		  true))
+      		  
+      case (DenseVectorReal(data), ParameterGaussian(sd)) =>
+        Some(KerEval.generateKerEval(
+      		  data,
+      		  Kernel.InnerProduct.gaussian(
+      				  _: Real,
+      				  _: Real,
+      				  Algebra.R.InnerProductSpace,
+      				  sd),
+      		  true))
+      	
+      case (DenseVectorMatrixReal(data), ParameterGaussian(sd)) =>
+        Some(KerEval.generateKerEval(
+      		  data,
+      		  Kernel.Metric.gaussian(
+      				  _: DenseMatrix[Real],
+      				  _: DenseMatrix[Real],
+      				  Algebra.DenseMatrixReal.MetricSpace,
+      				  sd),
+      		  true))
+      		  
+      case _ => None
   }
   
   /**

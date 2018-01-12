@@ -17,7 +17,11 @@
     - Will the gain outweight the overhead for thread spawning ?
     - That would depend on the value of DMax.
 - Gram matrix symmetry should be exploited to reduce computational times.
-    
+
+# Check
+
+- Each kernel should return a Try, with the result depending on the validity of the provided parameter. For example, a Gaussian kernel must have 0 < sd.
+ 
 # Architecture
 
 - Real and Index types are defined to avoid setting the types directly. However, .toInt and .toDouble methods are used for conversion. Any mention to Int and Double should be removed.
