@@ -3,7 +3,6 @@
 # Long Term
 
 - R interface via rscala
-- IO to be able to use data and parameters from disk.
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
 
 # Performances
@@ -29,6 +28,7 @@
 - Better management of Option, when .get is used
 - DenseVectorRoot involves a lot of pattern-matching scattered across multiple files. Maybe it would be best to change the architecture to centralize the descriptions of behaviours.
     - See: https://stackoverflow.com/questions/48169051/how-to-avoid-type-argument-erasure/48170083?noredirect=1#comment83372119_48170083
+    - once kerEval are generated, this problem disappears... So is it worth investigating ?
     
 # Minor
 
