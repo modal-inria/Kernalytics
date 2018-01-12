@@ -4,9 +4,15 @@ import breeze.linalg._
 import p04various.TypeDef._
 
 object KerEval {
-  sealed trait DenseVectorRoot // Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example)
-  case class DenseVectorReal(val data: DenseVector[Real]) extends DenseVectorRoot
-  case class DenseVectorMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DenseVectorRoot
+  sealed trait DenseVectorRoot { // Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example)
+    def nPoint: Index
+  } 
+  case class DenseVectorReal(val data: DenseVector[Real]) extends DenseVectorRoot {
+    def nPoint: Index = data.size
+  }
+  case class DenseVectorMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DenseVectorRoot {
+    def nPoint: Index = data.size
+  }
   
   sealed trait ParameterRoot
   case class ParameterGaussian(val sd: Real) extends ParameterRoot

@@ -42,6 +42,6 @@ object Demo {
     f.saveas(baseDir + Def.folderSep + "data.png")
     
     val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
-    val seg = Test.segment(kerEval, dMax, nPoints, segPoints, true, baseDir)
+    val seg = Test.segment(kerEval, dMax, nPoints, true, baseDir)
   }
 }

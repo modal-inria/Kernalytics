@@ -28,7 +28,6 @@ object Test {
       kerEval: (Index, Index) => Real,
       dMax: Index,
       nPoints: Index,
-      segPoints: Array[Index],
       visualOutput: Boolean,
       baseDir: String)
   : Array[Index] = {    

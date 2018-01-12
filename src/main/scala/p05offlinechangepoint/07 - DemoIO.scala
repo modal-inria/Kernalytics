@@ -5,11 +5,12 @@ import breeze.numerics._
 import breeze.plot._
 import java.io.File
 import org.apache.commons.io.FileUtils
+import scala.util.{Try, Success, Failure}
 
 import p00rkhs.{KerEval}
 import p04various.Def
 import p04various.TypeDef._
-import p07io.{ReadVar, Write}
+import p07io.{CombineVarParam, ReadVar, ReadParam, Write}
 
 /**
  * Demo with data input / output from the hard drive.
@@ -48,17 +49,19 @@ object DemoIO {
   def segmentData = {
     val dMax = 8
 
-    val data = ReadVar.readAndParseVars(dataFile)
+    val kerEval =
+      for {
+        data <- ReadVar.readAndParseVars(dataFile)
+        param <- ReadParam.readAndParseParam(descriptorFile)
+        kerEval <- CombineVarParam.generateAllKerEval(data, param)
+      } yield (data(0).data.nPoint, kerEval)
     
-//    val f = Figure()
-//    val p = f.subplot(0)
-//    p += plot(x, data)
-//    p.title = "Data"
-//    p.xlabel = "Time"
-//    p.ylabel = "Value"
-//    f.saveas(baseDir + Def.folderSep + "data.png")
-//    
-//    val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
-//    val seg = Test.segment(kerEval, dMax, nPoints, segPoints, true, baseDir)
+    val seg =
+      kerEval.map(k => Test.segment(k._2, dMax, k._1, true, baseDir))
+      
+    seg match {
+        case Success(a) => println(a.mkString(","))
+        case Failure(m) => println(m)
+      }
   }
 }
