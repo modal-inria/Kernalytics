@@ -1,8 +1,8 @@
 object Main extends App {
-//  p05offlinechangepoint.Demo.floatSignal
-//  p05offlinechangepoint.DemoIO.generateData
-//  p05offlinechangepoint.DemoIO.generateParam
-  p05offlinechangepoint.DemoIO.segmentData
+//  offlinechangepoint.Demo.floatSignal
+//  offlinechangepoint.DemoIO.generateData
+//  offlinechangepoint.DemoIO.generateParam
+  offlinechangepoint.DemoIO.segmentData
 //  p06sandbox.Exceptions.main
 //  p06sandbox.TypeErasure.main
 //  p06sandbox.Regex.main

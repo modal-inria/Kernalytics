@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>Kernalitics</name>
+  <name>Kernalytics</name>
   <buildSpec>
     <buildCommand>
       <name>org.scala-ide.sdt.core.scalabuilder</name>

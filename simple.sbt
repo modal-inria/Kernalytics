@@ -1,4 +1,4 @@
-name := "Kernalitics"
+name := "Kernalytics"
 
 version := "1.0"
 
