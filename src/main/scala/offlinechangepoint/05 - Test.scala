@@ -28,8 +28,7 @@ object Test {
       kerEval: (Index, Index) => Real,
       dMax: Index,
       nPoints: Index,
-      visualOutput: Boolean,
-      baseDir: String)
+      visualOutput: Option[String])
   : Array[Index] = {    
 		val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
 //		Segmentation.printAccumulator(res, "res")
@@ -38,13 +37,13 @@ object Test {
 //		Segmentation.printSegCost(bestPartition)
 		
 		val costs = res.L.last.map(_.cost)
-    val bestD = NumberSegmentSelection.optimalNumberSegments(costs, nPoints, visualOutput, baseDir)
+		val bestD = NumberSegmentSelection.optimalNumberSegments(costs, nPoints, visualOutput)
     
-    return res
-    .L
-    .last(bestD)
-    .seg
-    .reverse
-    .toArray
+		return res
+				.L
+				.last(bestD)
+				.seg
+				.reverse
+				.toArray
   }
 }

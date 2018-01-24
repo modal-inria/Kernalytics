@@ -14,8 +14,7 @@ object NumberSegmentSelection {
   def optimalNumberSegments(
       cost: Array[Real],
       n: Index,
-      visualOutput: Boolean,
-      baseDir: String)
+      visualOutput: Option[String])
   : Index = {
     val DMax = cost.size - 1
     val DMin: Index = (0.6 * DMax.toDouble).toInt // TODO: should use Real and Index types
@@ -46,37 +45,41 @@ object NumberSegmentSelection {
         val penalty = DenseVector(funcs.map(_(D))).dot(C)
         cost(D) + penalty
       })
-      
-    if (visualOutput) {
-      val regressedCost =
-        DenseVector.tabulate[Real](cost.size)(D => {
-          DenseVector(funcs.map(_(D))).dot(beta)
-        })
-      
-      val f = Figure()
-    	  val p = f.subplot(0)
-    	  
-    		p += plot(
-    		    (1 to DMax).map(_.toDouble),
-    		    penalizedCost(1 to DMax),
-    		    name = "Penalized Cost")
-    		    
-    		p += plot(
-    		    (1 to DMax).map(_.toDouble),
-    		    cost.slice(1, DMax + 1),
-    		    name = "Cost")
-    		    
-    		p += plot(
-    		    (1 to DMax).map(_.toDouble),
-    		    regressedCost(1 to DMax),
-    		    name = "Regressed Cost")
-    		
-    		p.title = "Penalized Cost"
-    		p.xlabel = "D"
-    		p.ylabel = "Cost"
-    		f.saveas(baseDir + "/lines.png")
-    }
+    
+    visualOutput match {
+      case Some(baseDir) => {
+        val regressedCost =
+          DenseVector.tabulate[Real](cost.size)(D => {
+            DenseVector(funcs.map(_(D))).dot(beta)
+          })
+        
+        val f = Figure()
+        val p = f.subplot(0)
+      	  
+        p += plot(
+        		(1 to DMax).map(_.toDouble),
+        		penalizedCost(1 to DMax),
+        		name = "Penalized Cost")
 
+        p += plot(
+        		(1 to DMax).map(_.toDouble),
+        		cost.slice(1, DMax + 1),
+        		name = "Cost")
+
+        p += plot(
+        		(1 to DMax).map(_.toDouble),
+        		regressedCost(1 to DMax),
+        		name = "Regressed Cost")
+
+        p.title = "Penalized Cost"
+        p.xlabel = "D"
+        p.ylabel = "Cost"
+        f.saveas(baseDir + "/lines.png")
+      }
+      
+      case _ => {}
+    }
+    
     return argmin(penalizedCost)
   }
 }

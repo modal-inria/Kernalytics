@@ -98,7 +98,7 @@ object DemoIO {
       } yield (data(0).data.nPoint, kerEval)
     
     val seg =
-      kerEval.map(k => Test.segment(k._2, dMax, k._1, true, baseDir))
+      kerEval.map(k => Test.segment(k._2, dMax, k._1, Some(baseDir)))
       
     seg match {
         case Success(a) => println(a.mkString(","))
