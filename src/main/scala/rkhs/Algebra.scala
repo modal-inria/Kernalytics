@@ -41,9 +41,10 @@ object Algebra {
       MetricSpaceFromNormedSpace(NormedSpaceFromInnerProductSpace(v))
   }
 
-  object Distribution { // TODO: implement a normed space on distributions based on the ChiSquared function
+  object Distribution {
 /**
- * Must be used as a metric for the laplacian kernel to get the ChiSquared metric.
+ * Must be used as a metric for the laplacian kernel to get the ChiSquared kernel.
+ * https://en.wikipedia.org/wiki/Positive-definite_kernel
  * 
  * TODO: implement other squared norm based kernels, like Jensen divergence or Total Variation.
  */

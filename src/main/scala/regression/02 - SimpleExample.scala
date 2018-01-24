@@ -3,7 +3,7 @@ package regression
 import breeze.linalg._
 import breeze.plot._
 import breeze.stats.distributions._
-import rkhs.{Gram, Kernel, Predict}
+import rkhs.{Gram, Kernel}
 
 object SimpleExample {
   def main {

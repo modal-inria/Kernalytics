@@ -1,4 +1,4 @@
-package rkhs
+package regression
 
 import breeze.linalg._
 import various.TypeDef._

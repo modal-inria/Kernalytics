@@ -5,12 +5,15 @@ import various.TypeDef._
 
 object KerEval {
   sealed trait DenseVectorRoot { // Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example)
+    val typeName: String
     def nPoint: Index
   } 
   case class DenseVectorReal(val data: DenseVector[Real]) extends DenseVectorRoot {
+    val typeName = "Real"
     def nPoint: Index = data.size
   }
   case class DenseVectorMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DenseVectorRoot {
+    val typeName = "Matrix of Real"
     def nPoint: Index = data.size
   }
   
