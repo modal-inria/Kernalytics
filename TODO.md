@@ -20,6 +20,7 @@
 # Check
 
 - Each kernel should return a Try, with the result depending on the validity of the provided parameter. For example, a Gaussian kernel must have 0 < sd.
+- Add a multivariate example.
  
 # Architecture
 

@@ -37,7 +37,10 @@ object Kernel {
 		    y: Data,
 		    ip: Algebra.Traits.InnerProductSpace[Data],
 		    sd: Real)
-		: Real = {val diff = ip.-(x, y); math.exp(-ip.ip(diff, diff) / (2.0 * math.pow(sd, 2.0)))}
+	  : Real = {
+	    val diff = ip.-(x, y)
+	    math.exp(-ip.ip(diff, diff) / (2.0 * math.pow(sd, 2.0)))
+	  }
 	}
 	
 	object Metric {		  
@@ -48,14 +51,11 @@ object Kernel {
 		    sd: Real)
 		: Real = math.exp(- math.pow(n.distance(x, y), 2.0) / (2.0 * math.pow(sd, 2.0)))
 		
-	  /**
-	   * Note the condition alpha > 0.
-	   */
 	  def laplacian[Data](
 	      x: Data,
 	      y: Data,
 	      n: Algebra.Traits.MetricSpace[Data],
-	      alpha: Real)
+	      alpha: Real) // TODO: 0 < alpha should be checked, but checking it at each call would slow the execution down
 	  : Real = math.exp(- alpha * n.distance(x, y))
 	}
 
@@ -66,7 +66,7 @@ object Kernel {
 	object Legacy {
 		object R {
 			def product(x: Real, y: Real): Real = x * y
-					def gaussian(x: Real, y: Real, sd: Real): Real = math.exp(- math.pow(x - y, 2.0) / (2.0 * math.pow(sd, 2.0)))
+			def gaussian(x: Real, y: Real, sd: Real): Real = math.exp(- math.pow(x - y, 2.0) / (2.0 * math.pow(sd, 2.0)))
 		}
 
 		object Rn {

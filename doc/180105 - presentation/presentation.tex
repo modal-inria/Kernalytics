@@ -24,7 +24,7 @@
 \usepackage[fixlanguage]{babelbib}
 \selectbiblanguage{french}
 
-\title[Kernalitics]{Kernalitics - Méthodes à noyaux et modélisation}
+\title[Kernalytics]{Kernalytics - Méthodes à noyaux et modélisation}
 \author[VK]{Vincent KUBICKI - InriaTech}
 \institute[Inria]{Inria Lille - Nord Europe}
 % \date{17 Octobre 2017}
@@ -37,66 +37,142 @@
 
 \section{Introduction}
 
-\begin{frame}{Kernalitics - Généralités}
+\begin{frame}{Kernalytics - Généralités}
 	\begin{itemize}
-		\item Utilisation de méthode à noyaux.
-		\item Gestion des noyaux multivariés.
-		\item Objectif: grande modularité et facilité d'ajout de fonctionnalités.
+		\item Contrat Coreye.
+		\item Preuve de concept pour utiliser les noyaux.
+		\item Pallier aux difficultés liées au C de KernSeg.
+		\item Scala et programmation fonctionelle.
+		\item Gestion des données multivariées.
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Modularité}
-% présenter la modularité liée à la séparation entre méthodes partagées (calcul matrice de Gram par exemple), noyaux adaptés à chaque type de données, et algorithmes (regression, calcul de distributions)
-% faire les trois colonnes
-\end{frame}
+\section{Mathématiques}
 
 \begin{frame}{Segmentation à noyaux}
 	\begin{itemize}
+		\item Adaptation directe de "New Efficient Algorithms for Multiple Change-Point Detection with kernels", de Célisse et al.
 		\item Implémentation utilisant la programmation dynamique.
 		\item Sélection du nombre optimal de segments via une heuristique de pente.
 	\end{itemize}
 \end{frame}
-\begin{frame}{Programmation fonctionnelle}
-	\begin{itemize}
-		\item Raisonnements similaires aux raisonnements mathématiques.
-		\item Objets proches, par exemple composition de noyaux.
-		\item Tests unitaires très faciles à implémenter.
-	\end{itemize}
+
+\begin{frame}{Modularité}
+	\begin{columns}
+		\begin{column}{0.3\textwidth}
+			\begin{block}{Commun}
+				\begin{itemize}
+					\item Matrice de Gram
+					\item KerEval
+					\item ...
+				\end{itemize}
+			\end{block}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\begin{block}{Noyaux}
+				\begin{itemize}
+					\item Linéaire
+					\item Polynomial
+					\item Gaussien
+					\item Laplacien
+				\end{itemize}
+			\end{block}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\begin{block}{Algorithmes}
+				\begin{itemize}
+					\item Régression
+					\item K-Means
+					\item Test d'égalité de distributions
+					\item Segmentation
+				\end{itemize}
+			\end{block}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 \begin{frame}{Structures algébriques}
 	\begin{itemize}
-		\item Noyaux génériques, par exemples nécessitant une structure d'espace normé, d'espace métrique,...
-		\item Les données et la structure algébriques sont fournies séparément pour générer le noyau.
-		\item Exemple: la segmentation de matrice a été implémenté rapidement en donnant le produit de Frobenius de matrice.
-		\item Le système peut déduire des structures algébriques, par exemple une norme canonique à partir d'un produit scalaire.
-		\item Axe de modularité supplémentaire.
+		\item Tous les noyaux sont génériques, nécessitant un type de donnée et une structure algébrique.
+		\item Exemple: la segmentation de matrice nécessite seulement un produit interne dans l'espace des matrices réelles (Frobenius par exemple).
+		\item Déduction des structures algébriques (i.e. produit interne $\rightarrow$ norme $\rightarrow$ distance).
+		\item Hiérarchie algébrique validée par typage.
 	\end{itemize}
-
-% injection de la structure algébrique dans la création du noyau
-% rapidité pour implémenter la segmentation de matrice en ne fournissant que l'espace préhilbertien sur les matrices
 \end{frame}
+
+\begin{frame}{Programmation fonctionnelle}
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\begin{block}{Immutabilité}
+				\begin{itemize}
+					\item Aucune variable.
+					\item Aucune boucle.
+					\item Généralisation des lapply, reduce, etc... de R
+				\end{itemize}
+			\end{block}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\begin{block}{Composition de fonctions}
+				\begin{itemize}
+					\item Combinaison linéaire de noyaux.
+					\item Code est concis et de haut niveau.
+					\item Simplicité d'intégration d'un nouveau noyau, sous la forme d'une fonction $(X, X) \rightarrow \mathbb{R}$
+					\item Simplicité pour ajouter un nouveau type de données, sous la forme d'une fonction $\text{Chaîne de caractères} \rightarrow X$.
+				\end{itemize}
+			\end{block}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\section{Informatique}
 
 \begin{frame}{Génie logiciel}
 	\begin{itemize}
-		\item Utilisation d'une librairie de calcul / statistiques: Breeze, pour ne pas réinventer la roue.
+		\item Utilisation d'une d'algèbre linéaire / statistiques: Breeze.
 		\item Code est compilé: beaucoup de vérifications sont effectuées lors de la compilation, et l'exécution est rapide.
-		\item Simplicité d'intégration d'un nouveau noyau, sous la forme d'une fonction $(X, X) \rightarrow \mathbb{R}$, disponible immédiatement pour tous les algorithmes.
-		\item Simplicité pour ajouter un nouveau type de données, sous la forme d'une fonction $\text{Chaîne de caractères} \rightarrow X$.
+		\item Tests unitaires très faciles à implémenter, gestion des exceptions limpide.
 		\item Code compilé pour la JVM, facilité de déploiement multiplateforme.
+		\item Maintenance plus simple que du C++ (i.e. système de build trivial).
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Utilisation}
-	\begin{itemize}
-		\item Fichiers d'entrée séparés entre données et description
-		% mettre un exemple, ou deux colonnes pour présenter le format
-	\end{itemize}
+	\begin{block}{Format des données}
+		\begin{itemize}
+			\item 2 fichiers d'entrée en csv: données et descripteurs
+			\item 1 colonne par variable en données, 1 colonne par noyau en descripteurs
+			\item Plusieurs noyaux possibles pour une même variable, par exemple
+		\end{itemize}
+	\end{block}
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\begin{block}{Données}
+				\begin{itemize}
+					\item Nom de variable
+					\item Type de donnée
+					\item Une observation par ligne
+					\item ...
+				\end{itemize}
+			\end{block}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\begin{block}{Descripteurs}
+				\begin{itemize}
+					\item Nom de variable
+					\item Poids
+					\item Noyau et paramètres
+				\end{itemize}
+			\end{block}
+		\end{column}
+	\end{columns}
 \end{frame}
+
+\section{Conclusion}
 
 \begin{frame}{A faire}
 	\begin{itemize}
-		\item Paquet R en utilisant rscala (wrapper léger, prototype déjà testé).
+		\item Créer un paquet R en utilisant rscala (wrapper léger, prototype déjà testé).
+		\item Intégrer des noyaux plus avancés.
 	\end{itemize}
 \end{frame}
 
