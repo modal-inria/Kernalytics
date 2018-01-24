@@ -42,13 +42,13 @@ object ReadParam {
     val paramStr = v(2)
     
     val GaussianPattern = raw"Gaussian\(([0-9.]+)\)".r
-    val ProductPattern = raw"Product\(()\)".r
+    val LinearPattern   = raw"Linear\(()\)".r
     
     Try(weightStr.toDouble).flatMap(weight => {
       paramStr match {
         case GaussianPattern(c) => Success(new ParsedParam(varName, weight, new KerEval.ParameterGaussian(c.toDouble)))
-        case ProductPattern(c)  => Success(new ParsedParam(varName, weight, new KerEval.ParameterProduct()))
-        case _ => Failure(new Exception("Parameter string is impossible to parse: " + paramStr))
+        case LinearPattern(c)   => Success(new ParsedParam(varName, weight, new KerEval.ParameterLinear()))
+        case _ => Failure(new Exception("parseIndividualParam: parameter string is impossible to parse: " + paramStr))
       }
     })
   }

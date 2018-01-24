@@ -15,8 +15,8 @@ object KerEval {
   }
   
   sealed trait ParameterRoot
+  case class ParameterLinear()               extends ParameterRoot
   case class ParameterGaussian(val sd: Real) extends ParameterRoot
-  case class ParameterProduct ()             extends ParameterRoot
   
   class VarDescription(
       val weight: Real, 
@@ -59,7 +59,7 @@ object KerEval {
       param: ParameterRoot)
   : Option[(Index, Index) => Real] = // TODO: return a Try instead of an Option, as it would mix better with the rest of the exception handling
     (data, param) match {
-      case (DenseVectorReal(data), ParameterProduct()) =>
+      case (DenseVectorReal(data), ParameterLinear()) =>
         Some(KerEval.generateKerEval(
       		  data,
       		  Kernel.InnerProduct.linear(
