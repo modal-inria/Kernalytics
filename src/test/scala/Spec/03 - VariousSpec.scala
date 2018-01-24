@@ -1,12 +1,14 @@
+package Spec
+
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions._
 import org.scalactic._
 import org.scalatest._
-
 import p00rkhs.{Algebra, KerEval, Kernel}
 import p04various.TypeDef._
 import p05offlinechangepoint.{CostMatrix, Test}
+import org.scalactic.source.Position.apply
 
 /**
  * A mix of various unit tests put here until a better place is found.

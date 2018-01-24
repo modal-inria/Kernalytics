@@ -1,11 +1,13 @@
+package Spec
+
 import breeze.linalg._
 import breeze.stats.distributions._
-import collection.mutable.Stack
 import org.scalactic._
 import org.scalatest._
 import p04various.Math
 import p04various.TypeDef._
 import p00rkhs.Algebra
+import org.scalactic.source.Position.apply
 
 // http://www.scalatest.org/user_guide/using_matchers
 

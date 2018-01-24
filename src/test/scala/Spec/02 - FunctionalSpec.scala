@@ -1,10 +1,13 @@
+package Spec
+
 import breeze.linalg._
 import breeze.stats.distributions._
 import org.scalactic._
 import org.scalatest._
-import p00rkhs.{Algebra, KerEval, Kernel}
+import p00rkhs.{KerEval}
 import p04various.TypeDef._
 import p05offlinechangepoint.{Test}
+import org.scalactic.source.Position.apply
 
 /**
  * This class contains functional tests. This means that those tests check entire segmentations.
