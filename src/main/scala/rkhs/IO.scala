@@ -10,11 +10,16 @@ import various.TypeDef._
  * A more automated solution would have to be implemented later. This next solution could use the same interface with nameStr, paramStr and the data, though.
  */
 object IO {
+  def parseParamAndGenerateKernel(data: KerEval.DataRoot, paramStr: String): Try[(Index, Index) => Real] = {
+    parseParam(paramStr)
+    .flatMap(p => generateKernel(p._1, p._2, data))
+  }
+  
   /**
    * Parse the parameter string to extract both the kernel name 
    */
   def parseParam(str: String): Try[(String, String)] = {
-    val paramPattern = raw"([a-zA-Z0-9]+)\((.+)\)".r
+    val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
     val t = Try({val t = paramPattern.findAllIn(str); (t.group(1), t.group(2))})
     
     t match {

@@ -15,7 +15,7 @@ import various.TypeDef._
  * - kernel (including parameters)
  */
 object ReadParam {
-  class ParsedParam(val name: String, val weight: Real, val kernel: KerEval.ParameterRoot)
+  class ParsedParam(val name: String, val weight: Real, val kernel: String)
   
   def readAndParseParam(fileName: String): Try[Array[ParsedParam]] =
     readParams(fileName)
@@ -35,21 +35,13 @@ object ReadParam {
         .transpose)
   
   def parseIndividualParam(v: Array[String]): Try[ParsedParam] = {
-    if (v.size != 3) return Failure(new Exception("In descriptor file, all variables must have three lines: name, weight and kernel."))
-    
+    if (v.size != 3)
+      return Failure(new Exception("In descriptor file, all variables must have three lines: name, weight and kernel."))
+       
     val varName = v(0)
     val weightStr = v(1)
     val paramStr = v(2)
     
-    val GaussianPattern = raw"Gaussian\(([0-9.]+)\)".r
-    val LinearPattern   = raw"Linear\(()\)".r
-    
-    Try(weightStr.toDouble).flatMap(weight => {
-      paramStr match {
-        case GaussianPattern(c) => Success(new ParsedParam(varName, weight, new KerEval.ParameterGaussian(c.toDouble)))
-        case LinearPattern(c)   => Success(new ParsedParam(varName, weight, new KerEval.ParameterLinear()))
-        case _ => Failure(new Exception("parseIndividualParam: parameter string is impossible to parse: " + paramStr))
-      }
-    })
+    return Try(weightStr.toDouble).map(w => new ParsedParam(v(0), w, paramStr))
   }
 }

@@ -22,14 +22,10 @@ object KerEval {
     def nPoint: Index = data.size
   }
   
-  sealed trait ParameterRoot
-  case class ParameterLinear()               extends ParameterRoot
-  case class ParameterGaussian(val sd: Real) extends ParameterRoot
-  
   class VarDescription(
       val weight: Real, 
       val data: DataRoot,
-      val param: ParameterRoot)
+      val param: String)
   
   /**
    * Generate the kerEval function from the data.
@@ -58,55 +54,15 @@ object KerEval {
       val evaluationResult = DenseVector.tabulate[Real](kArray.size)(k => kArray(k)(i, j)) // evaluate the various kernels TODO: parallel evaluation
       evaluationResult.dot(weights) // weight the results
     }
-    
-  /**
-   * Generate a KerEval using data and pattern matching on the parameters.
-   */
-  def paramToKerEval(
-      data: DataRoot,
-      param: ParameterRoot)
-  : Option[(Index, Index) => Real] = // TODO: return a Try instead of an Option, as it would mix better with the rest of the exception handling
-    (data, param) match {
-      case (DenseVectorReal(data), ParameterLinear()) =>
-        Some(KerEval.generateKerEval(
-      		  data,
-      		  Kernel.InnerProduct.linear(
-      				  _: Real,
-      				  _: Real,
-      				  Algebra.R.InnerProductSpace),
-      		  true))
-      		  
-      case (DenseVectorReal(data), ParameterGaussian(sd)) =>
-        Some(KerEval.generateKerEval(
-      		  data,
-      		  Kernel.InnerProduct.gaussian(
-      				  _: Real,
-      				  _: Real,
-      				  Algebra.R.InnerProductSpace,
-      				  sd),
-      		  true))
-      	
-      case (DenseVectorMatrixReal(data), ParameterGaussian(sd)) =>
-        Some(KerEval.generateKerEval(
-      		  data,
-      		  Kernel.Metric.gaussian(
-      				  _: DenseMatrix[Real],
-      				  _: DenseMatrix[Real],
-      				  Algebra.DenseMatrixReal.MetricSpace,
-      				  sd),
-      		  true))
-      		  
-      case _ => None
-  }
   
   /**
-   * Take data description and generate the corresponding KerEval.
+   * Take data description, generate the individual kernels and compute linear combination to generate final kernel.
    */
   def multivariateKerEval(data: Array[VarDescription]): (Index, Index) => Real = {
     val nVar = data.size
     val weights = DenseVector.tabulate[Real](nVar)(i => data(i).weight)
     
-    val kArray = data.map(v => KerEval.paramToKerEval(v.data, v.param).get)
+    val kArray = data.map(v => IO.parseParamAndGenerateKernel(v.data, v.param).get)
     
     return KerEval.linearCombKerEval(kArray, weights)
   }

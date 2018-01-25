@@ -4,7 +4,7 @@ import breeze.linalg._
 import breeze.numerics._
 import breeze.plot._
 
-import rkhs.{KerEval}
+import rkhs.{IO, KerEval}
 import various.Def
 import various.TypeDef._
 
@@ -41,7 +41,7 @@ object Demo {
     p.ylabel = "Value"
     f.saveas(baseDir + Def.folderSep + "data.png")
     
-    val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
-    val seg = Test.segment(kerEval, dMax, nPoints, Some(baseDir))
+    val seg = IO.parseParamAndGenerateKernel(KerEval.DenseVectorReal(data), "Gaussian(0.5)")
+    .map(kerEval => Test.segment(kerEval, dMax, nPoints, Some(baseDir)))
   }
 }

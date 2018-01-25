@@ -4,7 +4,7 @@ import breeze.linalg._
 import breeze.stats.distributions._
 import org.scalactic._
 import org.scalatest._
-import rkhs.{KerEval}
+import rkhs.{IO, KerEval}
 import various.TypeDef._
 import offlinechangepoint.{Test}
 import org.scalactic.source.Position.apply
@@ -36,10 +36,10 @@ class FunctionalSpec extends FlatSpec with Matchers {
     }
 
 		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
-		val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
+		val kerEval = IO.parseParamAndGenerateKernel(KerEval.DenseVectorReal(data), "Gaussian(0.5)").get
 		val seg = Test.segment(kerEval, dMax, nPoints, None)
 		      
-		 (segPoints) should === (seg)
+		(segPoints) should === (seg)
   }
   
   "matrix" should "compute segmentation for a univariate float signal"  in {
@@ -67,7 +67,7 @@ class FunctionalSpec extends FlatSpec with Matchers {
 	  }
 
 		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
-		val kerEval = KerEval.paramToKerEval(KerEval.DenseVectorMatrixReal(data), KerEval.ParameterGaussian(0.5)).get
+		val kerEval = IO.parseParamAndGenerateKernel(KerEval.DenseVectorMatrixReal(data), "Gaussian(0.5)").get
 		val seg = Test.segment(kerEval, dMax, nPoints, None)
 		      
 		(segPoints) should === (seg)
@@ -96,8 +96,8 @@ class FunctionalSpec extends FlatSpec with Matchers {
     }
 
 		val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)		
-		val kerEval0 = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterGaussian(0.5)).get
-		val kerEval1 = KerEval.paramToKerEval(KerEval.DenseVectorReal(data), KerEval.ParameterLinear  ()   ).get		
+		val kerEval0 = IO.parseParamAndGenerateKernel(KerEval.DenseVectorReal(data), "Gaussian(0.5)").get
+		val kerEval1 = IO.parseParamAndGenerateKernel(KerEval.DenseVectorReal(data), "Linear()").get		
 		val kerEval = KerEval.linearCombKerEval(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
 		val seg = Test.segment(kerEval, dMax, nPoints, None)
 		
@@ -134,8 +134,8 @@ class FunctionalSpec extends FlatSpec with Matchers {
 		
 		val varDescription =
 		  Array(
-		      new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data0), KerEval.ParameterGaussian(0.5)),
-		      new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data1), KerEval.ParameterLinear  ()   ))
+		      new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data0), "Gaussian(0.5)"),
+		      new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data1), "Linear()"     ))
 		val kerEval = KerEval.multivariateKerEval(varDescription)
 		val seg = Test.segment(kerEval, dMax, nPoints, None)
 		
