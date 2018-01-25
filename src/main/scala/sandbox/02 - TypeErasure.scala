@@ -1,4 +1,8 @@
-package sandbox;
+package sandbox
+
+object TypeErasure2 {
+  
+}
 //package p06sandbox
 //
 //import breeze.linalg._

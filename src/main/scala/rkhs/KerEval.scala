@@ -4,15 +4,20 @@ import breeze.linalg._
 import various.TypeDef._
 
 object KerEval {
-  sealed trait DenseVectorRoot { // Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example)
+  /**
+   * Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example).
+   * Note that any type of containers could be used, not just DenseVector, because the data container is not specified in DataRoot, but in the derived
+   * types.
+   */
+  sealed trait DataRoot { 
     val typeName: String
     def nPoint: Index
   } 
-  case class DenseVectorReal(val data: DenseVector[Real]) extends DenseVectorRoot {
+  case class DenseVectorReal(val data: DenseVector[Real]) extends DataRoot {
     val typeName = "Real"
     def nPoint: Index = data.size
   }
-  case class DenseVectorMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DenseVectorRoot {
+  case class DenseVectorMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DataRoot {
     val typeName = "Matrix of Real"
     def nPoint: Index = data.size
   }
@@ -23,7 +28,7 @@ object KerEval {
   
   class VarDescription(
       val weight: Real, 
-      val data: DenseVectorRoot,
+      val data: DataRoot,
       val param: ParameterRoot)
   
   /**
@@ -58,7 +63,7 @@ object KerEval {
    * Generate a KerEval using data and pattern matching on the parameters.
    */
   def paramToKerEval(
-      data: DenseVectorRoot,
+      data: DataRoot,
       param: ParameterRoot)
   : Option[(Index, Index) => Real] = // TODO: return a Try instead of an Option, as it would mix better with the rest of the exception handling
     (data, param) match {

@@ -15,7 +15,7 @@ import various.TypeDef._
  * - one line per observation
  */
 object ReadVar {
-  class ParsedVar(val name: String, val data: KerEval.DenseVectorRoot) // type is not necessary, as data has been parsed into the correct type
+  class ParsedVar(val name: String, val data: KerEval.DataRoot) // type is not necessary, as data has been parsed into the correct type
   
   def readNoParse(fileName: String): Array[Array[String]] =
     Source

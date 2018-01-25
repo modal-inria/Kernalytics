@@ -11,7 +11,7 @@ import various.TypeDef._
 object IO {
   class IOKernel(
       val name: String,
-      val paramConv: (String, KerEval.DenseVectorRoot) => Try[(Index, Index) => Real])
+      val paramConv: (String, KerEval.DataRoot) => Try[(Index, Index) => Real])
    
    val Linear = new IOKernel(
        "Linear",
@@ -63,7 +63,7 @@ object IO {
            }
          })
        })
-      
+  
    /** To be available, a Kernel must be included in this Array. */
    val registeredKernels: Array[IOKernel] = Array(Linear, Gaussian)
 }

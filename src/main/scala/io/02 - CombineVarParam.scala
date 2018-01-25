@@ -28,7 +28,7 @@ object CombineVarParam {
   /**
    * Can fail if the parameter do not match any variable.
    */
-  def generateIndividualKerEval(dict: Map[String, KerEval.DenseVectorRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
+  def generateIndividualKerEval(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
     Try(dict(param.name))
     .map(data => new KerEval.VarDescription(param.weight, data, param.kernel))
 }
