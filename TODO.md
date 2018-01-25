@@ -32,6 +32,8 @@
 - DenseVectorRoot involves a lot of pattern-matching scattered across multiple files. Maybe it would be best to change the architecture to centralize the descriptions of behaviours.
     - See: https://stackoverflow.com/questions/48169051/how-to-avoid-type-argument-erasure/48170083?noredirect=1#comment83372119_48170083
     - once kerEval are generated, this problem disappears... So is it worth investigating ?
+- rkhs.IO should be more automated, maybe by just maintaining lists of possibles combinations of kernels and datatypes ?
+- nest the utests structure to reflect the original source code structure. See the example of rkhsspec in src/test/scala.
 
 # Mathematics
 
