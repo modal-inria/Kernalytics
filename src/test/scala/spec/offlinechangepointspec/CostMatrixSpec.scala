@@ -1,19 +1,20 @@
-package spec
+package spec.offlinechangepointspec
 
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions._
 import org.scalactic._
 import org.scalatest._
-import rkhs.{ Algebra, KerEval, Kernel }
 import various.TypeDef._
-import offlinechangepoint.{ CostMatrix, Test }
 import org.scalactic.source.Position.apply
+
+import offlinechangepoint.{ CostMatrix, Test }
+import rkhs.{ Algebra, KerEval, Kernel }
 
 /**
  * A mix of various unit tests put here until a better place is found.
  */
-class VariousSpec extends FlatSpec with Matchers {
+class CostMatrixSpec extends FlatSpec with Matchers {
   "nextColumn" should "compute the cost matrix next column" in {
     val nPoints = 12
     val kernelSD = 1.0

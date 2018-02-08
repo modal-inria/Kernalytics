@@ -1,4 +1,4 @@
-package spec
+package spec.variousspec
 
 import breeze.linalg._
 import breeze.stats.distributions._

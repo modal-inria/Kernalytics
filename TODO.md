@@ -1,7 +1,5 @@
 # Short Term
 
-- delete ParameterRoot and replace it completely with rkhs.IO
-
 # Long Term
 
 - remove the deprecation warnings using -deprecation
@@ -10,11 +8,6 @@
 
 # Performances
 
-- a Vector is used to enforce immutability when manipulating L.
-    - Switching to a mutable matrix might improve the performances. Encapsulating this in a monad would preserve functional purity.
-    - a better solution would be to use an Array[List[SegCost]], where each List contains all the values of mu for a given D. In terms of accesses, it is the transpose of the current implementation.
-        - each new results is added using ::, and the computation of the best new segmentation can be obtained for excample by zipping the cost matrix column with the list
-    - in any cases, keep the old implementation
 - the loop over D for a given tauP can be parallelized.
     - Will the gain outweight the overhead for thread spawning ?
     - That would depend on the value of DMax.

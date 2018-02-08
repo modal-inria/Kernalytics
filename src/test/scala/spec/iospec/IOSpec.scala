@@ -1,4 +1,5 @@
-package spec;
+package spec.iospec
+
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions._
