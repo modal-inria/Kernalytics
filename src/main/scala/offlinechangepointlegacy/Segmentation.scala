@@ -1,4 +1,4 @@
-package offlinechangepoint
+package offlinechangepointlegacy
 
 import breeze.linalg.{argmin, DenseVector} // not imported using _ to avoid masking Scala Vector with Breeze Vector
 import various.TypeDef._
@@ -15,8 +15,12 @@ object Segmentation {
   
   /**
    * Accumulator used in Algorithm 3.
+   * The indices in L correspond to $L_{D, \tau' + 1}$. With tau' the last element included in the segment. For example, the column 5 corresponds to the segments [0, 4] (and the column 0 to empty segments []).
+   * The column index thus corresponds to the first elements to the right of the segment.
+   * Last element corresponds to $L_{D, \tau' + 1}$, which stores the computation for the sub-segment [0, tau'].
+   * Hence there are $\tau' + 2$ elements in L. The element 0 corresponds to an empty segment (tau' + 1 = 0), the element 1 (tau' + 1 = 1) to the segment [0, 0], and so on.
    * 
-   * @param L storage of all the SegCost. Last element corresponds to $L_{D, \tau' + 1}$, and stores the computation for the sub-segment [0, tau']. Hence there are $\tau' + 2$ elements in L. The element 0 corresponds to an empty segment, the element 1 to the segment [0, 0], and so on.
+   * @param L storage of all the SegCost.
    * @param tauP index of the last observation included in the last element of L (same notation as $L_{D, \tau' + 1}$ in the article).
    * @param currCol column of the cost matrix
    */
@@ -105,6 +109,7 @@ object Segmentation {
   /**
    * Cost of the segmentation with D segments of a sub-collection of the first $\tau'$ observations of a n long collection.
    * Use the knowledge of the D - 1 optimal segmentations and the cost matrix to compute it.
+   * Note that both acc.L and acc.currCol.c are accessed at the tau element. This confirms that the tau element in acc.L corresponds to the [0, tau - 1] segment.
    * 
    * @param acc The accumulator containing the previously computed values, among which the quantities corresponding to the D - 1 segments will be used.
    * @param tau Index of the first element of the new segment that is introduced.

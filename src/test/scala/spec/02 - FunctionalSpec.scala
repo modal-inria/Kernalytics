@@ -6,7 +6,7 @@ import org.scalactic._
 import org.scalatest._
 import rkhs.{IO, KerEval}
 import various.TypeDef._
-import offlinechangepoint.{Test}
+import offlinechangepointlegacy.{Test}
 import org.scalactic.source.Position.apply
 
 /**

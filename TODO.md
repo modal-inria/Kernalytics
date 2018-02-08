@@ -4,6 +4,7 @@
 
 # Long Term
 
+- remove the deprecation warnings using -deprecation
 - R interface via rscala
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
 

@@ -7,7 +7,7 @@ import org.scalactic._
 import org.scalatest._
 import rkhs.{Algebra, KerEval, Kernel}
 import various.TypeDef._
-import offlinechangepoint.{CostMatrix, Test}
+import offlinechangepointlegacy.{CostMatrix, Test}
 import org.scalactic.source.Position.apply
 
 /**

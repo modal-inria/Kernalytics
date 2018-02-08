@@ -1,4 +1,4 @@
-package offlinechangepoint
+package offlinechangepointlegacy
 
 import breeze.linalg._
 import breeze.plot._
