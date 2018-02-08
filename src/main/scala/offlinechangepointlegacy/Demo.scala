@@ -41,7 +41,9 @@ object Demo {
     p.ylabel = "Value"
     f.saveas(baseDir + Def.folderSep + "data.png")
 
-    val seg = IO.parseParamAndGenerateKernel(KerEval.DenseVectorReal(data), "Gaussian(0.5)")
-      .map(kerEval => Test.segment(kerEval, dMax, nPoints, Some(baseDir)))
+    val seg =
+      IO
+        .parseParamAndGenerateKernel(KerEval.DenseVectorReal(data), "Gaussian(0.5)")
+        .map(kerEval => Test.segment(kerEval, dMax, nPoints, Some(baseDir)))
   }
 }

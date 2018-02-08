@@ -97,7 +97,7 @@ object Segmentation {
   def loopOverTau(dM1Val: List[SegCost], currCol: DenseVector[Real], tauP: Index, D: Index): SegCost = {
     val head :: tail = dM1Val
     val initalSegCost = new SegCost(head.cost + currCol(tauP), tauP :: head.seg) // SegCost for the case where the only element in the new segment is tauP
-    recurLoopOverTau(dM1Val, currCol, tauP, initalSegCost)
+    recurLoopOverTau(tail, currCol, tauP - 1, initalSegCost)
   }
 
   /**
@@ -111,10 +111,9 @@ object Segmentation {
   def recurLoopOverTau(ls: List[SegCost], currCol: DenseVector[Real], currInd: Index, bestCost: SegCost): SegCost = ls match {
     case Nil => bestCost
     case head :: tail => {
-      val newInd = currInd - 1
-      val newCost = head.cost + currCol(newInd)
-      val newBestCost = if (bestCost.cost < newCost) bestCost else new SegCost(newCost, newInd :: head.seg)
-      recurLoopOverTau(tail, currCol, newInd, newBestCost)
+      val newCost = head.cost + currCol(currInd)
+      val newBestCost = if (bestCost.cost < newCost) bestCost else new SegCost(newCost, currInd :: head.seg)
+      recurLoopOverTau(tail, currCol, currInd - 1, newBestCost)
     }
   }
 
