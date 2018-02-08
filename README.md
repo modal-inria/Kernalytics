@@ -6,7 +6,5 @@ Kernel methods are versatile, and creating a generic computational engine that e
 
 # How to add a Kernel
 
-- Implement the (X, X) => R function
-- Extend ParameterRoot with its parameter description
-- In ReadParam.parseIndividualParam add the function to parse the descriptor file
-- In KerEval.paramToKerEval, generate the correct kernel
+- Implement the (X, X) => R function anywhere, as long as it is reachable.
+- Add a corresponding case in rkhs.IO.generateKernel.

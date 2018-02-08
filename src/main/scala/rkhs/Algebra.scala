@@ -42,12 +42,12 @@ object Algebra {
   }
 
   object Distribution {
-/**
- * Must be used as a metric for the laplacian kernel to get the ChiSquared kernel.
- * https://en.wikipedia.org/wiki/Positive-definite_kernel
- * 
- * TODO: implement other squared norm based kernels, like Jensen divergence or Total Variation.
- */
+    /**
+     * Must be used as a metric for the laplacian kernel to get the ChiSquared kernel.
+     * https://en.wikipedia.org/wiki/Positive-definite_kernel
+     *
+     * TODO: implement other squared norm based kernels, like Jensen divergence or Total Variation.
+     */
     def ChiSquared(x: DenseVector[Real], y: DenseVector[Real]): Real = {
       val elements = DenseVector.tabulate(x.size)(i => {
         math.pow(x(i) - y(i), 2.0) / (x(i) + y(i))

@@ -1,7 +1,7 @@
 package rkhs
 
 import breeze.linalg._
-import scala.util.{Try, Success, Failure}
+import scala.util.{ Try, Success, Failure }
 
 import various.TypeDef._
 
@@ -12,16 +12,16 @@ import various.TypeDef._
 object IO {
   def parseParamAndGenerateKernel(data: KerEval.DataRoot, paramStr: String): Try[(Index, Index) => Real] = {
     parseParam(paramStr)
-    .flatMap(p => generateKernel(p._1, p._2, data))
+      .flatMap(p => generateKernel(p._1, p._2, data))
   }
-  
+
   /**
-   * Parse the parameter string to extract both the kernel name 
+   * Parse the parameter string to extract both the kernel name
    */
   def parseParam(str: String): Try[(String, String)] = {
     val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
-    val t = Try({val t = paramPattern.findAllIn(str); (t.group(1), t.group(2))})
-    
+    val t = Try({ val t = paramPattern.findAllIn(str); (t.group(1), t.group(2)) })
+
     t match {
       case Success(_) => t
       case Failure(_) => Failure(new Exception(str + " is not a valid parameter String")) // default exception for pattern matching is not expressive enough
@@ -31,45 +31,45 @@ object IO {
   /**
    * Generate a KerEval from a combination of parameter string and data.
    */
-	def generateKernel(kernelNameStr: String, paramStr: String, data: KerEval.DataRoot): Try[(Index, Index) => Real] = data match {
-    	case KerEval.DenseVectorReal(data) if kernelNameStr == "Linear" => {
-    		Success(KerEval.generateKerEval(
-    				data,
-    				Kernel.InnerProduct.linear(
-    						_: Real,
-    						_: Real,
-    						Algebra.R.InnerProductSpace),
-    				true))
-    	}
-    
-    	case KerEval.DenseVectorReal(data) if kernelNameStr == "Gaussian" => {
-    		Try(paramStr.toDouble)
-    		.map(sd => {
-    			KerEval.generateKerEval(
-    					data,
-    					Kernel.InnerProduct.gaussian(
-    							_: Real,
-    							_: Real,
-    							Algebra.R.InnerProductSpace,
-    							sd),
-    					true)
-    		})
-    	}
-    
-    	case KerEval.DenseVectorMatrixReal(data) if kernelNameStr == "Gaussian" => {
-    		Try(paramStr.toDouble)
-    		.map(sd => {
-    			KerEval.generateKerEval(
-    					data,
-    					Kernel.Metric.gaussian(
-    							_: DenseMatrix[Real],
-    							_: DenseMatrix[Real],
-    							Algebra.DenseMatrixReal.MetricSpace,
-    							sd),
-    					true)
-    		})
-    	}
-    
-    	case _ => Failure(new Exception(kernelNameStr + " kernel is not available for " + data.typeName + "data type."))
-	}
+  def generateKernel(kernelNameStr: String, paramStr: String, data: KerEval.DataRoot): Try[(Index, Index) => Real] = data match {
+    case KerEval.DenseVectorReal(data) if kernelNameStr == "Linear" => {
+      Success(KerEval.generateKerEval(
+        data,
+        Kernel.InnerProduct.linear(
+          _: Real,
+          _: Real,
+          Algebra.R.InnerProductSpace),
+        true))
+    }
+
+    case KerEval.DenseVectorReal(data) if kernelNameStr == "Gaussian" => {
+      Try(paramStr.toDouble)
+        .map(sd => {
+          KerEval.generateKerEval(
+            data,
+            Kernel.InnerProduct.gaussian(
+              _: Real,
+              _: Real,
+              Algebra.R.InnerProductSpace,
+              sd),
+            true)
+        })
+    }
+
+    case KerEval.DenseVectorMatrixReal(data) if kernelNameStr == "Gaussian" => {
+      Try(paramStr.toDouble)
+        .map(sd => {
+          KerEval.generateKerEval(
+            data,
+            Kernel.Metric.gaussian(
+              _: DenseMatrix[Real],
+              _: DenseMatrix[Real],
+              Algebra.DenseMatrixReal.MetricSpace,
+              sd),
+            true)
+        })
+    }
+
+    case _ => Failure(new Exception(kernelNameStr + " kernel is not available for " + data.typeName + "data type."))
+  }
 }

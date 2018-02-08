@@ -1,6 +1,6 @@
 package io
 
-import scala.util.{Try, Success, Failure}
+import scala.util.{ Try, Success, Failure }
 
 import rkhs.KerEval
 import various.TypeDef._
@@ -14,9 +14,9 @@ object CombineVarParam {
   def generateAllKerEval(data: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[(Index, Index) => Real] = {
     val arrayNames = data.map(_.name)
     val arrayData = data.map(_.data)
-    
+
     val namesToData = arrayNames.zip(arrayData).toMap
-    
+
     param
       .reverse
       .foldLeft[Try[List[KerEval.VarDescription]]](Success(Nil))((acc, e) =>
@@ -24,11 +24,11 @@ object CombineVarParam {
       .map(_.toArray)
       .map(KerEval.multivariateKerEval(_))
   }
-  
+
   /**
    * Can fail if the parameter do not match any variable.
    */
   def generateIndividualKerEval(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
     Try(dict(param.name))
-    .map(data => new KerEval.VarDescription(param.weight, data, param.kernel))
+      .map(data => new KerEval.VarDescription(param.weight, data, param.kernel))
 }
