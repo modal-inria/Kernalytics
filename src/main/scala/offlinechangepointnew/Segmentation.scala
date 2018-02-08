@@ -1,10 +1,9 @@
-package offlinechangepoint
+package offlinechangepointnew
 
 import breeze.linalg.{ argmin, DenseVector } // not imported using _ to avoid masking Scala Vector with Breeze Vector
 import scala.annotation.tailrec
 
 import rkhs.Gram
-import offlinechangepointlegacy.CostMatrix
 import various.TypeDef._
 
 /**
@@ -117,25 +116,15 @@ object Segmentation {
     }
   }
 
-  //  def printAccumulator(acc: Accumulator, accumulatorName: String) {
-  //    (0 to acc.L.size - 1).foreach(tauP => {
-  //      (0 to acc.L(tauP).size - 1).foreach(D => {
-  //          val cost = acc.L(tauP)(D).cost
-  //          val partition = acc.L(tauP)(D).seg.reverse.mkString(", ")
-  //          println(s"tauP: $tauP, D: $D, s.cost: $cost, partition: $partition")
-  //        }) // complete output should be for tauP between 0 and nPoints - 1
-  //    })
-  //  }
-  //
-  //  def bestPartition(acc: Accumulator): SegCost = acc
-  //    .L
-  //    .last
-  //    .sortBy(_.cost)
-  //    .head
-  //
-  //  def printSegCost(s: SegCost) = {
-  //    val cost = s.cost
-  //    val partition = s.seg.reverse.mkString(", ")
-  //    println(s"s.cost: $cost, partition: $partition")
-  //  }
+  def printAllPartitions(acc: Accumulator) =
+    acc
+      .L
+      .map(_.head)
+      .foreach(printSegCost)
+
+  def printSegCost(s: SegCost) = {
+    val cost = s.cost
+    val partition = s.seg.reverse.mkString(", ")
+    println(s"s.cost: $cost, partition: $partition")
+  }
 }
