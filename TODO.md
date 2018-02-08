@@ -16,7 +16,6 @@
 # Check
 
 - Each kernel should return a Try, with the result depending on the validity of the provided parameter. For example, a Gaussian kernel must have 0 < sd.
-- Add a multivariate example.
  
 # Architecture
 
@@ -27,7 +26,6 @@
     - See: https://stackoverflow.com/questions/48169051/how-to-avoid-type-argument-erasure/48170083?noredirect=1#comment83372119_48170083
     - once kerEval are generated, this problem disappears... So is it worth investigating ?
 - rkhs.IO should be more automated, maybe by just maintaining lists of possibles combinations of kernels and datatypes ?
-- nest the utests structure to reflect the original source code structure. See the example of rkhsspec in src/test/scala.
 
 # Mathematics
 
