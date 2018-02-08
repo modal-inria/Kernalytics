@@ -1,6 +1,6 @@
 object Main extends App {
 //  offlinechangepointnew.Demo.floatSignal
-  offlinechangepointnew.DemoIO.segmentData
+  offlinechangepoint.DemoIO.segmentData
 //  offlinechangepoint.DemoIO.generateData
 //  offlinechangepoint.DemoIO.generateParam
 //  offlinechangepointlegacy.DemoIO.segmentData

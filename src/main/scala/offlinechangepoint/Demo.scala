@@ -1,4 +1,4 @@
-package offlinechangepointlegacy
+package offlinechangepoint
 
 import breeze.linalg._
 import breeze.numerics._
@@ -45,5 +45,6 @@ object Demo {
       IO
         .parseParamAndGenerateKernel(KerEval.DenseVectorReal(data), "Gaussian(0.5)")
         .map(kerEval => Test.segment(kerEval, dMax, nPoints, Some(baseDir)))
+        .map(seg => println(seg.mkString(" ")))
   }
 }

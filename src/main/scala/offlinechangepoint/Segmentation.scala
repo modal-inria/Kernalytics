@@ -1,4 +1,4 @@
-package offlinechangepointnew
+package offlinechangepoint
 
 import breeze.linalg.{ argmin, DenseVector } // not imported using _ to avoid masking Scala Vector with Breeze Vector
 import scala.annotation.tailrec

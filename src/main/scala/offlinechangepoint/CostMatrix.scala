@@ -1,4 +1,4 @@
-package offlinechangepointlegacy
+package offlinechangepoint
 
 import breeze.linalg.{ DenseVector, DenseMatrix, sum, trace }
 import various.TypeDef._
@@ -19,7 +19,7 @@ object CostMatrix {
    * @param nObs total number of observations
    * @param tauP start index of the segment AFTER the one for which the cost matrix provides the cost.
    */
-  case class ColumnCostMatrix(
+  class ColumnCostMatrix(
     val c: DenseVector[Real],
     val d: DenseVector[Real],
     val a: DenseVector[Real],
@@ -41,7 +41,7 @@ object CostMatrix {
     val a = DenseVector.tabulate[Real](nObs)(i => if (i == 0) k00 else 0.0) // for the first column, the submatrix associated to the cost only contains one element, that is why d = -a (for the only non zero element)
     val c = DenseVector.tabulate[Real](nObs)(tau => 0.0) // the cost of the one-observation segment is 0
 
-    return ColumnCostMatrix(c, d, a, nObs, tauP)
+    return new ColumnCostMatrix(c, d, a, nObs, tauP)
   }
 
   /**
@@ -71,7 +71,7 @@ object CostMatrix {
 
     val c = d + sumA
 
-    return ColumnCostMatrix(c, d, a, currColumn.nObs, tauP)
+    return new ColumnCostMatrix(c, d, a, currColumn.nObs, tauP)
   }
 
   /**

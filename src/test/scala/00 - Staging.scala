@@ -8,6 +8,6 @@ import various.TypeDef._
 /**
  * Sandbox class to write tests.
  */
-object Staging extends App {  
+object Staging extends App {
 
 }

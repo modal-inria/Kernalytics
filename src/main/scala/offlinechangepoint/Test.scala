@@ -1,4 +1,4 @@
-package offlinechangepointnew
+package offlinechangepoint
 
 import breeze.linalg._
 import rkhs.{ Algebra, KerEval, Kernel }

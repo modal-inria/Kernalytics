@@ -1,4 +1,4 @@
-package offlinechangepointlegacy
+package offlinechangepoint
 
 import breeze.linalg._
 import breeze.numerics._
@@ -16,7 +16,7 @@ import io.{ CombineVarParam, ReadVar, ReadParam, Write }
  * Demo with data input / output from the hard drive.
  */
 object DemoIO {
-  val baseDir = "data/offlinechangepoint/07 - DemoIO"
+  val baseDir = "data/offlinechangepoint/DemoIO"
   val dataFile = baseDir + Def.folderSep + "data.csv"
   val descriptorFile = baseDir + Def.folderSep + "descriptor.csv"
 
