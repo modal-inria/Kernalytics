@@ -3,6 +3,7 @@ package rkhs
 import breeze.linalg._
 import scala.util.{ Try, Success, Failure }
 
+import various.Error
 import various.TypeDef._
 
 /**
@@ -44,6 +45,7 @@ object IO {
 
     case KerEval.DenseVectorReal(data) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toDouble)
+        .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
           KerEval.generateKerEval(
             data,
@@ -58,6 +60,7 @@ object IO {
 
     case KerEval.DenseVectorMatrixReal(data) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toDouble)
+        .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
           KerEval.generateKerEval(
             data,

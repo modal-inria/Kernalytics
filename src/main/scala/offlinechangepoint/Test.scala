@@ -29,7 +29,7 @@ object Test {
     nPoints: Index,
     visualOutput: Option[String]): Array[Index] = {
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
-    Segmentation.printAllPartitions(res)
+//    Segmentation.printAllPartitions(res)
 
     val costs = res.L.map(_.head.cost)
     val bestD = NumberSegmentSelection.optimalNumberSegments(costs, nPoints, visualOutput)
