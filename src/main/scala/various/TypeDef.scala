@@ -19,13 +19,13 @@ object TypeDef {
   implicit val ConvertibleIndex: Convertible[Index] = new Convertible[Index] {
     def toIndex(i: Index) = i
     def toInteger(i: Index) = i
-    def toReal(i: Index) = i.toReal
+    def toReal(i: Index) = i.toDouble
   }
 
   implicit val ConvertibleInteger: Convertible[Integer] = new Convertible[Integer] {
     def toIndex(i: Integer) = i
     def toInteger(i: Integer) = i
-    def toReal(i: Integer) = i.toReal
+    def toReal(i: Integer) = i.toDouble
   }
 
   implicit val ConvertibleReal: Convertible[Real] = new Convertible[Real] {
