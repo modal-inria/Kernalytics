@@ -58,8 +58,8 @@ object CostMatrix {
     })
 
     val sumA = DenseVector.zeros[Real](currColumn.nObs)
-    val sumAb = DenseVector.zeros[Real](currColumn.nObs)
-    for (tau <- (tauP to 0 by -1)) { // TODO: could be computed functionaly using a scan, on the reversed data...
+    val sumAb = DenseVector.zeros[Real](currColumn.nObs) // even if it is a val, its coefficients will be mutated
+    for (tau <- (tauP to 0 by -1)) { // TODO: could be computed functionally using a scan, on the reversed data...
       sumAb(tau) = tau match {
         case _ if tau == tauP => a(tau)
         case _ if tau < tauP => a(tau) + sumAb(tau + 1)
