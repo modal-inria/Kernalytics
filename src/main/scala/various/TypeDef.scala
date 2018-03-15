@@ -19,24 +19,21 @@ object TypeDef {
     def toReal: Real
   }
 
-  implicit class ConvertibleInt(i: Int)
-    extends Convertible {
-    override def toIndex = i
-    override def toInteger = i
-    override def toReal = i.toDouble
+  implicit class ConvertibleInt(i: Int) extends Convertible {
+    def toIndex = i
+    def toInteger = i
+    def toReal = i.toDouble
   }
 
-  implicit class ConvertibleDouble(d: Double)
-    extends Convertible {
-    override def toIndex = d.toInt
-    override def toInteger = d.toInt
-    override def toReal = d
+  implicit class ConvertibleDouble(d: Double) extends Convertible {
+    def toIndex = d.toInt
+    def toInteger = d.toInt
+    def toReal = d
   }
 
-  implicit class ConvertibleString(s: String)
-    extends Convertible {
-    override def toIndex = s.toInt
-    override def toInteger = s.toInt
-    override def toReal = s.toDouble
+  implicit class ConvertibleString(s: String) extends Convertible {
+    def toIndex = s.toInt
+    def toInteger = s.toInt
+    def toReal = s.toDouble
   }
 }
