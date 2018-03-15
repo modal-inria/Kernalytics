@@ -67,7 +67,7 @@ object ReadVar {
   }
   
   def parseReal(data: String): Real =
-    data.toDouble
+    data.toReal
   
   /**
    * All variables must have different names.

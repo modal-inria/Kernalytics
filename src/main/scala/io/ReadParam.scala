@@ -42,6 +42,6 @@ object ReadParam {
     val weightStr = v(1)
     val paramStr = v(2)
     
-    return Try(weightStr.toDouble).map(w => new ParsedParam(v(0), w, paramStr))
+    return Try(weightStr.toReal).map(w => new ParsedParam(v(0), w, paramStr))
   }
 }

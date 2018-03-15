@@ -19,11 +19,11 @@ object NumberSegmentSelection {
     nObs: Index,
     visualOutput: Option[String]): Index = {
     val DMax = cost.size - 1
-    val DMin: Index = (0.6 * DMax.toDouble).toInt // TODO: should use Real and Index types
+    val DMin: Index = (0.6 * DMax.toReal).toIndex
 
     val funcs =
       Array[Index => Real](
-        D => D.toDouble / nObs.toDouble,
+        D => D.toReal / nObs.toReal,
         D => Math.logBinomial(nObs - 1, D - 1),
         D => 1.0) // for constant term
 
@@ -58,17 +58,17 @@ object NumberSegmentSelection {
       val p = f.subplot(0)
 
       p += plot(
-        (1 to DMax).map(_.toDouble),
+        (1 to DMax).map(_.toReal),
         penalizedCost(1 to DMax),
         name = "Penalized Cost")
 
       p += plot(
-        (1 to DMax).map(_.toDouble),
+        (1 to DMax).map(_.toReal),
         cost.slice(1, DMax + 1),
         name = "Cost")
 
       p += plot(
-        (1 to DMax).map(_.toDouble),
+        (1 to DMax).map(_.toReal),
         regressedCost(1 to DMax),
         name = "Regressed Cost")
 

@@ -26,8 +26,8 @@ object Math {
   def logBinomial(nInt: TypeDef.Integer, mInt: TypeDef.Integer): TypeDef.Real =
     if (mInt == 0) 0.0
     else {
-      val n = nInt.toDouble
-      val m = mInt.toDouble
+      val n = nInt.toReal
+      val m = mInt.toReal
       
   //    n * math.log(n) - m * math.log(m) - (n - m) * math.log(n - m)
       (n + 0.5) * math.log(n) - (m + 0.5) * math.log(m) - (n - m + 0.5) * math.log(n - m) - 0.5 * math.log(2.0 * math.Pi)
@@ -58,7 +58,7 @@ object Math {
     val segMat = DenseMatrix.zeros[Real](nObs, nObs)
     
     for (currBounds <- bounds) {
-      val segSize = (currBounds._2 - currBounds._1).toDouble
+      val segSize = (currBounds._2 - currBounds._1).toReal
       segMat(currBounds._1 to currBounds._2 - 1, currBounds._1 to currBounds._2 - 1) += 1.0 / segSize
     }
     
