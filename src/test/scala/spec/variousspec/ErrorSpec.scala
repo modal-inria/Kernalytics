@@ -23,6 +23,6 @@ class ErrorSpec extends FlatSpec with Matchers {
       case Failure(m) => m.toString
     }
     
-    mes should === ("java.lang.Exception: A Gaussian model has a sd parameter value -12.0. sd should be striclty superior to 0.")
+    mes should === ("java.lang.Exception: A Gaussian model has a sd parameter value -12.0. sd should be be striclty superior to 0.")
   }
 }
