@@ -31,5 +31,3 @@ https://en.wikipedia.org/wiki/Markdown#Example
     * Will the gain outweight the overhead for thread spawning ?
     * That would depend on the value of DMax.
   * Gram matrix symmetry should be exploited to reduce computational times.
-
-# Minor 
