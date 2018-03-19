@@ -45,7 +45,7 @@ object IO {
 
     case KerEval.DenseVectorReal(data) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
-        .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
+        .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be striclty superior to 0."))
         .map(sd => {
           KerEval.generateKerEval(
             data,
