@@ -32,4 +32,4 @@ https://en.wikipedia.org/wiki/Markdown#Example
     * That would depend on the value of DMax.
   * Gram matrix symmetry should be exploited to reduce computational times.
 
-# Minor
+# Minor 
