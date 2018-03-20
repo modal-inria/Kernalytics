@@ -1,0 +1,11 @@
+Package: Kernalizr
+Type: Package
+Title: Kernalizr
+Version: 0.1.0
+Author: Vincent KUBICKI <vincent.kubicki@inria.fr>
+Maintainer: Vincent KUBICKI <vincent.kubicki@inria.fr>
+Description: R interface to Kernalytics
+License: Inria internal licence. Do not distribute.
+Encoding: UTF-8
+LazyData: true
+Imports: rscala
