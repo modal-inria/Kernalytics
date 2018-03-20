@@ -19,6 +19,7 @@ object DemoIO {
   val baseDir = "data/offlinechangepoint/DemoIO"
   val dataFile = baseDir + Def.folderSep + "data.csv"
   val descriptorFile = baseDir + Def.folderSep + "descriptor.csv"
+  val dMax = 8
 
   def generateRealData(
     name: String,
@@ -86,9 +87,7 @@ object DemoIO {
     FileUtils.writeStringToFile(new File(descriptorFile), str, "UTF-8")
   }
 
-  def segmentData = {
-    val dMax = 8
-
+  def segmentData(dataFile: String, descriptorFile: String, dMax: Index): Array[Index] = {
     val kerEval =
       for {
         data <- ReadVar.readAndParseVars(dataFile)
@@ -99,9 +98,13 @@ object DemoIO {
     val seg =
       kerEval.map(k => Test.segment(k._2, dMax, k._1, Some(baseDir)))
 
-    seg match {
-      case Success(a) => println(a.mkString(","))
-      case Failure(m) => println(m)
+    return seg match {
+      case Success(a) => a
+      case Failure(m) => {println(m); Array[Index]()}
     }
+  }
+
+  def segmentDataTest {
+    println(segmentData(dataFile, descriptorFile, dMax).mkString(", "))
   }
 }
