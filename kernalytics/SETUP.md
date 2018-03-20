@@ -1,0 +1,1 @@
+- In Eclipse, activate the option "Insert spaces for tabs"
