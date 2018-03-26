@@ -21,13 +21,13 @@ object NumberSegmentSelection {
     val DMax = cost.size - 1
     val DMin: Index = (0.6 * DMax.toReal).toIndex
 
-    val funcs =
+    val funcs = // functions that will be evaluated for various values of D (from DMin to DMax)
       Array[Index => Real](
         D => D.toReal / nObs.toReal,
-        D => Math.logBinomial(nObs - 1, D - 1),
+        D => Math.logBinomial(nObs - 1, D - 1) / nObs.toReal,
         D => 1.0) // for constant term
 
-    val x =
+    val x = // design matrix constructed from evaluations of funcs
       DenseMatrix.tabulate[Real](DMax - DMin + 1, 3)((i, j) => {
         val D = i + DMin // because tabulate will start evaluation at 0, this is an offset
         funcs(j)(D)
@@ -44,7 +44,7 @@ object NumberSegmentSelection {
 
     val penalizedCost =
       DenseVector.tabulate[Real](cost.size)(D => {
-        val penalty = DenseVector(funcs.map(_(D))).dot(C) // penalty is computed using the C coefficients. TODO: this computation is partially redundant with the one used to get the value of x
+        val penalty = DenseVector(funcs.map(_(D))).dot(C) // each function is evaluated at D, and the C coefficients are applied. TODO: this computation is partially redundant with the one used to get the value of x
         cost(D) + penalty
       })
 

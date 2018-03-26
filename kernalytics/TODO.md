@@ -1,5 +1,10 @@
 # Short Term
 
+- implement string kernel, see Gartner
+- implement graph kernel
+  - first the one based on laplacian by Celisse
+  - then the one proposed in Gartner
+
 # Long Term
 
 # Architecture
