@@ -13,12 +13,18 @@ import various.TypeDef._
  * Algorithm ends when no Lagrange multipliers have been modified.
  */
 object Core {
-  val tol: Real = 1.0e-3
+  /**
+   * wrapper for mutable input, so that the syntax of the be similar to the original article, which was not written in a functionnal style
+   */
+  class Mutable[A](var value: A) 
+
+  val tol: Real = 1.0e-3 // tolerance in alpha space
+  val eps: Real = 1.0e-3 // tolerance in objective function value space
 
   def optimize(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real): DenseVector[Real] = {
     val alpha = DenseVector.zeros[Real](nObs) // DenseVector are mutable, no need for a val
     var b: Real = 0.0 // threshold
-    var cached = updateCache(alpha, b, y, nObs, kerEval) // cached reference is modified by updateCache, hence the var
+    var cached = updateCache(alpha, b, y, kerEval) // cached reference is modified by updateCache, hence the var
 
     var numChanged: Index = 0
     var examineAll = true
@@ -27,12 +33,12 @@ object Core {
       numChanged = 0
       if (examineAll) {
         for (i <- 0 to nObs - 1) {
-          numChanged += examineExample(i, alpha, y, C, cached, kerEval)
+          numChanged += examineExample(i, alpha, y, b, C, cached, kerEval)
         }
       } else { // Only examine the bound observations (observation for which a constraint is active)
         for (i <- 0 to nObs - 1) {
           if (tol < alpha(i) || alpha(i) < C - tol) {
-            numChanged += examineExample(i, alpha, y, C, cached, kerEval)
+            numChanged += examineExample(i, alpha, y, b, C, cached, kerEval)
           }
         }
       }
@@ -53,7 +59,8 @@ object Core {
    * w = \sum_{i = 1}^N y_i \alpha_i x_i in the kernel case
    * u = \sum_{j = 1}^N y_j \alpha_j K(x_j, x)
    */
-  def updateCache(alpha: DenseVector[Real], b: Real, y: DenseVector[Real], nObs: Index, kerEval: (Index, Index) => Real): DenseVector[Real] = {
+  def updateCache(alpha: DenseVector[Real], b: Real, y: DenseVector[Real], kerEval: (Index, Index) => Real): DenseVector[Real] = {
+    val nObs = alpha.length
     var e = DenseVector.zeros[Real](nObs)
     for (i <- 0 to nObs - 1) {
       var sum = 0.0
@@ -72,7 +79,7 @@ object Core {
    * @param i index of the Lagrange multiplier to optimize
    * @return 1 if at least one Lagrange multiplier has been modified
    */
-  def examineExample(i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
+  def examineExample(i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Real, C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
     val nObs = alpha.length
 
     val y2 = y(i2)
@@ -85,15 +92,15 @@ object Core {
 
       if (randomIndices._1.length > 1) {
         val i1 = secondChoiceHeuristic(E2, cached)
-        return takeStep(i1, i2, alpha, y, C, cached, kerEval)
+        return takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval)
       }
 
       for (i1 <- 0 to randomIndices._1.length - 1) { // loop over all non-zero and non-C alpha, starting at random point
-        return takeStep(i1, i2, alpha, y, C, cached, kerEval)
+        return takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval)
       }
 
       for (i1 <- 0 to nObs - 1) { // loop over all non-zero and non-C alpha, starting at random point TODO: there is no need to loop over the previously discarded non bound cases
-        return takeStep(i1, i2, alpha, y, C, cached, kerEval)
+        return takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval)
       }
     }
 
@@ -119,7 +126,7 @@ object Core {
     return (all.filter(i => tol > alpha(i) || alpha(i) < C - tol), all)
   }
 
-  def takeStep(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
+  def takeStep(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Mutable[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
     if (i1 == i2) return 0
     val alph1 = alpha(i1)
     val alph2 = alpha(i2)
@@ -155,9 +162,37 @@ object Core {
         a2 = h
       }
     } else {
-      //     val f1 = y1*(E1 + b) -
+      val f1 = y1 * (E1 + b.value) - alph1 * k11 - s * alph2 * k12
+      val f2 = y2 * (E2 + b.value) - s * alph1 * k12 - alph2 * k22
+      val L1 = alph1 + s * (alph2 - l)
+      val H1 = alph1 + s * (alph2 - h)
+      val psiL = L1 * f1 + l * f2 + 0.5 * L1 * L1 * k11 + 0.5 * l * l * k22 + s * l * L1 * k12
+      val phiH = H1 * f1 + h * f2 + 0.5 * H1 * H1 * k11 + 0.5 * h * h * k22 + s * h * H1 * k12
+
+      if (psiL < phiH - eps) {
+        a2 = l
+      } else if (psiL > phiH + eps) {
+        a2 = h
+      } else {
+        a2 = alph2
+      }
     }
 
-    ???
+    if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) {
+      return 0
+    }
+
+    val a1 = alph1 + s * (alph2 - a2)
+
+    val b1 = E1 + y1 * (a1 - alph1) * k11 + y2 * (a2 - alph2) * k12 + b.value // update threshold to reflect change in Lagrange multiplier
+    val b2 = E2 + y1 * (a1 - alph1) * k12 + y2 * (a2 - alph2) * k22 + b.value
+    b.value = (b1 + b2) / 2.0
+    
+    updateCache(alpha, b.value, y, kerEval)
+
+    alpha(i1) = a1
+    alpha(i2) = a2
+    
+    return 1
   }
 }
