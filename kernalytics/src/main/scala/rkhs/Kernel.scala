@@ -51,8 +51,7 @@ object Kernel {
       x: Data,
       y: Data,
       n: Algebra.Traits.MetricSpace[Data],
-      alpha: Real) // TODO: 0 < alpha should be checked, but checking it at each call would slow the execution down
-      : Real = math.exp(-alpha * n.distance(x, y))
+      alpha: Real): Real = math.exp(-alpha * n.distance(x, y))
   }
 
   /**

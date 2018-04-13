@@ -13,10 +13,12 @@ object KerEval {
     val typeName: String
     def nPoint: Index
   }
+
   case class DenseVectorReal(val data: DenseVector[Real]) extends DataRoot {
     val typeName = "Real"
     def nPoint: Index = data.size
   }
+
   case class DenseVectorMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DataRoot {
     val typeName = "Matrix of Real"
     def nPoint: Index = data.size

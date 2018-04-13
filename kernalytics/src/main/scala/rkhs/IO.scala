@@ -8,7 +8,7 @@ import various.TypeDef._
 
 /**
  * Parsing for instantiation of kernels. As long as the number of combination of data and kernels is low, it is possible to maintain it by hand.
- * A more automated solution would have to be implemented later. This next solution could use the same interface with nameStr, paramStr and the data, though.
+ * TODO: A more automated solution would have to be implemented later. This next solution could use the same interface with nameStr, paramStr and the data, though.
  */
 object IO {
   def parseParamAndGenerateKernel(data: KerEval.DataRoot, paramStr: String): Try[(Index, Index) => Real] = {
