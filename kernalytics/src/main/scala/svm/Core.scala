@@ -73,40 +73,50 @@ object Core {
    * @return 1 if at least one Lagrange multiplier has been modified
    */
   def examineExample(i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], C: Real, cached: DenseVector[Real]): Index = {
+    val nObs = alpha.length
+
     val y2 = y(i2)
     val alph2 = alpha(i2)
     val E2 = cached(i2)
     val r2 = E2 * y2
 
     if ((r2 < -tol && alph2 < C) || (r2 > tol && alph2 > 0)) { // KKT
-      if (numOfNonBound(cached, C) > 1) {
-        val i1 = secondChoiceHeuristic(i2, cached)
+      val randomIndices = randomNonBoundIndices(cached, C)
+
+      if (randomIndices._1.length > 1) {
+        val i1 = secondChoiceHeuristic(E2, cached)
+        return takeStep(i1, i2)
+      }
+
+      for (i1 <- 0 to randomIndices._1.length - 1) { // loop over all non-zero and non-C alpha, starting at random point
+        return takeStep(i1, i2)
+      }
+
+      for (i1 <- 0 to nObs - 1) { // loop over all non-zero and non-C alpha, starting at random point TODO: there is no need to loop over the previously discarded non bound cases
         return takeStep(i1, i2)
       }
     }
 
-    return ???
+    return 0 // no second Lagrange multiplier was enough candidate for the heuristic
   }
 
-  def numOfNonBound(cached: DenseVector[Real], C: Real): Index = {
+  /**
+   * Step size used in take step is approximated by |E 1 - E2|. The heuristic selects the second candidate for which the step size is maximal.
+   */
+  def secondChoiceHeuristic(E2: Real, cached: DenseVector[Real]): Index = {
     val nObs = cached.length
-    var num = 0
-    for (i <- 0 to nObs - 1) {
-      if (tol < cached(i) && cached(i) < C - tol) {
-        num += 1
-      }
-    }
+    val dis = cached.map(E1 => math.abs(E2 - E1))
 
-    return num
+    return argmax(dis)
   }
 
-  def secondChoiceHeuristic(i2: Index, cached: DenseVector[Real]): Index = {
+  /**
+   * Get the indices of non-bound Lagrange multiplier, in a random order to avoid bias in the algorithm.
+   */
+  def randomNonBoundIndices(cached: DenseVector[Real], C: Real): (IndexedSeq[Index], IndexedSeq[Index]) = {
     val nObs = cached.length
-    for (i <- 0 to nObs - 1) {
-
-    }
-
-    ???
+    val all = util.Random.shuffle(0 to nObs - 1)
+    return (all.filter(i => tol > cached(i) || cached(i) < C - tol), all)
   }
 
   def takeStep(i1: Index, i2: Index): Index = {
