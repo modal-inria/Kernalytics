@@ -17,7 +17,6 @@
   - once kerEval are generated, this problem disappears... So is it worth investigating ?
 - rkhs.IO should be more automated, maybe by just maintaining lists of possibles combinations of kernels and datatypes ?
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
-- R interface via rscala
 
 # Check
 

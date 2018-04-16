@@ -58,27 +58,52 @@ object ReadVar {
   }
     
   /**
-   * Generates the ParsedVar object
+   * Generates the ParsedVar object.
    */
   def parseIndividualVar(v: Array[String]): Try[ParsedVar] = {
     if (v.size < 3) return Failure(new Exception("In data file, all variables must have at least three lines: name, type, and at least one observation. This is not the case in current data."))
     
     val varName = v(0)
-    val varType = v(1)
+    val varType = v(1).split(Def.optionSep)
     val data = v.drop(2)
     
-    Try({
-      varType match {
-        case "Real" => new ParsedVar(varName, KerEval.DenseVectorReal(DenseVector.tabulate(data.size)(i => parseReal(data(i)))))
-      }
-    })
+    val typeName = varType(0)
+    val typeParam = varType.drop(1)
+    
+    typeName match {
+      case "Real" => parseReal(varName,typeParam, data)
+      case "VectorReal" => parseVectorReal(varName, typeParam, data)
+    }
   }
   
   /**
    * Parse Real values.
    */
-  def parseReal(data: String): Real =
-    data.toReal
+  def parseReal(varName: String, typeParam: Array[String], data: Array[String]): Try[ParsedVar] = {
+    Try(new ParsedVar(varName, KerEval.DenseVectorReal(DenseVector.tabulate(data.size)(i => data(i).toReal))))
+  }
+    
+  /**
+   * Parse vector of Real values, with fixed size.
+   */
+  def parseVectorReal(varName: String, typeParam: Array[String], data: Array[String]): Try[ParsedVar] = {
+    Try({
+      val nCoeff = typeParam(0).toIndex
+      
+      val convertedData =
+        data
+        .map(_.split(Def.optionSep))
+        .map(_.map(_.toReal))
+        .map(new DenseVector[Real](_))
+        
+      val allCorrectSize = data.forall(o => o.length == nCoeff)
+        
+      if (allCorrectSize)
+        new ParsedVar(varName, KerEval.DenseVectorDenseVectorReal(DenseVector[DenseVector[Real]](convertedData)))
+      else
+        throw new Exception(s"VectorReal elements do not all have $nCoeff elements as required.")
+    })
+  }
   
   /**
    * Check that all variables have different names.

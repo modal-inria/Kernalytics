@@ -67,7 +67,7 @@ class FunctionalSpec extends FlatSpec with Matchers {
     }
 
     val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val kerEval = IO.parseParamAndGenerateKernel(KerEval.DenseVectorMatrixReal(data), "Gaussian(0.5)").get
+    val kerEval = IO.parseParamAndGenerateKernel(KerEval.DenseVectorDenseMatrixReal(data), "Gaussian(0.5)").get
     val seg = Test.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)

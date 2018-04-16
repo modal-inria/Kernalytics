@@ -7,4 +7,5 @@ object Def {
   val eol = Properties.lineSeparator
   val folderSep = File.separator
   val csvSep = ";"
+  val optionSep = ","
 }

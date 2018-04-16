@@ -68,6 +68,17 @@ object Algebra {
     val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
   }
 
+  object DenseVectorReal {
+    object InnerProductSpace extends Traits.InnerProductSpace[DenseVector[Real]] {
+      def -(x: DenseVector[Real], y: DenseVector[Real]): DenseVector[Real] = x - y
+      def ip(x: DenseVector[Real], y: DenseVector[Real]): Real = x.dot(y)
+    }
+
+    val NormedSpace = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
+
+    val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
+  }
+
   object DenseMatrixReal {
     object InnerProductSpace extends Traits.InnerProductSpace[DenseMatrix[Real]] {
       def -(x: DenseMatrix[Real], y: DenseMatrix[Real]): DenseMatrix[Real] = x - y
