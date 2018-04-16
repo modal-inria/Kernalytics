@@ -5,5 +5,7 @@ package svm
  * Points are scattered around the line x = y, with two support vectors on each side, and some random points further.
  */
 object SimpleCase2D {
-  
+  def main {
+    
+  }
 }

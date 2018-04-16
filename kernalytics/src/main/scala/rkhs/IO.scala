@@ -58,6 +58,31 @@ object IO {
         })
     }
 
+    case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Linear" => {
+      Success(KerEval.generateKerEval(
+        data,
+        Kernel.InnerProduct.linear(
+          _: DenseVector[Real],
+          _: DenseVector[Real],
+          Algebra.DenseVectorReal.InnerProductSpace),
+        true))
+    }
+
+    case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Gaussian" => {
+      Try(paramStr.toReal)
+        .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
+        .map(sd => {
+          KerEval.generateKerEval(
+            data,
+            Kernel.Metric.gaussian(
+              _: DenseVector[Real],
+              _: DenseVector[Real],
+              Algebra.DenseVectorReal.MetricSpace,
+              sd),
+            true)
+        })
+    }
+
     case KerEval.DenseVectorDenseMatrixReal(data) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
