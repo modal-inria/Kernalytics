@@ -30,7 +30,7 @@ object IO {
   }
 
   /**
-   * Generate a KerEval from a combination of parameter string and data.
+   * Generate a single var KerEval from a combination of parameter string and data.
    */
   def generateKernel(kernelNameStr: String, paramStr: String, data: KerEval.DataRoot): Try[(Index, Index) => Real] = data match {
     case KerEval.DenseVectorReal(data) if kernelNameStr == "Linear" => {
