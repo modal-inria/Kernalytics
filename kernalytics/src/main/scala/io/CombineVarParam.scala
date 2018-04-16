@@ -7,7 +7,10 @@ import various.TypeDef._
 
 object CombineVarParam {
   /**
-   * Generate a global KerEval from separate descriptions of data and parameters. The return type is a Try, because there
+   * The handling of heterogeneous data in Kernalytics is performed through a kerEval function (Index, Index) => Real.
+   * generateAllKerEval is therefore called once all individual vars and kernel descriptions have been parsed.
+   *
+   * Generate a global kerEval from separate descriptions of data and parameters. The return type is a Try, because there
    * is the possibility that some parameters name do not match any variable name. A failure will also be returned
    * if no valid kernels are generated.
    */
@@ -26,7 +29,7 @@ object CombineVarParam {
   }
 
   /**
-   * Can fail if the parameter do not match any variable.
+   * Can fail if the parameter does not match any variable.
    */
   def generateIndividualKerEval(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
     Try(dict(param.name))
