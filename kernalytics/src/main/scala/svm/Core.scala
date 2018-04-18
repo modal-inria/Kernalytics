@@ -14,12 +14,13 @@ import various.TypeDef._
  */
 object Core {
   /**
-   * wrapper for mutable input, so that the syntax of the be similar to the original article, which was not written in a functionnal style
+   * wrapper for mutable input, so that the syntax be similar to the original article, which was not written in a functional style.
    */
   class Mutable[A](var value: A) 
 
   val tol: Real = 1.0e-3 // tolerance in alpha space
   val eps: Real = 1.0e-3 // tolerance in objective function value space
+  val epsLH: Real = 1e-12
 
   def optimize(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real): (DenseVector[Real], Real) = {
     val alpha = DenseVector.zeros[Real](nObs) // DenseVector are mutable, no need for a val
@@ -34,17 +35,17 @@ object Core {
 
     while (numChanged > 0 || examineAll) { // as long as some coefficients where changed in the last iteration, or that a complete examination is required
       if (numChanged > 0) println("optimize, numchanged > 0")
-      if (examineAll) println("examineAll")
+      if (examineAll) println("optimize, examineAll")
       
       numChanged = 0
       if (examineAll) {
         for (i <- 0 to nObs - 1) {
-          numChanged += examineExample(i, alpha, y, b, C, cached, kerEval)
+          numChanged += examineExample(i, alpha, y, new Mutable(b), C, cached, kerEval)
         }
       } else { // Only examine the bound observations (observation for which a constraint is active)
         for (i <- 0 to nObs - 1) {
           if (tol < alpha(i) || alpha(i) < C - tol) {
-            numChanged += examineExample(i, alpha, y, b, C, cached, kerEval)
+            numChanged += examineExample(i, alpha, y, new Mutable(b), C, cached, kerEval)
           }
         }
       }
@@ -86,7 +87,7 @@ object Core {
    * @param i index of the Lagrange multiplier to optimize
    * @return 1 if at least one Lagrange multiplier has been modified
    */
-  def examineExample(i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Real, C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
+  def examineExample(i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Mutable[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
     println(s"examineExample, i2: $i2")
     val nObs = alpha.length
 
@@ -102,17 +103,17 @@ object Core {
       if (randomIndices._1.length > 1) {
         println("examineExample, first heuristic")
         val i1 = secondChoiceHeuristic(E2, cached)
-        if (takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval) == 1) return 1 // but, if takeStep returns 0, switch to next heuristic
+        if (takeStep(i1, i2, alpha, y, b, C, cached, kerEval) == 1) return 1 // if takeStep returns 0, switch to next heuristic
       }
 
       for (i1 <- 0 to randomIndices._1.length - 1) { // loop over all non-zero and non-C alpha, starting at random point
         println("examineExample, second heuristic")
-        if (takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval) == 1) return 1
+        if (takeStep(i1, i2, alpha, y, b, C, cached, kerEval) == 1) return 1
       }
 
       for (i1 <- 0 to nObs - 1) { // loop over all non-zero and non-C alpha, starting at random point TODO: there is no need to loop over the previously discarded non bound cases
         println("examineExample, third heuristic")
-        if (takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval) == 1) return 1
+        if (takeStep(i1, i2, alpha, y, b, C, cached, kerEval) == 1) return 1
       }
     }
 
@@ -141,6 +142,7 @@ object Core {
   def takeStep(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Mutable[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
     println(s"takeStep, i1")
     if (i1 == i2) return 0
+    
     val alph1 = alpha(i1)
     val alph2 = alpha(i2)
     val y1 = y(i1)
@@ -151,13 +153,20 @@ object Core {
 
     val s = y1 * y2
 
+    println(s"takeStep: alph1: $alph1, alph2: $alph2")
+    
     val (l, h) = if (y1 != y2) { // uppercases for l and h forbidden by Scala syntax: https://stackoverflow.com/questions/12636972/how-to-pattern-match-into-an-uppercase-variable
       (max(0.0, alph2 - alph1), min(C, C + alph2 - alph1))
     } else {
       (max(0.0, alph2 + alph1 - C), min(C, alph2 + alph1))
     }
 
-    if (math.abs(l - h) < tol) return 0
+    println(s"takeStep: l: $l, h: $h")
+    
+    if (math.abs(l - h) < epsLH) {
+      println("l and h are too close")
+      return 0
+    }
 
     val k11 = kerEval(i1, i1)
     val k12 = kerEval(i1, i2)
@@ -190,6 +199,8 @@ object Core {
         a2 = alph2
       }
     }
+    
+    println(s"takeStep, a2: $a2")
 
     if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) {
       return 0

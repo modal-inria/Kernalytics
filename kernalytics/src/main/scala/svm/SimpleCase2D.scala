@@ -13,7 +13,7 @@ import various.TypeDef._
  */
 object SimpleCase2D {
   def main {
-    val C = 1.0e-8
+    val C = 0.5e-4
     val y = new DenseVector[Real](Array[Real](1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0)) // TODO: manage this from a file
     val dataFile = "data/svm/SimpleCase2D/data.csv"
     val descriptorFile = "data/svm/SimpleCase2D/descriptor.csv"
