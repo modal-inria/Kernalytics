@@ -96,7 +96,7 @@ object ReadVar {
         .map(_.map(_.toReal))
         .map(new DenseVector[Real](_))
         
-      val allCorrectSize = data.forall(o => o.length == nCoeff)
+      val allCorrectSize = convertedData.forall(o => o.length == nCoeff)
         
       if (allCorrectSize)
         new ParsedVar(varName, KerEval.DenseVectorDenseVectorReal(DenseVector[DenseVector[Real]](convertedData)))

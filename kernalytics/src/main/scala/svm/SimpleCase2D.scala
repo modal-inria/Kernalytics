@@ -1,6 +1,7 @@
 package svm
 
 import breeze.linalg._
+import scala.util.{ Try, Success, Failure }
 
 import io.{ CombineVarParam, ReadVar, ReadParam }
 import rkhs.{ KerEval, IO }
@@ -24,7 +25,17 @@ object SimpleCase2D {
         kerEval <- CombineVarParam.generateAllKerEval(data, param)
       } yield (data(0).data.nPoint, kerEval)
 
-    val seg =
-      kerEvalTry.map(kerEval => Core.optimize(kerEval._1, kerEval._2, y, C))
+    val (errorMessage, parsedData) = kerEvalTry match {
+      case Failure(m) => (m.toString, (-1, -1))
+      case Success(s) => ("", s)
+    }
+
+//    println(errorMessage)
+    
+    // TODO: output lambda coefficients to a a csv file
+    
+        kerEvalTry
+          .map(kerEval => Core.optimize(kerEval._1, kerEval._2, y, C))
+          .map(println)
   }
 }
