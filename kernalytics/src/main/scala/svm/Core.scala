@@ -21,15 +21,21 @@ object Core {
   val tol: Real = 1.0e-3 // tolerance in alpha space
   val eps: Real = 1.0e-3 // tolerance in objective function value space
 
-  def optimize(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real): DenseVector[Real] = {
+  def optimize(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real): (DenseVector[Real], Real) = {
     val alpha = DenseVector.zeros[Real](nObs) // DenseVector are mutable, no need for a val
     var b: Real = 0.0 // threshold
     var cached = updateCache(alpha, b, y, kerEval) // cached reference is modified by updateCache, hence the var
+    
+    println(s"optimize, cached: $cached")
+    println(s"optimize, y: $y")
 
     var numChanged: Index = 0
     var examineAll = true
 
     while (numChanged > 0 || examineAll) { // as long as some coefficients where changed in the last iteration, or that a complete examination is required
+      if (numChanged > 0) println("optimize, numchanged > 0")
+      if (examineAll) println("examineAll")
+      
       numChanged = 0
       if (examineAll) {
         for (i <- 0 to nObs - 1) {
@@ -50,7 +56,7 @@ object Core {
       }
     }
 
-    return alpha
+    return (alpha, b)
   }
 
   /**
@@ -63,13 +69,14 @@ object Core {
     val nObs = alpha.length
     var e = DenseVector.zeros[Real](nObs)
     for (i <- 0 to nObs - 1) {
-      var sum = 0.0
+      var sum = - b
       for (j <- 0 to nObs - 1) {
         sum += y(j) * alpha(j) * kerEval(j, i)
       }
-      e(i) = sum - b
+      e(i) = sum - y(i) // u_i - y_i
     }
 
+    println(s"updateCache, e: $e")
     return e
   }
 
@@ -80,6 +87,7 @@ object Core {
    * @return 1 if at least one Lagrange multiplier has been modified
    */
   def examineExample(i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Real, C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
+    println(s"examineExample, i2: $i2")
     val nObs = alpha.length
 
     val y2 = y(i2)
@@ -87,20 +95,24 @@ object Core {
     val E2 = cached(i2)
     val r2 = E2 * y2
 
-    if ((r2 < -tol && alph2 < C) || (r2 > tol && alph2 > 0)) { // KKT
+    if ((r2 < -tol && alph2 < C) || (r2 > tol && alph2 > 0)) { // KKT violated for a non-bound observation
+      println("examineExample, KKT violated")
       val randomIndices = randomNonBoundIndices(alpha, C)
 
       if (randomIndices._1.length > 1) {
+        println("examineExample, first heuristic")
         val i1 = secondChoiceHeuristic(E2, cached)
-        return takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval)
+        if (takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval) == 1) return 1 // but, if takeStep returns 0, switch to next heuristic
       }
 
       for (i1 <- 0 to randomIndices._1.length - 1) { // loop over all non-zero and non-C alpha, starting at random point
-        return takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval)
+        println("examineExample, second heuristic")
+        if (takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval) == 1) return 1
       }
 
       for (i1 <- 0 to nObs - 1) { // loop over all non-zero and non-C alpha, starting at random point TODO: there is no need to loop over the previously discarded non bound cases
-        return takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval)
+        println("examineExample, third heuristic")
+        if (takeStep(i1, i2, alpha, y, new Mutable(b), C, cached, kerEval) == 1) return 1
       }
     }
 
@@ -127,6 +139,7 @@ object Core {
   }
 
   def takeStep(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Mutable[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
+    println(s"takeStep, i1")
     if (i1 == i2) return 0
     val alph1 = alpha(i1)
     val alph2 = alpha(i2)
@@ -193,6 +206,7 @@ object Core {
     alpha(i1) = a1
     alpha(i2) = a2
     
+    println("takeStep, alpha updated")
     return 1
   }
 }

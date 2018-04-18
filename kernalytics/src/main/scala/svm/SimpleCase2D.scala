@@ -13,7 +13,7 @@ import various.TypeDef._
  */
 object SimpleCase2D {
   def main {
-    val C = 1.0
+    val C = 1.0e-8
     val y = new DenseVector[Real](Array[Real](1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0)) // TODO: manage this from a file
     val dataFile = "data/svm/SimpleCase2D/data.csv"
     val descriptorFile = "data/svm/SimpleCase2D/descriptor.csv"
@@ -36,6 +36,6 @@ object SimpleCase2D {
     
         kerEvalTry
           .map(kerEval => Core.optimize(kerEval._1, kerEval._2, y, C))
-          .map(println)
+          .map(res => {println(res._1); println(res._2)})
   }
 }
