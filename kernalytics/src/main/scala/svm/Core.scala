@@ -16,25 +16,28 @@ object Core {
   /**
    * wrapper for mutable input, so that the syntax be similar to the original article, which was not written in a functional style.
    */
-  class Mutable[A](var value: A) 
+  class Mutable[A](var value: A)
 
   val tol: Real = 1.0e-3 // tolerance in alpha space
   val eps: Real = 1.0e-3 // tolerance in objective function value space
   val epsLH: Real = 1e-12
 
+  /**
+   * Call optimizeImpl with default initial values.
+   */
   def optimize(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real): (DenseVector[Real], Real) = {
     val alpha = DenseVector.zeros[Real](nObs) // DenseVector are mutable, no need for a val
     val b0: Real = 0.0
     optimizeImpl(nObs, kerEval, y, C, alpha, b0)
   }
-  
+
   /**
    * Debug version where the initial solution can be provided.
    */
   def optimizeImpl(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real, alpha: DenseVector[Real], b0: Real): (DenseVector[Real], Real) = {
-    var b: Real = 0 // threshold
+    var b: Real = b0 // threshold
     var cached = updateCache(alpha, b, y, kerEval) // cached reference is modified by updateCache, hence the var
-    
+
     println(s"optimize, cached: $cached")
     println(s"optimize, y: $y")
 
@@ -44,7 +47,7 @@ object Core {
     while (numChanged > 0 || examineAll) { // as long as some coefficients where changed in the last iteration, or that a complete examination is required
       if (numChanged > 0) println("optimize, numchanged > 0")
       if (examineAll) println("optimize, examineAll")
-      
+
       numChanged = 0
       if (examineAll) {
         for (i <- 0 to nObs - 1) {
@@ -77,15 +80,22 @@ object Core {
   def updateCache(alpha: DenseVector[Real], b: Real, y: DenseVector[Real], kerEval: (Index, Index) => Real): DenseVector[Real] = {
     val nObs = alpha.length
     var e = DenseVector.zeros[Real](nObs)
+    var u = DenseVector.zeros[Real](nObs)
     for (i <- 0 to nObs - 1) {
-      var sum = - b
+      u(i) = -b
       for (j <- 0 to nObs - 1) {
-        sum += y(j) * alpha(j) * kerEval(j, i)
+        u(i) += y(j) * alpha(j) * kerEval(j, i)
       }
-      e(i) = sum - y(i) // u_i - y_i
     }
 
-    println(s"updateCache, e: $e")
+    println("updateCache: alpha: " + alpha)
+    println("updateCache: b: " + b)
+    println("updateCache: u: " + u)
+    println("updateCache: y: " + y)
+    println("updateCache: u * y: " + (u *:* y))
+
+    e = u - y
+
     return e
   }
 
@@ -150,7 +160,7 @@ object Core {
   def takeStep(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], b: Mutable[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
     println(s"takeStep, i1")
     if (i1 == i2) return 0
-    
+
     val alph1 = alpha(i1)
     val alph2 = alpha(i2)
     val y1 = y(i1)
@@ -162,7 +172,7 @@ object Core {
     val s = y1 * y2
 
     println(s"takeStep: alph1: $alph1, alph2: $alph2")
-    
+
     val (l, h) = if (y1 != y2) { // uppercases for l and h forbidden by Scala syntax: https://stackoverflow.com/questions/12636972/how-to-pattern-match-into-an-uppercase-variable
       (max(0.0, alph2 - alph1), min(C, C + alph2 - alph1))
     } else {
@@ -170,7 +180,7 @@ object Core {
     }
 
     println(s"takeStep: l: $l, h: $h")
-    
+
     if (math.abs(l - h) < epsLH) {
       println("l and h are too close")
       return 0
@@ -207,7 +217,7 @@ object Core {
         a2 = alph2
       }
     }
-    
+
     println(s"takeStep, a2: $a2")
 
     if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) {
@@ -219,12 +229,12 @@ object Core {
     val b1 = E1 + y1 * (a1 - alph1) * k11 + y2 * (a2 - alph2) * k12 + b.value // update threshold to reflect change in Lagrange multiplier
     val b2 = E2 + y1 * (a1 - alph1) * k12 + y2 * (a2 - alph2) * k22 + b.value
     b.value = (b1 + b2) / 2.0
-    
+
     updateCache(alpha, b.value, y, kerEval)
 
     alpha(i1) = a1
     alpha(i2) = a2
-    
+
     println("takeStep, alpha updated")
     return 1
   }

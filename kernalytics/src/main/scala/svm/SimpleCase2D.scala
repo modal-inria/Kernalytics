@@ -15,9 +15,9 @@ import various.TypeDef._
 object SimpleCase2D {
   def main {
     val C: Real = 10000000 // large value to penalize non compliance with margins
-    val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, - 1.0, -1.0, -1.0, -1.0)
-    val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, -3.5, 0.0, 0.0, 0.0) // analytic solution
-    val b0: Real = -2.0
+    val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
+    val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
+    val b0: Real = 2.0
 
     val rootFolder = "data/svm/SimpleCase2D"
     val dataFile = rootFolder + Def.folderSep + "data.csv"
@@ -30,12 +30,12 @@ object SimpleCase2D {
         kerEval <- CombineVarParam.generateAllKerEval(data, param)
       } yield (data(0).data.nPoint, kerEval)
 
-    val (errorMessage, parsedData) = kerEvalTry match {
-      case Failure(m) => (m.toString, (-1, -1))
-      case Success(s) => ("", s)
+    kerEvalTry match {
+      case Failure(m) => { println("Parsing error: " + m.toString) }
+      case Success(s) => {}
     }
 
-    println(errorMessage)
+    // println(errorMessage)
 
     // TODO: output lambda coefficients to a a csv file
 
