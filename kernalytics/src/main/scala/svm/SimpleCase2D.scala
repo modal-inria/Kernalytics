@@ -24,7 +24,7 @@ object SimpleCase2D {
     //    val b0: Real = 2.0
 
     val alpha0 = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // perturbed analytic solution
-    val b0: Real = 12.0
+    val b0: Real = 0.0
 
     val rootFolder = "data/svm/SimpleCase2D"
     val dataFile = rootFolder + Def.folderSep + "data.csv"

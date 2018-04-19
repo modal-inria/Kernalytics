@@ -33,7 +33,9 @@ object Core {
    */
   def optimizeImpl(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real, alpha: DenseVector[Real], b0: Real): (DenseVector[Real], Real) = {
     b = b0 // threshold
-    var cached = updateCache(alpha, y, kerEval) // cached reference is modified by updateCache, hence the var
+    val cached = DenseVector.zeros[Real](nObs)
+      
+    updateCache(cached, alpha, y, kerEval) // cached reference is modified by updateCache, hence the var
 
     println(s"optimize, cached: $cached")
     println(s"optimize, y: $y")
@@ -74,7 +76,7 @@ object Core {
    * w = \sum_{i = 1}^N y_i \alpha_i x_i in the kernel case
    * u = \sum_{j = 1}^N y_j \alpha_j K(x_j, x)
    */
-  def updateCache(alpha: DenseVector[Real], y: DenseVector[Real], kerEval: (Index, Index) => Real): DenseVector[Real] = {
+  def updateCache(cached: DenseVector[Real], alpha: DenseVector[Real], y: DenseVector[Real], kerEval: (Index, Index) => Real) = {
     val nObs = alpha.length
     var e = DenseVector.zeros[Real](nObs)
     var u = DenseVector.zeros[Real](nObs)
@@ -83,17 +85,9 @@ object Core {
       for (j <- 0 to nObs - 1) {
         u(i) += y(j) * alpha(j) * kerEval(j, i)
       }
+      
+      cached(i) = u(i) - y(i)
     }
-
-    println("updateCache: alpha: " + alpha)
-    println("updateCache: b: " + b)
-    println("updateCache: u: " + u)
-    println("updateCache: y: " + y)
-    println("updateCache: u * y: " + (u *:* y))
-
-    e = u - y
-
-    return e
   }
 
   /**
@@ -227,7 +221,7 @@ object Core {
     val b2 = E2 + y1 * (a1 - alph1) * k12 + y2 * (a2 - alph2) * k22 + b
     b = (b1 + b2) / 2.0
 
-    updateCache(alpha, y, kerEval)
+    updateCache(cached, alpha, y, kerEval)
 
     alpha(i1) = a1
     alpha(i2) = a2
