@@ -16,8 +16,15 @@ object SimpleCase2D {
   def main {
     val C: Real = 10000000 // large value to penalize non compliance with margins
     val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
-    val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
-    val b0: Real = 2.0
+
+    //    val alpha0 = DenseVector.zeros[Real](8) // standard initialization
+    //    val b0: Real = 0.0
+
+    //    val alpha0 = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
+    //    val b0: Real = 2.0
+
+    val alpha0 = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // perturbed analytic solution
+    val b0: Real = 12.0
 
     val rootFolder = "data/svm/SimpleCase2D"
     val dataFile = rootFolder + Def.folderSep + "data.csv"
@@ -40,7 +47,7 @@ object SimpleCase2D {
     // TODO: output lambda coefficients to a a csv file
 
     kerEvalTry
-      .map(kerEval => Core.optimizeImpl(kerEval._1, kerEval._2, y, C, alpha, b0))
+      .map(kerEval => Core.optimizeImpl(kerEval._1, kerEval._2, y, C, alpha0, b0))
       .map(res => { println(res._1); println(res._2) })
   }
 }
