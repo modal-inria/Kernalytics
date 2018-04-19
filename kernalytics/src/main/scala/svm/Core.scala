@@ -25,7 +25,7 @@ object Core {
     val b0: Real = 0.0
     optimizeImpl(nObs, kerEval, y, C, alpha, b0)
   }
-  
+
   var b: Real = 0.0 // global var are ugly, but necessary to keep the syntax close to the article
 
   /**
@@ -34,8 +34,9 @@ object Core {
   def optimizeImpl(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real, alpha: DenseVector[Real], b0: Real): (DenseVector[Real], Real) = {
     b = b0 // threshold
     val cached = DenseVector.zeros[Real](nObs)
-      
+
     updateCache(cached, alpha, y, kerEval) // cached reference is modified by updateCache, hence the var
+    checkSolution(kerEval, alpha, y, C)
 
     println(s"optimize, cached: $cached")
     println(s"optimize, y: $y")
@@ -85,7 +86,7 @@ object Core {
       for (j <- 0 to nObs - 1) {
         u(i) += y(j) * alpha(j) * kerEval(j, i)
       }
-      
+
       cached(i) = u(i) - y(i)
     }
   }
@@ -222,11 +223,39 @@ object Core {
     b = (b1 + b2) / 2.0
 
     updateCache(cached, alpha, y, kerEval)
+    checkSolution(kerEval, alpha, y, C)
 
     alpha(i1) = a1
     alpha(i2) = a2
 
     println("takeStep, alpha updated")
     return 1
+  }
+
+  /**
+   * Output the objective function value to check convergence of the algorithm, and check the constraints.
+   * Only useful in debug.
+   */
+  def checkSolution(kerEval: (Index, Index) => Real, alpha: DenseVector[Real], y: DenseVector[Real], C: Real) {
+    val nObs = alpha.length
+    var psi = 0.0
+
+    for (i <- 0 to nObs - 1) {
+      for (j <- 0 to nObs - 1) {
+        psi += y(i) * y(j) * kerEval(i, j) * alpha(i) * alpha(j)
+      }
+    }
+
+    psi /= 2.0
+    psi -= sum(alpha)
+
+    println(s"checkSolution, psi = $psi")
+
+    for (i <- 0 to nObs - 1) {
+      if (alpha(i) < 0.0) println(s"checkSolution, alpha($i) < 0.0")
+      if (C < alpha(i)) println(s"checkSolution, C < alpha($i)")
+    }
+    
+    if (tol < math.abs(y.dot(alpha))) println("checkSolution, y.dot(alpha) != 0.0")
   }
 }
