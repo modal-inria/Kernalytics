@@ -24,7 +24,15 @@ object Core {
 
   def optimize(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real): (DenseVector[Real], Real) = {
     val alpha = DenseVector.zeros[Real](nObs) // DenseVector are mutable, no need for a val
-    var b: Real = 0.0 // threshold
+    val b0: Real = 0.0
+    optimizeImpl(nObs, kerEval, y, C, alpha, b0)
+  }
+  
+  /**
+   * Debug version where the initial solution can be provided.
+   */
+  def optimizeImpl(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real, alpha: DenseVector[Real], b0: Real): (DenseVector[Real], Real) = {
+    var b: Real = 0 // threshold
     var cached = updateCache(alpha, b, y, kerEval) // cached reference is modified by updateCache, hence the var
     
     println(s"optimize, cached: $cached")
