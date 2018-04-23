@@ -2,6 +2,7 @@ package svm
 
 import breeze.linalg._
 import java.io.File
+import org.apache.commons.io.FileUtils
 import scala.io.Source
 import scala.util.{ Try, Success, Failure }
 
@@ -72,6 +73,16 @@ object SVM {
    * Write the result with a column of alpha coefficients, and a column with just b.
    */
   def writeResults(rootFolder: String, res: (DenseVector[Real], Real)): Try[Unit] = {
-    ???
+    val nObs = res._1.size
+    val outFile = rootFolder + Def.folderSep + "model.csv"
+    
+    val header = "alpha" + Def.csvSep + "b"
+    val data = Array.tabulate(nObs + 1)(i => i match {
+      case 0 => header
+      case 1 => res._1(0) + Def.csvSep + res._2
+      case _ => res._1(i) + Def.csvSep
+    })
+    
+    return Try(FileUtils.writeStringToFile(new File(outFile), data.mkString(Def.eol), "UTF-8"))
   }
 }
