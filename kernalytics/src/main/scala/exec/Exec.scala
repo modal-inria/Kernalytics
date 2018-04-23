@@ -6,7 +6,7 @@ import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
 import various.Def
 import various.TypeDef._
 
-object Main {
+object Exec {
   case class AlgoParam(
     val algo: Map[String, String],
     val nObs: Index,
@@ -44,7 +44,10 @@ object Main {
    */
   def callAlgo(param: AlgoParam): Try[Unit] =
     algoExistence(param).flatMap(a => a match {
-      case _ if (a == "regression") => ???
+//      case _ if (a == "changepoint") => ???
+//      case _ if (a == "diffdist") => ???
+//      case _ if (a == "kmeans") => ???
+//      case _ if (a == "regression") => ???
       case _ if (a == "svm") => ???
       case _ => Failure(new Exception(s"Algorithm $a not implemented yet."))
     })
@@ -53,6 +56,6 @@ object Main {
     if (param.algo.contains("algo"))
       Success(param)
     else
-      Failure(new Exception("algo value not found in algorithm description file."))
+      Failure(new Exception("Algorithm name not found in algo.csv."))
   }
 }
