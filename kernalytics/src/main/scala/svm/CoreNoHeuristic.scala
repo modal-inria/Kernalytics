@@ -17,7 +17,7 @@ import various.TypeDef._
  * https://github.com/bnjmn/weka/blob/master/weka/src/main/java/weka/classifiers/functions/SMO.java
  * https://github.com/davidar/jclassification/blob/master/src/cc/vidr/jclassification/svm/SMO.java
  */
-object Core {
+object CoreNoHeuristic {
   val tolAlpha: Real = 1.0e-3 // tolerance in alpha space
   val tolObjective: Real = 1.0e-3 // tolerance in objective function value space (when kerEval is evaluated)
 
@@ -31,44 +31,26 @@ object Core {
   }
 
   var b: Real = 0.0 // global var are ugly, but necessary to keep the syntax close to the article
+  val nSweep = 100
 
   /**
    * Debug version where the initial solution can be provided.
    */
   def optimizeImpl(nObs: Index, kerEval: (Index, Index) => Real, y: DenseVector[Real], C: Real, alpha: DenseVector[Real], b0: Real): (DenseVector[Real], Real) = {
     b = b0 // threshold
-    val cached = DenseVector.zeros[Real](nObs)
 
+    val cached = DenseVector.zeros[Real](nObs)
     updateCache(cached, alpha, y, kerEval)
     checkSolution(kerEval, alpha, y, C)
 
-    println(s"optimize, cached: $cached")
     println(s"optimize, y: $y")
 
-    var numChanged: Index = 0
-    var examineAll = true
-
-    while (numChanged > 0 || examineAll) { // as long as some coefficients where changed in the last iteration, or that a complete examination is required
-      if (numChanged > 0) println("optimize, numchanged > 0")
-      if (examineAll) println("optimize, examineAll")
-
-      numChanged = 0
-      if (examineAll) {
-        for (i <- 0 to nObs - 1) {
-          numChanged += examineExample(i, alpha, y, C, cached, kerEval)
+    for (k <- 0 to nSweep - 1) {
+      println(s"k: $k")
+      for (i1 <- 0 to nObs - 1) {
+        for (i2 <- 0 to nObs - 1) {
+          takeStep(i1, i2, alpha, y, C, cached, kerEval)
         }
-      } else { // Only examine the bound observations (observation for which a constraint is active)
-        for (i <- 0 to nObs - 1) {
-          if (tolAlpha < alpha(i) || alpha(i) < C - tolAlpha) {
-            numChanged += examineExample(i, alpha, y, C, cached, kerEval)
-          }
-        }
-      }
-
-      if (examineAll == true) {
-        examineAll = false
-      } else if (numChanged == 0) { // if none were changed, that could mean that the heuristic could not find good candidates anymore, hence it is necessary to perform an exhaustive examination
-        examineAll = true
       }
     }
 
@@ -83,79 +65,25 @@ object Core {
    */
   def updateCache(cached: DenseVector[Real], alpha: DenseVector[Real], y: DenseVector[Real], kerEval: (Index, Index) => Real) = {
     val nObs = alpha.length
-    var e = DenseVector.zeros[Real](nObs)
-    var u = DenseVector.zeros[Real](nObs)
     for (i <- 0 to nObs - 1) {
-      u(i) = -b
+      var currSum = -b
+
       for (j <- 0 to nObs - 1) {
-        u(i) += y(j) * alpha(j) * kerEval(j, i)
+        currSum += y(j) * alpha(j) * kerEval(j, i)
       }
 
-      cached(i) = u(i) - y(i)
-    }
-  }
-
-  /**
-   * Use the KKT violation as a criterium for modification.
-   *
-   * @param i index of the Lagrange multiplier to optimize
-   * @return 1 if at least one Lagrange multiplier has been modified
-   */
-  def examineExample(i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
-    println(s"examineExample, i2: $i2")
-    val nObs = alpha.length
-
-    val y2 = y(i2)
-    val alph2 = alpha(i2)
-    val E2 = cached(i2)
-    val r2 = E2 * y2
-
-    if ((r2 < -tolAlpha && alph2 < C - tolObjective) || (r2 > tolAlpha && alph2 > tolObjective)) { // KKT violated AND non-bound observation
-      println("examineExample, KKT violated")
-      val randomIndices = randomNonBoundIndices(alpha, C)
-
-      if (randomIndices._1.length > 1) {
-        println("examineExample, first heuristic")
-        val i1 = secondChoiceHeuristic(E2, cached)
-        if (takeStep(i1, i2, alpha, y, C, cached, kerEval) == 1) return 1 // if takeStep returns 0, switch to next heuristic
-      }
-
-      for (i1 <- 0 to randomIndices._1.length - 1) { // loop over all non-zero and non-C alpha, starting at random point
-        println("examineExample, second heuristic")
-        if (takeStep(i1, i2, alpha, y, C, cached, kerEval) == 1) return 1
-      }
-
-      for (i1 <- 0 to nObs - 1) { // loop over all non-zero and non-C alpha, starting at random point TODO: there is no need to loop over the previously discarded non bound cases
-        println("examineExample, third heuristic")
-        if (takeStep(i1, i2, alpha, y, C, cached, kerEval) == 1) return 1
-      }
+      cached(i) = currSum - y(i)
     }
 
-    return 0 // no second Lagrange multiplier was a good enough candidate for the heuristic
-  }
-
-  /**
-   * Step size used in takeStep is approximated by |E1 - E2|. The heuristic selects the second candidate for which the step size is maximal.
-   */
-  def secondChoiceHeuristic(E2: Real, cached: DenseVector[Real]): Index = {
-    val nObs = cached.length
-    val dis = cached.map(E1 => math.abs(E2 - E1))
-
-    return argmax(dis)
-  }
-
-  /**
-   * Get the indices of non-bound Lagrange multiplier, in a random order to avoid bias in the algorithm.
-   */
-  def randomNonBoundIndices(alpha: DenseVector[Real], C: Real): (IndexedSeq[Index], IndexedSeq[Index]) = {
-    val nObs = alpha.length
-    val all = util.Random.shuffle(0 to nObs - 1)
-    return (all.filter(i => tolAlpha > alpha(i) || alpha(i) < C - tolAlpha), all)
+    println(s"updateCache: $cached")
   }
 
   def takeStep(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
-    println(s"takeStep, i1")
-    if (i1 == i2) return 0
+    println(s"takeStep, i1: $i1, i2: $i2")
+    if (i1 == i2) {
+      println("i1 == i2")
+      return 0
+    }
 
     val alph1 = alpha(i1)
     val alph2 = alpha(i2)
@@ -186,7 +114,7 @@ object Core {
     val k12 = kerEval(i1, i2)
     val k22 = kerEval(i2, i2)
 
-    val eta = k11 + k22 - 2 * k12
+    val eta = k11 + k22 - 2.0 * k12
 
     var a2: Real = 0.0 // use of a var to have a syntax similar to the article
 
@@ -199,6 +127,7 @@ object Core {
         a2 = h
       }
     } else {
+      println("eta == 0.0")
       val f1 = y1 * (E1 + b) - alph1 * k11 - s * alph2 * k12
       val f2 = y2 * (E2 + b) - s * alph1 * k12 - alph2 * k22
       val L1 = alph1 + s * (alph2 - l)
@@ -265,10 +194,10 @@ object Core {
     println(s"checkSolution, psi = $psi")
 
     for (i <- 0 to nObs - 1) {
-      if (alpha(i) < 0.0) println(s"checkSolution, alpha($i) < 0.0")
-      if (C < alpha(i)) println(s"checkSolution, C < alpha($i)")
+      if (alpha(i) < 0.0) println(s"checkSolution error, alpha($i) < 0.0")
+      if (C < alpha(i)) println(s"checkSolution error, C < alpha($i)")
     }
 
-    if (tolAlpha < math.abs(y.dot(alpha))) println("checkSolution, y.dot(alpha) != 0.0")
+    if (tolAlpha < math.abs(y.dot(alpha))) println("checkSolution error, y.dot(alpha) != 0.0")
   }
 }
