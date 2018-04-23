@@ -18,7 +18,7 @@ object KerEval {
     val typeName = "Real"
     def nPoint: Index = data.size
   }
-  
+
   case class DenseVectorDenseVectorReal(val data: DenseVector[DenseVector[Real]]) extends DataRoot {
     val typeName = "VectorReal"
     def nPoint: Index = data.size
