@@ -40,7 +40,7 @@ class CostMatrixSpec extends FlatSpec with Matchers {
         Algebra.R.InnerProductSpace,
         kernelSD)
 
-    val kerEval = KerEval.generateKerEval(data, kernel, true)
+    val kerEval = KerEval.generateKerEval(data, kernel)
 
     val costDirect = CostMatrix.completeCostMatrix(data, kernel)
     //		println("Cost with direct computation")
