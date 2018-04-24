@@ -5,17 +5,7 @@ import breeze.linalg._
 import various.TypeDef._
 
 /**
- * Core implementation of the algorithm. Note that it is not written in a functional style, but as direct implementation of the paper:
- * Sequential Minimal Optimization, John C. Platt, 1998
- *
- * TODO: for debug, export the cost value at each iteration, to ensure that it decreases properly
- *
- * Algorithm ends when no Lagrange multipliers have been modified.
- *
- * Implementation examples:
- * https://github.com/scalanlp/breeze-examples/blob/master/src/main/scala/breeze/classify/GaussianKernelSVM.scala
- * https://github.com/bnjmn/weka/blob/master/weka/src/main/java/weka/classifiers/functions/SMO.java
- * https://github.com/davidar/jclassification/blob/master/src/cc/vidr/jclassification/svm/SMO.java
+ * No heuristic version of the optimization algorithm, to single out the implementation error.
  */
 object CoreNoHeuristic {
   val tolAlpha: Real = 1.0e-3 // tolerance in alpha space

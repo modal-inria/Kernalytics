@@ -3,6 +3,7 @@ package exec
 import scala.util.{ Try, Success, Failure }
 
 import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
+import svm.SVM
 import various.Def
 import various.TypeDef._
 
@@ -16,17 +17,17 @@ object Exec {
   /**
    * @return string that is empty on success, or that contains a description of the problems.
    */
-  def main(workFolder: String): String = {
-    val algoFile = workFolder + Def.folderSep + "algo.csv"
-    val dataFile = workFolder + Def.folderSep + "data.csv"
-    val descFile = workFolder + Def.folderSep + "desc.csv"
+  def main(rootFolder: String): String = {
+    val algoFile = rootFolder + Def.folderSep + "algo.csv"
+    val dataFile = rootFolder + Def.folderSep + "data.csv"
+    val descFile = rootFolder + Def.folderSep + "desc.csv"
 
     val readAll = for {
       algo <- ReadAlgo.readAndParseFile(algoFile)
       data <- ReadVar.readAndParseVars(dataFile)
       param <- ReadParam.readAndParseParam(descFile)
       kerEval <- CombineVarParam.generateAllKerEval(data, param)
-    } yield (AlgoParam(algo, data(0).data.nPoint, kerEval, workFolder))
+    } yield (AlgoParam(algo, data(0).data.nPoint, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)
 
@@ -43,12 +44,12 @@ object Exec {
    * are however captured and managed properly, hence the Try[Unit] return type.
    */
   def callAlgo(param: AlgoParam): Try[Unit] =
-    algoExistence(param).flatMap(a => a match {
+    algoExistence(param).flatMap(a => a.algo("algo") match {
 //      case _ if (a == "changepoint") => ???
 //      case _ if (a == "diffdist") => ???
 //      case _ if (a == "kmeans") => ???
 //      case _ if (a == "regression") => ???
-      case _ if (a == "svm") => ???
+      case "svm" => SVM.main(a)
       case _ => Failure(new Exception(s"Algorithm $a not implemented yet."))
     })
 

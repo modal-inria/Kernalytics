@@ -18,7 +18,7 @@ object SVM {
     val res = for {
       y <- parseY(param.nObs, yFile)
       C <- getC(param)
-      resAlgo <- Success(Core.optimize(param.nObs, param.kerEval, y, C))
+      resAlgo <- Success(CoreNoHeuristic.optimize(param.nObs, param.kerEval, y, C))
       resWrite <- writeResults(param.rootFolder, resAlgo)
     } yield resWrite
 
@@ -80,7 +80,7 @@ object SVM {
     val data = Array.tabulate(nObs + 1)(i => i match {
       case 0 => header
       case 1 => res._1(0) + Def.csvSep + res._2
-      case _ => res._1(i) + Def.csvSep
+      case _ => res._1(i - 1) + Def.csvSep
     })
     
     return Try(FileUtils.writeStringToFile(new File(outFile), data.mkString(Def.eol), "UTF-8"))
