@@ -12,9 +12,7 @@ import various.TypeDef._
  *
  * Links: http://www.gatsby.ucl.ac.uk/~gretton/coursefiles/lecture4_introToRKHS.pdf
  */
-
 object EstimationRidge {
-  def estimate(kerEval: KerEval, y: DenseVector[Real], lambda: Real): DenseVector[Real] = {
-    ???
-  }
+  def estimate(kerEval: KerEval, y: DenseVector[Real], lambda: Real): DenseVector[Real] =
+    inv((kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObs))) * y
 }

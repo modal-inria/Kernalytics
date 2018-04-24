@@ -1,19 +1,20 @@
-package svm
+package exec
 
 import breeze.linalg._
 import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.io.Source
 import scala.util.{ Try, Success, Failure }
-
-import exec.Exec
 import various.Def
 import various.TypeDef._
+import svm.CoreNoHeuristic
 
 object SVM {
+  val headerSizeY = 2
+  
   def main(param: Exec.AlgoParam): Try[Unit] = {
     val rootFolder = param.rootFolder
-    val yFile = rootFolder + Def.folderSep + "y.csv"
+    val yFile = rootFolder + Def.folderSep + "yLearn.csv"
 
     val res = for {
       y <- parseY(param.kerEval.nObs, yFile)
@@ -55,7 +56,7 @@ object SVM {
     Try(Source.fromFile(new File(fileName)))
       .map(_.getLines.map(_.split(Def.csvSep)).toArray.transpose)
       .flatMap(checkNElements(nObs, _))
-      .flatMap(d => Try(d(0).map(s => s.toReal)))
+      .flatMap(d => Try(d(0).drop(headerSizeY).map(s => s.toReal)))
       .map(DenseVector[Real])
   }
       
@@ -63,10 +64,10 @@ object SVM {
    * Check that csv only has one columns, and the correct number of rows.
    */
   def checkNElements(nObs: Index, data: Array[Array[String]]): Try[Array[Array[String]]] = {
-    if (data.size == 1 && data(0).size == nObs)
+    if (data.size == 1 && data(0).size == nObs + headerSizeY)
       Success(data)
     else
-      Failure(new Exception(s"y.csv must have one column and $nObs rows."))
+      Failure(new Exception(s"y.csv must have one column and $nObs data rows."))
   }
 
   /**

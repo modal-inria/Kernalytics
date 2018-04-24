@@ -1,10 +1,8 @@
 package exec
 
 import scala.util.{ Try, Success, Failure }
-
 import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
 import rkhs.KerEval
-import svm.SVM
 import various.Def
 import various.TypeDef._
 
@@ -19,7 +17,7 @@ object Exec {
    */
   def main(rootFolder: String): String = {
     val algoFile = rootFolder + Def.folderSep + "algo.csv"
-    val dataFile = rootFolder + Def.folderSep + "data.csv"
+    val dataFile = rootFolder + Def.folderSep + "dataLearn.csv" // the data used in the KerEval is always the data from the learning phase
     val descFile = rootFolder + Def.folderSep + "desc.csv"
 
     val readAll = for {
@@ -48,7 +46,7 @@ object Exec {
 //      case _ if (a == "changepoint") => ???
 //      case _ if (a == "diffdist") => ???
 //      case _ if (a == "kmeans") => ???
-//      case _ if (a == "regression") => ???
+      case "regression" => Regression.main(a)
       case "svm" => SVM.main(a)
       case _ => Failure(new Exception(s"Algorithm $a not implemented yet."))
     })

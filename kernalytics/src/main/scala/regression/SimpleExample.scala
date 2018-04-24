@@ -37,6 +37,8 @@ object SimpleExample {
       coefficients,
       xLearn,
       kernel)
+      
+    println(s"coefficients: $coefficients")
 
     val fig = Figure()
     val plt = fig.subplot(0)
@@ -48,7 +50,7 @@ object SimpleExample {
     val min = -3.0
     val max = 18.0
     val sd = 1.0
-    val varName = "x"
+    val varName = "v1"
     val varType = "Real"
     val nPoints = 100
     val rootFolder = "data/regression/SimpleExample"
@@ -62,7 +64,9 @@ object SimpleExample {
       100) // nPoints
 
     val xStr = varName + Def.eol + varType + Def.eol + xLearn.data.mkString(Def.eol)
-    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "data.csv"), xStr, "UTF-8")
-    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "y.csv"), yLearn.data.mkString(Def.eol), "UTF-8")
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "dataLearn.csv"), xStr, "UTF-8")
+    
+    val yStr = "y" + Def.eol + "Real" + Def.eol + yLearn.data.mkString(Def.eol)
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "yLearn.csv"), yStr, "UTF-8")
   }
 }
