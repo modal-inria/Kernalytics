@@ -1,6 +1,6 @@
 package sandbox
 
-object TypeErasure2 {
+object TypeErasureB {
   
 }
 //package p06sandbox

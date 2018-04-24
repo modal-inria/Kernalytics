@@ -4,7 +4,7 @@ import breeze.linalg._
 
 import various.TypeDef._
 
-object TypeErasure {
+object TypeErasureA {
   trait DenseContent[T] {
     def compute(v: DenseVector[T]): String
   }
