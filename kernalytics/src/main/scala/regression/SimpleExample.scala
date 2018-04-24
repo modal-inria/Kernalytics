@@ -3,7 +3,12 @@ package regression
 import breeze.linalg._
 import breeze.plot._
 import breeze.stats.distributions._
+import java.io.File
+import org.apache.commons.io.FileUtils
+
 import rkhs.{ Gram, Kernel }
+import various.Def
+import various.TypeDef._
 
 object SimpleExample {
   def main {
@@ -37,5 +42,27 @@ object SimpleExample {
     val plt = fig.subplot(0)
     plt += plot(xLearn, yLearn, '.')
     plt += plot(xPredict, yPredict, '.')
+  }
+
+  def writeData {
+    val min = -3.0
+    val max = 18.0
+    val sd = 1.0
+    val varName = "x"
+    val varType = "Real"
+    val nPoints = 100
+    val rootFolder = "data/regression/SimpleExample"
+
+    val (xLearn, yLearn) = Data.oneDimFunction(
+      DenseVector[Real](0.0, 10.0, 16.0), // pointsX
+      DenseVector[Real](0.0, 10.0, 8.0), // pointsY
+      1.0, // sd
+      min, // min
+      max, // max,
+      100) // nPoints
+
+    val xStr = varName + Def.eol + varType + Def.eol + xLearn.data.mkString(Def.eol)
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "data.csv"), xStr, "UTF-8")
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "y.csv"), yLearn.data.mkString(Def.eol), "UTF-8")
   }
 }
