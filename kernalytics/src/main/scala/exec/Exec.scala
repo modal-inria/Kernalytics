@@ -3,6 +3,7 @@ package exec
 import scala.util.{ Try, Success, Failure }
 
 import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
+import rkhs.KerEval
 import svm.SVM
 import various.Def
 import various.TypeDef._
@@ -10,8 +11,7 @@ import various.TypeDef._
 object Exec {
   case class AlgoParam(
     val algo: Map[String, String],
-    val nObs: Index,
-    val kerEval: (Index, Index) => Real,
+    val kerEval: KerEval,
     val rootFolder: String)
     
   /**
@@ -26,8 +26,8 @@ object Exec {
       algo <- ReadAlgo.readAndParseFile(algoFile)
       data <- ReadVar.readAndParseVars(dataFile)
       param <- ReadParam.readAndParseParam(descFile)
-      kerEval <- CombineVarParam.generateAllKerEval(data, param)
-    } yield (AlgoParam(algo, data(0).data.nPoint, kerEval, rootFolder))
+      kerEval <- CombineVarParam.generateAllKerEval(data(0).data.nPoint, data, param)
+    } yield (AlgoParam(algo, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)
 

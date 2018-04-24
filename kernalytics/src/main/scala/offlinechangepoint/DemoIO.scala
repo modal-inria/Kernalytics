@@ -88,15 +88,15 @@ object DemoIO {
   }
 
   def segmentData(dataFile: String, descriptorFile: String, dMax: Index): Array[Int] = {
-    val kerEval =
+    val res =
       for {
         data <- ReadVar.readAndParseVars(dataFile)
         param <- ReadParam.readAndParseParam(descriptorFile)
-        kerEval <- CombineVarParam.generateAllKerEval(data, param)
+        kerEval <- CombineVarParam.generateAllKerEval(data(0).data.nPoint, data, param)
       } yield (data(0).data.nPoint, kerEval)
 
     val seg =
-      kerEval.map(k => Test.segment(k._2, dMax, k._1, None))
+      res.map(k => Test.segment(k._2.k, dMax, k._1, None))
 
     return seg match {
       case Success(a) => a

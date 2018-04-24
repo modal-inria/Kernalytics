@@ -16,9 +16,9 @@ object SVM {
     val yFile = rootFolder + Def.folderSep + "y.csv"
 
     val res = for {
-      y <- parseY(param.nObs, yFile)
+      y <- parseY(param.kerEval.nObs, yFile)
       C <- getC(param)
-      resAlgo <- Success(CoreNoHeuristic.optimize(param.nObs, param.kerEval, y, C))
+      resAlgo <- Success(CoreNoHeuristic.optimize(param.kerEval.nObs, param.kerEval.k, y, C))
       resWrite <- writeResults(param.rootFolder, resAlgo)
     } yield resWrite
 

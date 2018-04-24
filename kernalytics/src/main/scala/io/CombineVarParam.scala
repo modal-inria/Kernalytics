@@ -14,18 +14,19 @@ object CombineVarParam {
    * is the possibility that some parameters name do not match any variable name. A failure will also be returned
    * if no valid kernels are generated.
    */
-  def generateAllKerEval(data: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[(Index, Index) => Real] = {
+  def generateAllKerEval(nObs: Index, data: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[KerEval] = {
     val arrayNames = data.map(_.name)
     val arrayData = data.map(_.data)
 
     val namesToData = arrayNames.zip(arrayData).toMap
 
-    param
+    param 
       .reverse
       .foldLeft[Try[List[KerEval.VarDescription]]](Success(Nil))((acc, e) =>
         acc.flatMap(l => generateIndividualKerEval(namesToData, e).map(k => k :: l)))
       .map(_.toArray)
       .map(KerEval.multivariateKerEval(_))
+      .map(kerEval => new KerEval(nObs, kerEval))
   }
 
   /**

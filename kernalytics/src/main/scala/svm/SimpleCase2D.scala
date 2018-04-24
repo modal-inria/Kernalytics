@@ -34,8 +34,8 @@ object SimpleCase2D {
       for {
         data <- ReadVar.readAndParseVars(dataFile)
         param <- ReadParam.readAndParseParam(descriptorFile)
-        kerEval <- CombineVarParam.generateAllKerEval(data, param)
-      } yield (data(0).data.nPoint, kerEval)
+        kerEval <- CombineVarParam.generateAllKerEval(data(0).data.nPoint, data, param)
+      } yield kerEval
 
     kerEvalTry match {
       case Failure(m) => { println("Parsing error: " + m.toString) }
@@ -47,7 +47,7 @@ object SimpleCase2D {
     // TODO: output lambda coefficients to a a csv file
 
     kerEvalTry
-      .map(kerEval => CoreNoHeuristic.optimizeImpl(kerEval._1, kerEval._2, y, C, alpha0, b0))
+      .map(kerEval => CoreNoHeuristic.optimizeImpl(kerEval.nObs, kerEval.k, y, C, alpha0, b0))
       .map(res => { println(res._1); println(res._2) })
   }
 }
