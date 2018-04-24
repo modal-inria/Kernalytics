@@ -3,6 +3,28 @@ package rkhs
 import breeze.linalg._
 import various.TypeDef._
 
+/**
+ * Rich container for kernel, instead of just having a function (Index, Index) => Real.
+ * Subsequent access should always be performed using k instead of kerEval, as k uses the cache if it has been computed.
+ * TODO: implement low rank approximation in this class.
+ */
+class KerEval(val nObs: Index, val kerEval: (Index, Index) => Real, val cacheGram: Boolean) {
+  val cacheMatrix = if (cacheGram)
+    Some(DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => kerEval(i, j)))
+  else
+    None
+
+  def getK: DenseMatrix[Real] = cacheMatrix match {
+    case Some(m) => m
+    case None => DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => kerEval(i, j))
+  }
+
+  val k: (Index, Index) => Real = cacheMatrix match {
+    case Some(m) => (i, j) => m(i, j)
+    case None => (i, j) => kerEval(i, j)
+  }
+}
+
 object KerEval {
   /**
    * Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example).
@@ -36,9 +58,10 @@ object KerEval {
 
   /**
    * Generate the kerEval function from the data.
-   * It differs from the kernel fonction in the sense that it is a function from a pair of indices to R. It corresponds
+   * It differs from the kernel function in the sense that it is a function from a pair of indices to R. It corresponds
    * to the evaluation of the kernel on specific observations.
-   * If gramCache argument is true, the Gram matrix will be computed and accessed.
+   * The advantage of this abstraction is that it does not depend on the data type, because the data is kept in the closure of
+   * the function. KerEval is always (Index, Index) => Real.
    *
    * @param data data vector
    * @param kernel kernel function
@@ -46,14 +69,8 @@ object KerEval {
    */
   def generateKerEval[Data](
     data: DenseVector[Data],
-    kernel: (Data, Data) => Real,
-    gramCache: Boolean): (Index, Index) => Real =
-    if (gramCache) {
-      val gram = Gram.generate(data, kernel)
-      (i, j) => gram(i, j)
-    } else {
-      (i, j) => kernel(data(i), data(j))
-    }
+    kernel: (Data, Data) => Real): (Index, Index) => Real =
+    (i, j) => kernel(data(i), data(j))
 
   def linearCombKerEval(kArray: Array[(Index, Index) => Real], weights: DenseVector[Real]): (Index, Index) => Real =
     (i, j) => {

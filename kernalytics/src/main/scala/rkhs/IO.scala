@@ -39,8 +39,7 @@ object IO {
         Kernel.InnerProduct.linear(
           _: Real,
           _: Real,
-          Algebra.R.InnerProductSpace),
-        true))
+          Algebra.R.InnerProductSpace)))
     }
 
     case KerEval.DenseVectorReal(data) if kernelNameStr == "Gaussian" => {
@@ -53,8 +52,7 @@ object IO {
               _: Real,
               _: Real,
               Algebra.R.InnerProductSpace,
-              sd),
-            true)
+              sd))
         })
     }
 
@@ -64,8 +62,7 @@ object IO {
         Kernel.InnerProduct.linear(
           _: DenseVector[Real],
           _: DenseVector[Real],
-          Algebra.DenseVectorReal.InnerProductSpace),
-        true))
+          Algebra.DenseVectorReal.InnerProductSpace)))
     }
 
     case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Gaussian" => {
@@ -78,8 +75,7 @@ object IO {
               _: DenseVector[Real],
               _: DenseVector[Real],
               Algebra.DenseVectorReal.MetricSpace,
-              sd),
-            true)
+              sd))
         })
     }
 
@@ -93,8 +89,7 @@ object IO {
               _: DenseMatrix[Real],
               _: DenseMatrix[Real],
               Algebra.DenseMatrixReal.MetricSpace,
-              sd),
-            true)
+              sd))
         })
     }
 
