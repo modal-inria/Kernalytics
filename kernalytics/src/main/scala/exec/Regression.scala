@@ -5,9 +5,10 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.io.Source
 import scala.util.{ Try, Success, Failure }
+
+import regression.EstimationRidge
 import various.Def
 import various.TypeDef._
-import regression.EstimationRidge
 
 object Regression {
   val headerSizeY = 2
@@ -29,23 +30,9 @@ object Regression {
    * Check that the parameter C has been provided, is convertible and strictly positive.
    */
   def getLambda(param: Exec.AlgoParam): Try[Real] =
-    lambdaExistence(param)
+    Param.existence(param, "lambda")
       .flatMap(C => Try(param.algo("lambda").toReal))
-      .flatMap(lambdaPositive)
-
-  def lambdaExistence(param: Exec.AlgoParam): Try[Exec.AlgoParam] = {
-    if (param.algo.contains("lambda"))
-      Success(param)
-    else
-      Failure(new Exception("Lambda parameter not found in algo.csv."))
-  }
-
-  def lambdaPositive(C: Real): Try[Real] = {
-    if (0.0 <= C)
-      Success(C)
-    else
-      Failure(new Exception("C must be positive."))
-  }
+      .flatMap(Param.realPositive(_, "lambda"))
 
   /**
    * Check that the response file y has been provided and contains the right number of correctly formatted elements.
@@ -69,11 +56,8 @@ object Regression {
       Failure(new Exception(s"y.csv must have one column and $nObs data rows."))
   }
 
-  /**
-   * Write the result with a column of alpha coefficients, and a column with just b.
-   */
   def writeResults(rootFolder: String, res: DenseVector[Real]): Try[Unit] = {
     val outFile = rootFolder + Def.folderSep + "model.csv"
-    return Try(FileUtils.writeStringToFile(new File(outFile), "alpha" + Def.eol + res.data.mkString(Def.eol), "UTF-8"))
+    return Try(FileUtils.writeStringToFile(new File(outFile), res.data.mkString(Def.eol), "UTF-8"))
   }
 }

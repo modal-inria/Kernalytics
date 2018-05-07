@@ -27,23 +27,9 @@ object OfflineChangePoint {
    * Check that the parameter DMax has been provided, is convertible and strictly positive.
    */
   def getDMax(param: Exec.AlgoParam): Try[Index] =
-    DMaxExistence(param)
+    Param.existence(param, "DMax")
       .flatMap(DMax => Try(param.algo("DMax").toIndex))
-      .flatMap(DMaxStricltyPositive)
-
-  def DMaxExistence(param: Exec.AlgoParam): Try[Exec.AlgoParam] = {
-    if (param.algo.contains("DMax"))
-      Success(param)
-    else
-      Failure(new Exception("DMax parameter not found in algo.csv."))
-  }
-
-  def DMaxStricltyPositive(DMax: Index): Try[Index] = {
-    if (0 < DMax)
-      Success(DMax)
-    else
-      Failure(new Exception("C must be strictly positive."))
-  }
+      .flatMap(Param.indexStricltyPositive(_, "DMax"))
 
   /**
    * Write the result the list of change points in the optimal solution.
@@ -51,7 +37,7 @@ object OfflineChangePoint {
   def writeResults(rootFolder: String, res: Array[Index]): Try[Unit] = {
     val outFile = rootFolder + Def.folderSep + "model.csv"
 
-    val data = "change points" + Def.eol + res.map(_.toString).mkString(Def.eol)
+    val data = res.mkString(Def.eol)
 
     return Try(FileUtils.writeStringToFile(new File(outFile), data, "UTF-8"))
   }

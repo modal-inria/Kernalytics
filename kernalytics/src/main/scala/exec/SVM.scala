@@ -11,7 +11,7 @@ import svm.CoreNoHeuristic
 
 object SVM {
   val headerSizeY = 2
-  
+
   def main(param: Exec.AlgoParam): Try[Unit] = {
     val yFile = param.rootFolder + Def.folderSep + "yLearn.csv"
 
@@ -29,23 +29,9 @@ object SVM {
    * Check that the parameter C has been provided, is convertible and strictly positive.
    */
   def getC(param: Exec.AlgoParam): Try[Real] =
-    CExistence(param)
+    Param.existence(param, "C")
       .flatMap(C => Try(param.algo("C").toReal))
-      .flatMap(CStricltyPositive)
-
-  def CExistence(param: Exec.AlgoParam): Try[Exec.AlgoParam] = {
-    if (param.algo.contains("C"))
-      Success(param)
-    else
-      Failure(new Exception("C parameter not found in algo.csv."))
-  }
-
-  def CStricltyPositive(C: Real): Try[Real] = {
-    if (Def.epsilon < C)
-      Success(C)
-    else
-      Failure(new Exception("C must be strictly positive."))
-  }
+      .flatMap(Param.realStricltyPositive(_, "C"))
 
   /**
    * Check that the response file y has been provided and contains the right number of correctly formatted elements.
@@ -58,7 +44,7 @@ object SVM {
       .flatMap(d => Try(d(0).drop(headerSizeY).map(s => s.toReal)))
       .map(DenseVector[Real])
   }
-      
+
   /**
    * Check that csv only has one columns, and the correct number of rows.
    */
@@ -73,16 +59,12 @@ object SVM {
    * Write the result with a column of alpha coefficients, and a column with just b.
    */
   def writeResults(rootFolder: String, res: (DenseVector[Real], Real)): Try[Unit] = {
-    val nObs = res._1.size
-    val outFile = rootFolder + Def.folderSep + "model.csv"
-    
-    val header = "alpha" + Def.csvSep + "b"
-    val data = Array.tabulate(nObs + 1)(i => i match {
-      case 0 => header
-      case 1 => res._1(0) + Def.csvSep + res._2
-      case _ => res._1(i - 1) + Def.csvSep
-    })
-    
-    return Try(FileUtils.writeStringToFile(new File(outFile), data.mkString(Def.eol), "UTF-8"))
+    val alphaFile = rootFolder + Def.folderSep + "alpha.csv"
+    val bFile = rootFolder + Def.folderSep + "b.csv"
+
+    return for {
+      _ <- Try(FileUtils.writeStringToFile(new File(alphaFile), res._1.data.mkString(Def.eol), "UTF-8"))
+      _ <- Try(FileUtils.writeStringToFile(new File(bFile), res._2.toString, "UTF-8"))
+    } yield ()
   }
 }

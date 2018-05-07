@@ -1,7 +1,7 @@
 package kmeans
 
 import breeze.linalg._
-import rkhs.Gram
+import rkhs.{Gram, KerEval}
 
 object Base {
   /**
