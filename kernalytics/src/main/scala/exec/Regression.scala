@@ -57,7 +57,7 @@ object Regression {
   }
 
   def writeResults(rootFolder: String, res: DenseVector[Real]): Try[Unit] = {
-    val outFile = rootFolder + Def.folderSep + "model.csv"
+    val outFile = rootFolder + Def.folderSep + "beta.csv"
     return Try(FileUtils.writeStringToFile(new File(outFile), res.data.mkString(Def.eol), "UTF-8"))
   }
 }

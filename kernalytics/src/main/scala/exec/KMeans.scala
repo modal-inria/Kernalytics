@@ -34,7 +34,7 @@ object KMeans {
       .flatMap(Param.indexStricltyPositive(_, "nIteration"))
 
   def writeResults(rootFolder: String, res: IO.ReturnValue): Try[Unit] = {
-    val modelFile = rootFolder + Def.folderSep + "model.csv"
+    val modelFile = rootFolder + Def.folderSep + "alpha.csv"
     val labelFile = rootFolder + Def.folderSep + "label.csv"
     val data = res.labels.data.map(_.toString).mkString(Def.eol)
 

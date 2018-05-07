@@ -27,6 +27,13 @@ object Param {
       Failure(new Exception(s"$name must be strictly positive."))
   }
 
+  def realBounds(C: Real, lower: Real, upper: Real, name: String): Try[Real] = {
+    if (lower < C && C < upper)
+      Success(C)
+    else
+      Failure(new Exception(s"$name must be strictly positive."))
+  }
+
   def indexStricltyPositive(DMax: Index, name: String): Try[Index] = {
     if (0 < DMax)
       Success(DMax)

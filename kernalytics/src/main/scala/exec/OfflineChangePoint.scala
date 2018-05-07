@@ -35,7 +35,7 @@ object OfflineChangePoint {
    * Write the result the list of change points in the optimal solution.
    */
   def writeResults(rootFolder: String, res: Array[Index]): Try[Unit] = {
-    val outFile = rootFolder + Def.folderSep + "model.csv"
+    val outFile = rootFolder + Def.folderSep + "tau.csv"
 
     val data = res.mkString(Def.eol)
 
