@@ -43,9 +43,9 @@ object Exec {
    */
   def callAlgo(param: AlgoParam): Try[Unit] =
     algoExistence(param).flatMap(a => a.algo("algo") match {
-      case _ if (a == "changepoint") => ???
-//      case _ if (a == "diffdist") => ???
-//      case _ if (a == "kmeans") => ???
+      case "offlinechangepoint" => OfflineChangePoint.main(a)
+//      case "diffdist" => ???
+//      case "kmeans" => ???
       case "regression" => Regression.main(a)
       case "svm" => SVM.main(a)
       case _ => Failure(new Exception(s"Algorithm $a not implemented yet."))

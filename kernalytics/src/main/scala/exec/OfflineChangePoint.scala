@@ -11,7 +11,7 @@ import various.Def
 import various.TypeDef._
 import svm.CoreNoHeuristic
 
-object ChangePoint {
+object OfflineChangePoint {
   def main(param: Exec.AlgoParam): Try[Unit] = {
     val res = for {
       DMax <- getDMax(param)
@@ -51,8 +51,8 @@ object ChangePoint {
   def writeResults(rootFolder: String, res: Array[Index]): Try[Unit] = {
     val outFile = rootFolder + Def.folderSep + "model.csv"
 
-    val data = "change points" ++ res.map(_.toString)
+    val data = "change points" + Def.eol + res.map(_.toString).mkString(Def.eol)
 
-    return Try(FileUtils.writeStringToFile(new File(outFile), data.mkString(Def.eol), "UTF-8"))
+    return Try(FileUtils.writeStringToFile(new File(outFile), data, "UTF-8"))
   }
 }

@@ -57,6 +57,7 @@ object NumberSegmentSelection {
         })
 
       val f = Figure()
+      f.visible = false
       val p = f.subplot(0)
 
       p += plot(
