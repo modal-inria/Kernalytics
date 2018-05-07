@@ -2,13 +2,13 @@ package exec
 
 object Test {
   def svm {
-    val rootFolder = "data/exec/svm/SimpleCase2D"
+    val rootFolder = "data/exec/svm"
     val res = Exec.main(rootFolder)
     println(res)
   }
 
   def regression {
-    val rootFolder = "data/exec/regression/SimpleExample"
+    val rootFolder = "data/exec/regression"
     val res = Exec.main(rootFolder)
     println(res)
   }
