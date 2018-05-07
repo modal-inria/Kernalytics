@@ -43,7 +43,7 @@ object Exec {
    */
   def callAlgo(param: AlgoParam): Try[Unit] =
     algoExistence(param).flatMap(a => a.algo("algo") match {
-//      case _ if (a == "changepoint") => ???
+      case _ if (a == "changepoint") => ???
 //      case _ if (a == "diffdist") => ???
 //      case _ if (a == "kmeans") => ???
       case "regression" => Regression.main(a)

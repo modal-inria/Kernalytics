@@ -15,9 +15,11 @@ object NumberSegmentSelection {
    * @param nObs number of observations
    */
   def optimalNumberSegments(
-    cost: Array[Real],
+    resFromSegmentation: Segmentation.Accumulator,
     nObs: Index,
-    visualOutput: Option[String]): Index = {
+    visualOutput: Option[String]): Array[Index] = {
+    val cost = resFromSegmentation.L.map(_.head.cost)
+
     val DMax = cost.size - 1
     val DMin: Index = (0.6 * DMax.toReal).toIndex
 
@@ -78,6 +80,14 @@ object NumberSegmentSelection {
       f.saveas(baseDir + "/lines.png")
     })
 
-    return argmin(penalizedCost)
+    val bestD = argmin(penalizedCost)
+
+    return resFromSegmentation
+      .L
+      .map(_.head)
+      .apply(bestD)
+      .seg
+      .reverse
+      .toArray
   }
 }

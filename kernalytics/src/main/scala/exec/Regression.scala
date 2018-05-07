@@ -13,8 +13,7 @@ object Regression {
   val headerSizeY = 2
   
   def main(param: Exec.AlgoParam): Try[Unit] = {
-    val rootFolder = param.rootFolder
-    val yFile = rootFolder + Def.folderSep + "yLearn.csv"
+    val yFile = param.rootFolder + Def.folderSep + "yLearn.csv"
 
     val res = for {
       y <- parseY(param.kerEval.nObs, yFile)
