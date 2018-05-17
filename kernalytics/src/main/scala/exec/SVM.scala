@@ -11,9 +11,12 @@ import svm.CoreNoHeuristic
 
 object SVM {
   val headerSizeY = 2
+  val yFileName = "learnY.csv"
+  val alphaFileName = "paramAlpha.csv"
+  val bFileName = "paramB.csv"
 
   def main(param: Exec.AlgoParam): Try[Unit] = {
-    val yFile = param.rootFolder + Def.folderSep + "yLearn.csv"
+    val yFile = param.rootFolder + Def.folderSep + yFileName
 
     val res = for {
       y <- parseY(param.kerEval.nObs, yFile)
@@ -59,8 +62,8 @@ object SVM {
    * Write the result with a column of alpha coefficients, and a column with just b.
    */
   def writeResults(rootFolder: String, res: (DenseVector[Real], Real)): Try[Unit] = {
-    val alphaFile = rootFolder + Def.folderSep + "alpha.csv"
-    val bFile = rootFolder + Def.folderSep + "b.csv"
+    val alphaFile = rootFolder + Def.folderSep + alphaFileName
+    val bFile = rootFolder + Def.folderSep + bFileName
 
     return for {
       _ <- Try(FileUtils.writeStringToFile(new File(alphaFile), res._1.data.mkString(Def.eol), "UTF-8"))

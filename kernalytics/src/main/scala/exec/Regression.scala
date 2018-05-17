@@ -12,9 +12,11 @@ import various.TypeDef._
 
 object Regression {
   val headerSizeY = 2
+  val yFileName = "learnY.csv"
+  val betaFileName = "paramBeta.csv"
   
   def main(param: Exec.AlgoParam): Try[Unit] = {
-    val yFile = param.rootFolder + Def.folderSep + "yLearn.csv"
+    val yFile = param.rootFolder + Def.folderSep + yFileName
 
     val res = for {
       y <- parseY(param.kerEval.nObs, yFile)
@@ -57,7 +59,7 @@ object Regression {
   }
 
   def writeResults(rootFolder: String, res: DenseVector[Real]): Try[Unit] = {
-    val outFile = rootFolder + Def.folderSep + "beta.csv"
+    val outFile = rootFolder + Def.folderSep + betaFileName
     return Try(FileUtils.writeStringToFile(new File(outFile), res.data.mkString(Def.eol), "UTF-8"))
   }
 }

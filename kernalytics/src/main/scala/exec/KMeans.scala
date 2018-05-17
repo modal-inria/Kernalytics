@@ -12,6 +12,9 @@ import various.Def
 import various.TypeDef._
 
 object KMeans {
+  val alphaFileName = "paramAlpha.csv"
+  val labelFileName = "learnLabels.csv"
+  
   def main(param: Exec.AlgoParam): Try[Unit] = {
     val res = for {
       nClass <- getNClass(param)
@@ -34,8 +37,8 @@ object KMeans {
       .flatMap(Param.indexStricltyPositive(_, "nIteration"))
 
   def writeResults(rootFolder: String, res: IO.ReturnValue): Try[Unit] = {
-    val modelFile = rootFolder + Def.folderSep + "alpha.csv"
-    val labelFile = rootFolder + Def.folderSep + "label.csv"
+    val modelFile = rootFolder + Def.folderSep + alphaFileName
+    val labelFile = rootFolder + Def.folderSep + labelFileName
     val data = res.labels.data.map(_.toString).mkString(Def.eol)
 
     return for {

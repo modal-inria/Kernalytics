@@ -7,6 +7,10 @@ import various.Def
 import various.TypeDef._
 
 object Exec {
+  val algoFileName = "learnAlgo.csv"
+  val dataFileName = "learnData.csv"
+  val descFileName = "learnDesc.csv"
+  
   case class AlgoParam(
     val algo: Map[String, String],
     val kerEval: KerEval,
@@ -16,9 +20,9 @@ object Exec {
    * @return string that is empty on success, or that contains a description of the problems.
    */
   def main(rootFolder: String): String = {
-    val algoFile = rootFolder + Def.folderSep + "algo.csv"
-    val dataFile = rootFolder + Def.folderSep + "dataLearn.csv" // the data used in the KerEval is always the data from the learning phase
-    val descFile = rootFolder + Def.folderSep + "desc.csv"
+    val algoFile = rootFolder + Def.folderSep + algoFileName
+    val dataFile = rootFolder + Def.folderSep + dataFileName // the data used in the KerEval is always the data from the learning phase
+    val descFile = rootFolder + Def.folderSep + descFileName
 
     val readAll = for {
       algo <- ReadAlgo.readAndParseFile(algoFile)
@@ -55,6 +59,6 @@ object Exec {
     if (param.algo.contains("algo"))
       Success(param)
     else
-      Failure(new Exception("Algorithm name not found in algo.csv."))
+      Failure(new Exception(s"Algorithm name not found in $algoFileName."))
   }
 }

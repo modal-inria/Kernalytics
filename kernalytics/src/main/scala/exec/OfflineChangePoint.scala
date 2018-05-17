@@ -12,6 +12,8 @@ import various.TypeDef._
 import svm.CoreNoHeuristic
 
 object OfflineChangePoint {
+  val tauFileName = "paramTau.csv"
+  
   def main(param: Exec.AlgoParam): Try[Unit] = {
     val res = for {
       DMax <- getDMax(param)
@@ -35,7 +37,7 @@ object OfflineChangePoint {
    * Write the result the list of change points in the optimal solution.
    */
   def writeResults(rootFolder: String, res: Array[Index]): Try[Unit] = {
-    val outFile = rootFolder + Def.folderSep + "tau.csv"
+    val outFile = rootFolder + Def.folderSep + tauFileName
 
     val data = res.mkString(Def.eol)
 

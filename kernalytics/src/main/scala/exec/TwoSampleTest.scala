@@ -12,6 +12,8 @@ import various.Def
 import various.TypeDef._
 
 object TwoSampleTest {
+  val nullDataFile = "learnNull.csv"
+  
   def main(param: Exec.AlgoParam): Try[Unit] = {
     val res = for {
       nA <- getNA(param)
@@ -34,7 +36,7 @@ object TwoSampleTest {
       .flatMap(Param.realBounds(_, 0.0, 1.0, "alpha"))
 
   def writeResults(rootFolder: String, res: Boolean): Try[Unit] = {
-    val modelFile = rootFolder + Def.folderSep + "null.csv"
+    val modelFile = rootFolder + Def.folderSep + nullDataFile
     return Try(FileUtils.writeStringToFile(new File(modelFile), res.toString, "UTF-8"))
   }
 }
