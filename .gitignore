@@ -1,3 +1,6 @@
 /bin/
 /.metadata/
 .Rproj.user
+kernalytics/project/*
+kernalytics/target/*
+.recommenders/*

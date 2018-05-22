@@ -23,7 +23,7 @@ object CombineVarParam {
     param 
       .reverse
       .foldLeft[Try[List[KerEval.VarDescription]]](Success(Nil))((acc, e) =>
-        acc.flatMap(l => generateIndividualKerEval(namesToData, e).map(k => k :: l)))
+        acc.flatMap(l => generateIndividualVarDescription(namesToData, e).map(k => k :: l)))
       .map(_.toArray)
       .map(KerEval.multivariateKerEval(_))
       .map(kerEval => new KerEval(nObs, kerEval))
@@ -32,7 +32,7 @@ object CombineVarParam {
   /**
    * Can fail if the parameter does not match any variable.
    */
-  def generateIndividualKerEval(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
+  def generateIndividualVarDescription(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
     Try(dict(param.name))
       .map(data => new KerEval.VarDescription(param.weight, data, param.kernel))
 }

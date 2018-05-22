@@ -1,7 +1,7 @@
 package kmeans
 
 import breeze.linalg._
-import rkhs.{Gram, KerEval}
+import rkhs.{ Gram, KerEval }
 
 object Base {
   /**
@@ -23,6 +23,8 @@ object Base {
     val zik: DenseMatrix[Double])
 
   /**
+   * Computation of the distance between the observation K_x_i and the center of class C_k, where C_k is a linear combination of all the observations, as per the representer theorem.
+   *
    * ||K_x_i - C_k||^2 = ||K_x_i||^2 + ||C_k||^2 - 2 <K_x_i, C_k>
    * C_k = \sum_j a_{j, k} K_x_j, and this decomposition will be used multiple times here
    * ||K_x_i||^2 = <K_x_i, K_x_i> which is a diagonal element of the Gram matrix
@@ -31,7 +33,7 @@ object Base {
    * \sum_j a_{j, k} <K_x_i, K_x_j> is the scalar product between a row of initialState.param and the row corresponding to i in the Gram matrix
    *
    * Is it the same to directly compute K_x_i - C_k in the (K_x_1, ..., K_x_n) basis and compute the scalar product with itself ?
-   * Yes, but bilinearity of scalar product means there are n^2 terms to compute for each of the n observation (n^3 in total), most of them null because K_x_i is sparse in (K_x_1, ..., K_x_n) basis
+   * Yes, but bilinearity of scalar product means there are n^2 terms to compute for each of the n observation (n^3 in total). But most of them will be computed each time.
    * This could easily be tested numerically...
    */
   def eStep(initialState: ComputationState): ComputationState = {

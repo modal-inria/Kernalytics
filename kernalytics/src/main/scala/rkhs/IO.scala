@@ -17,7 +17,7 @@ object IO {
   }
 
   /**
-   * Parse the parameter string to extract both the kernel name
+   * Parse the parameter string to extract both the kernel name and the parameters
    */
   def parseParam(str: String): Try[(String, String)] = {
     val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
