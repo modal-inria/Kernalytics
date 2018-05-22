@@ -15,7 +15,7 @@ import various.TypeDef._
  * - kernel (including parameters)
  */
 object ReadParam {
-  class ParsedParam(val name: String, val weight: Real, val kernel: String)
+  class ParsedParam(val name: String, val weight: Real, val kernel: String, val param: String)
   
   def readAndParseParam(fileName: String): Try[Array[ParsedParam]] =
     readParams(fileName)
@@ -34,14 +34,29 @@ object ReadParam {
         .map(_.split(Def.csvSep))
         .transpose)
   
-  def parseIndividualParam(v: Array[String]): Try[ParsedParam] = {
+  def parseIndividualParam(v: Array[String]): Try[ParsedParam] =
+    for {
+      _ <- checkSize(v)
+      w <- Try(v(1).toReal)
+      (kernelStr, paramStr) <- parseParam(v(2))
+    } yield new ParsedParam(v(0), w, kernelStr, paramStr)
+  
+  def checkSize(v: Array[String]): Try[Array[String]] =
     if (v.size != 3)
-      return Failure(new Exception("In descriptor file, all variables must have three lines: name, weight and kernel."))
-       
-    val varName = v(0)
-    val weightStr = v(1)
-    val paramStr = v(2)
-    
-    return Try(weightStr.toReal).map(w => new ParsedParam(v(0), w, paramStr))
+      Failure(new Exception("In descriptor file, all variables must have three lines: name, weight and kernel."))
+    else
+      Success(v)
+  
+  /**
+   * Parse the parameter string to extract both the kernel name and the parameters
+   */
+  def parseParam(str: String): Try[(String, String)] = {
+    val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
+    val t = Try({ val t = paramPattern.findAllIn(str); (t.group(1), t.group(2)) })
+
+    t match {
+      case Success(_) => t
+      case Failure(_) => Failure(new Exception(str + " is not a valid parameter String")) // default exception for pattern matching is not expressive enough
+    }
   }
 }

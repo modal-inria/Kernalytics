@@ -10,31 +10,13 @@ import various.TypeDef._
  * Parsing for instantiation of kernels. As long as the number of combination of data and kernels is low, it is possible to maintain it by hand.
  * TODO: A more automated solution would have to be implemented later. This next solution could use the same interface with nameStr, paramStr and the data, though.
  */
-object IO {
-  def parseParamAndGenerateKernel(data: KerEval.DataRoot, paramStr: String): Try[(Index, Index) => Real] = {
-    parseParam(paramStr)
-      .flatMap(p => generateKernel(p._1, p._2, data))
-  }
-
-  /**
-   * Parse the parameter string to extract both the kernel name and the parameters
-   */
-  def parseParam(str: String): Try[(String, String)] = {
-    val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
-    val t = Try({ val t = paramPattern.findAllIn(str); (t.group(1), t.group(2)) })
-
-    t match {
-      case Success(_) => t
-      case Failure(_) => Failure(new Exception(str + " is not a valid parameter String")) // default exception for pattern matching is not expressive enough
-    }
-  }
-
+object KerEvalGenerator {
   /**
    * Generate a single var KerEval from a combination of parameter string and data.
    */
-  def generateKernel(kernelNameStr: String, paramStr: String, data: KerEval.DataRoot): Try[(Index, Index) => Real] = data match {
+  def generateKernelFromParamData(kernelNameStr: String, paramStr: String, data: KerEval.DataRoot): Try[(Index, Index) => Real] = data match {
     case KerEval.DenseVectorReal(data) if kernelNameStr == "Linear" => {
-      Success(KerEval.generateKerEval(
+      Success(KerEval.generateKerEvalFunc(
         data,
         Kernel.InnerProduct.linear(
           _: Real,
@@ -46,7 +28,7 @@ object IO {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be striclty superior to 0."))
         .map(sd => {
-          KerEval.generateKerEval(
+          KerEval.generateKerEvalFunc(
             data,
             Kernel.InnerProduct.gaussian(
               _: Real,
@@ -57,7 +39,7 @@ object IO {
     }
 
     case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Linear" => {
-      Success(KerEval.generateKerEval(
+      Success(KerEval.generateKerEvalFunc(
         data,
         Kernel.InnerProduct.linear(
           _: DenseVector[Real],
@@ -69,7 +51,7 @@ object IO {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
-          KerEval.generateKerEval(
+          KerEval.generateKerEvalFunc(
             data,
             Kernel.Metric.gaussian(
               _: DenseVector[Real],
@@ -83,7 +65,7 @@ object IO {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
-          KerEval.generateKerEval(
+          KerEval.generateKerEvalFunc(
             data,
             Kernel.Metric.gaussian(
               _: DenseMatrix[Real],

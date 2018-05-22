@@ -1,17 +1,18 @@
 package rkhs
 
 import breeze.linalg._
-import scala.util.{ Try, Success, Failure }
-
 import various.Def
 import various.TypeDef._
 
 /**
+ * Evolution of KerEval, so that different observations can be used for rows and columns. This is particularly useful for prediction, where the data is different from the learning set.
+ * 
  * Rich container for kernel, instead of just having a function (Index, Index) => Real.
  * Subsequent access should always be performed using k instead of kerEval, as k uses the cache if it has been computed.
+ * 
  * TODO: implement low rank approximation in this class.
  */
-class KerEval(val nObs: Index, val f: (Index, Index) => Real) {
+class KerEvalRC(val nObs: Index, val f: (Index, Index) => Real) {
   val cacheMatrix = if (Def.cacheGram)
     Some(DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => f(i, j)))
   else
@@ -57,45 +58,39 @@ object KerEval {
   class VarDescription(
     val weight: Real,
     val data: DataRoot,
-    val kernel: String,
     val param: String)
 
   /**
    * Generate the kerEval function from the data.
-   *
    * It differs from the kernel function in the sense that it is a function from a pair of indices to R. It corresponds
    * to the evaluation of the kernel on specific observations.
    * The advantage of this abstraction is that it does not depend on the data type, because the data is kept in the closure of
    * the function. KerEval is always (Index, Index) => Real.
    *
-   * Note that this only builds a part of a KerEval. The KerEval also contains a cache, and potentially low rank approximation and such.
-   *
    * @param data data vector
    * @param kernel kernel function
    * @param gramCache
    */
-  def generateKerEvalFunc[Data](
+  def generateKerEval[Data](
     data: DenseVector[Data],
     kernel: (Data, Data) => Real): (Index, Index) => Real =
     (i, j) => kernel(data(i), data(j))
 
-  def linearCombKerEvalFunc(kArray: Array[(Index, Index) => Real], weights: DenseVector[Real]): (Index, Index) => Real =
+  def linearCombKerEval(kArray: Array[(Index, Index) => Real], weights: DenseVector[Real]): (Index, Index) => Real =
     (i, j) => {
-      val evaluationResult = DenseVector.tabulate[Real](kArray.size)(k => kArray(k)(i, j)) // evaluate the various kernels funcs TODO: parallel evaluation
+      val evaluationResult = DenseVector.tabulate[Real](kArray.size)(k => kArray(k)(i, j)) // evaluate the various kernels TODO: parallel evaluation
       evaluationResult.dot(weights) // weight the results
     }
 
   /**
    * Take data description, generate the individual kernels and compute linear combination to generate final kernel.
    */
-  def multivariateKerEval(data: List[VarDescription]): Try[(Index, Index) => Real] = {
+  def multivariateKerEval(data: Array[VarDescription]): (Index, Index) => Real = {
     val nVar = data.size
-    val weights = DenseVector.tabulate[Real](nVar)(i => data(i).weight) // extract the weights for linearCombKerEvalFunc
+    val weights = DenseVector.tabulate[Real](nVar)(i => data(i).weight)
 
-    return data
-      .reverse
-      .foldLeft[Try[List[(Index, Index) => Real]]](Success(Nil))((acc, e) =>
-        acc.flatMap(l => KerEvalGenerator.generateKernelFromParamData(e.kernel, e.param, e.data).map(k => k :: l)))
-      .map(kList => linearCombKerEvalFunc(kList.toArray, weights))
+    val kArray = data.map(v => IO.parseParamAndGenerateKernel(v.data, v.param).get)
+
+    return KerEval.linearCombKerEval(kArray, weights)
   }
 }

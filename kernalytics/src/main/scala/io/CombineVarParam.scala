@@ -14,25 +14,24 @@ object CombineVarParam {
    * is the possibility that some parameters name do not match any variable name. A failure will also be returned
    * if no valid kernels are generated.
    */
-  def generateAllKerEval(nObs: Index, data: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[KerEval] = {
+  def generateGlobalKerEval(nObs: Index, data: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[KerEval] = {
     val arrayNames = data.map(_.name)
     val arrayData = data.map(_.data)
 
     val namesToData = arrayNames.zip(arrayData).toMap
 
-    param 
+    param
       .reverse
       .foldLeft[Try[List[KerEval.VarDescription]]](Success(Nil))((acc, e) =>
-        acc.flatMap(l => generateIndividualVarDescription(namesToData, e).map(k => k :: l)))
-      .map(_.toArray)
-      .map(KerEval.multivariateKerEval(_))
+        acc.flatMap(l => generateVarDescription(namesToData, e).map(k => k :: l)))
+      .flatMap(KerEval.multivariateKerEval(_))
       .map(kerEval => new KerEval(nObs, kerEval))
   }
 
   /**
    * Can fail if the parameter does not match any variable.
    */
-  def generateIndividualVarDescription(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
+  def generateVarDescription(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
     Try(dict(param.name))
-      .map(data => new KerEval.VarDescription(param.weight, data, param.kernel))
+      .map(data => new KerEval.VarDescription(param.weight, data, param.kernel, param.param))
 }

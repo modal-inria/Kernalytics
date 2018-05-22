@@ -4,7 +4,7 @@ import breeze.linalg._
 import scala.util.{ Try, Success, Failure }
 
 import io.{ CombineVarParam, ReadVar, ReadParam }
-import rkhs.{ KerEval, IO }
+import rkhs.{ KerEval, KerEvalGenerator }
 import various.Def
 import various.TypeDef._
 
@@ -34,7 +34,7 @@ object SimpleCase2D {
       for {
         data <- ReadVar.readAndParseVars(dataFile)
         param <- ReadParam.readAndParseParam(descriptorFile)
-        kerEval <- CombineVarParam.generateAllKerEval(data(0).data.nPoint, data, param)
+        kerEval <- CombineVarParam.generateGlobalKerEval(data(0).data.nPoint, data, param)
       } yield kerEval
 
     kerEvalTry match {

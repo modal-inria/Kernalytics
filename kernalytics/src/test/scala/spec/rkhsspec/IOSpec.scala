@@ -3,14 +3,15 @@ package spec.rkhsspec
 import org.scalatest._
 import scala.util.{ Try, Success, Failure }
 
-import rkhs.IO
+import io.ReadParam
+import rkhs.KerEvalGenerator
 
 object IOSpec {
   class IOSpec extends FlatSpec with Matchers {
     "parseParam" should "parse a correct parameter string." in {
       val validStr = "Gaussian(12.3)"
 
-      val res = IO.parseParam(validStr)
+      val res = ReadParam.parseParam(validStr)
 
       res should ===(Success(("Gaussian", "12.3")))
     }
@@ -18,7 +19,7 @@ object IOSpec {
     "parseParam" should "reject an incorrectly formatted string." in {
       val str = "toto"
 
-      val res = IO.parseParam(str)
+      val res = ReadParam.parseParam(str)
 
       val (errorMessage, parsedData) = res match {
         case Failure(m) => (m.toString, (-1, -1))

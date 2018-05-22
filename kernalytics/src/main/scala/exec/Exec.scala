@@ -28,7 +28,7 @@ object Exec {
       algo <- ReadAlgo.readAndParseFile(algoFile)
       data <- ReadVar.readAndParseVars(dataFile)
       param <- ReadParam.readAndParseParam(descFile)
-      kerEval <- CombineVarParam.generateAllKerEval(data(0).data.nPoint, data, param)
+      kerEval <- CombineVarParam.generateGlobalKerEval(data(0).data.nPoint, data, param)
     } yield (AlgoParam(algo, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)
