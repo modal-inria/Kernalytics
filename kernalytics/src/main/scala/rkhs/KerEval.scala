@@ -56,12 +56,14 @@ object KerEval {
 
   class VarDescription(
     val weight: Real,
-    val data: DataRoot,
+    val dataRow: DataRoot,
+    val dataCol: DataRoot,
     val kernel: String,
     val param: String)
 
   /**
-   * Generate the kerEval function from the data.
+   * Generate the kerEval function from the data. The resulting function does not depend on the data type. Data is kept
+   * in the closure.
    *
    * It differs from the kernel function in the sense that it is a function from a pair of indices to R. It corresponds
    * to the evaluation of the kernel on specific observations.
@@ -74,10 +76,8 @@ object KerEval {
    * @param kernel kernel function
    * @param gramCache
    */
-  def generateKerEvalFunc[Data](
-    data: DenseVector[Data],
-    kernel: (Data, Data) => Real): (Index, Index) => Real =
-    (i, j) => kernel(data(i), data(j))
+  def generateKerEvalFunc[Data](dataRow: DenseVector[Data], dataCol: DenseVector[Data], kernel: (Data, Data) => Real): (Index, Index) => Real =
+    (i, j) => kernel(dataRow(i), dataCol(j))
 
   def linearCombKerEvalFunc(kArray: Array[(Index, Index) => Real], weights: DenseVector[Real]): (Index, Index) => Real =
     (i, j) => {
@@ -95,7 +95,7 @@ object KerEval {
     return data
       .reverse
       .foldLeft[Try[List[(Index, Index) => Real]]](Success(Nil))((acc, e) =>
-        acc.flatMap(l => KerEvalGenerator.generateKernelFromParamData(e.kernel, e.param, e.data).map(k => k :: l)))
+        acc.flatMap(l => KerEvalGenerator.generateKernelFromParamData(e.kernel, e.param, e.dataRow, e.dataCol).map(k => k :: l)))
       .map(kList => linearCombKerEvalFunc(kList.toArray, weights))
   }
 }

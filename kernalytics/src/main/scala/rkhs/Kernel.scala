@@ -4,7 +4,7 @@ import breeze.linalg._
 import various.TypeDef._
 
 /**
- * This is the only point in the algorithm where the data types have to be known. Beyond that, only the kernel is evaluated, usually via KerEval.
+ * This is the last point in any algorithms where the data types have to be known. Beyond that, only the kernel is evaluated via KerEval.
  *
  * Bibliography:
  * - https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space#Examples

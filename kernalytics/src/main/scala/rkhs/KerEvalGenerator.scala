@@ -7,29 +7,33 @@ import various.Error
 import various.TypeDef._
 
 /**
- * Parsing for instantiation of kernels. As long as the number of combination of data and kernels is low, it is possible to maintain it by hand.
+ * Parsing for instantiation of kernels. As long as the number of combination of data and kernels is low, it is possible to maintain this list of combinations by hand.
+ * 
  * TODO: A more automated solution would have to be implemented later. This next solution could use the same interface with nameStr, paramStr and the data, though.
+ * TODO: This implementation could use dictionaries for example.
  */
 object KerEvalGenerator {
   /**
    * Generate a single var KerEval from a combination of parameter string and data.
    */
-  def generateKernelFromParamData(kernelNameStr: String, paramStr: String, data: KerEval.DataRoot): Try[(Index, Index) => Real] = data match {
-    case KerEval.DenseVectorReal(data) if kernelNameStr == "Linear" => {
+  def generateKernelFromParamData(kernelNameStr: String, paramStr: String, dataRow: KerEval.DataRoot, dataCol: KerEval.DataRoot): Try[(Index, Index) => Real] = (dataRow, dataCol) match {
+    case (KerEval.DenseVectorReal(dataRow), KerEval.DenseVectorReal(dataCol)) if kernelNameStr == "Linear" => {
       Success(KerEval.generateKerEvalFunc(
-        data,
+        dataRow,
+        dataCol,
         Kernel.InnerProduct.linear(
           _: Real,
           _: Real,
           Algebra.R.InnerProductSpace)))
     }
 
-    case KerEval.DenseVectorReal(data) if kernelNameStr == "Gaussian" => {
+    case (KerEval.DenseVectorReal(dataRow), KerEval.DenseVectorReal(dataCol)) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be striclty superior to 0."))
         .map(sd => {
           KerEval.generateKerEvalFunc(
-            data,
+            dataRow,
+            dataCol,
             Kernel.InnerProduct.gaussian(
               _: Real,
               _: Real,
@@ -38,21 +42,23 @@ object KerEvalGenerator {
         })
     }
 
-    case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Linear" => {
+    case (KerEval.DenseVectorDenseVectorReal(dataRow), KerEval.DenseVectorDenseVectorReal(dataCol)) if kernelNameStr == "Linear" => {
       Success(KerEval.generateKerEvalFunc(
-        data,
+        dataRow,
+        dataCol,
         Kernel.InnerProduct.linear(
           _: DenseVector[Real],
           _: DenseVector[Real],
           Algebra.DenseVectorReal.InnerProductSpace)))
     }
 
-    case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Gaussian" => {
+    case (KerEval.DenseVectorDenseVectorReal(dataRow), KerEval.DenseVectorDenseVectorReal(dataCol)) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
           KerEval.generateKerEvalFunc(
-            data,
+            dataRow,
+            dataCol,
             Kernel.Metric.gaussian(
               _: DenseVector[Real],
               _: DenseVector[Real],
@@ -61,12 +67,13 @@ object KerEvalGenerator {
         })
     }
 
-    case KerEval.DenseVectorDenseMatrixReal(data) if kernelNameStr == "Gaussian" => {
+    case (KerEval.DenseVectorDenseMatrixReal(dataRow), KerEval.DenseVectorDenseMatrixReal(dataCol)) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
           KerEval.generateKerEvalFunc(
-            data,
+            dataRow,
+            dataCol,
             Kernel.Metric.gaussian(
               _: DenseMatrix[Real],
               _: DenseMatrix[Real],
@@ -75,6 +82,6 @@ object KerEvalGenerator {
         })
     }
 
-    case _ => Failure(new Exception(kernelNameStr + " kernel is not available for " + data.typeName + "data type."))
+    case _ => Failure(new Exception(s"$kernelNameStr kernel is not available for (${dataRow.typeName}, ${dataCol.typeName})"))
   }
 }

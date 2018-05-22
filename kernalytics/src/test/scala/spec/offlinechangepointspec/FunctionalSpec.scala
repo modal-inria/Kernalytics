@@ -36,7 +36,7 @@ class FunctionalSpec extends FlatSpec with Matchers {
     }
 
     val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", KerEval.DenseVectorReal(data)).get
+    val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", KerEval.DenseVectorReal(data), KerEval.DenseVectorReal(data)).get
     val seg = Test.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
@@ -67,7 +67,7 @@ class FunctionalSpec extends FlatSpec with Matchers {
     }
 
     val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", KerEval.DenseVectorDenseMatrixReal(data)).get
+    val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", KerEval.DenseVectorDenseMatrixReal(data), KerEval.DenseVectorDenseMatrixReal(data)).get
     val seg = Test.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
@@ -96,8 +96,8 @@ class FunctionalSpec extends FlatSpec with Matchers {
     }
 
     val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val kerEval0 = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", KerEval.DenseVectorReal(data)).get
-    val kerEval1 = KerEvalGenerator.generateKernelFromParamData("Linear", "", KerEval.DenseVectorReal(data)).get
+    val kerEval0 = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", KerEval.DenseVectorReal(data), KerEval.DenseVectorReal(data)).get
+    val kerEval1 = KerEvalGenerator.generateKernelFromParamData("Linear", "", KerEval.DenseVectorReal(data), KerEval.DenseVectorReal(data)).get
     val kerEval = KerEval.linearCombKerEvalFunc(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
     val seg = Test.segment(kerEval, dMax, nPoints, None)
 
@@ -134,8 +134,8 @@ class FunctionalSpec extends FlatSpec with Matchers {
 
     val varDescription =
       List(
-        new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data0), "Gaussian", "0.5"),
-        new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data1), "Linear", ""))
+        new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data0), KerEval.DenseVectorReal(data0), "Gaussian", "0.5"),
+        new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data1), KerEval.DenseVectorReal(data1), "Linear", ""))
     val kerEval = KerEval.multivariateKerEval(varDescription)
     val seg = Test.segment(kerEval.get, dMax, nPoints, None)
 
