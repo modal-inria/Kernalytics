@@ -14,7 +14,7 @@ object CombineVarParam {
    * is the possibility that some parameters name do not match any variable name. A failure will also be returned
    * if no valid kernels are generated.
    */
-  def generateGlobalKerEval(nObs: Index, dataRow: Array[ReadVar.ParsedVar], dataCol: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[KerEval] = {
+  def generateGlobalKerEval(nObsRow: Index, nObsCol: Index, dataRow: Array[ReadVar.ParsedVar], dataCol: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[KerEval] = {
     val rowNames = dataRow.map(_.name)
     val rowData = dataRow.map(_.data)
     val dictRow = rowNames.zip(rowData).toMap
@@ -28,7 +28,7 @@ object CombineVarParam {
       .foldLeft[Try[List[KerEval.VarDescription]]](Success(Nil))((acc, e) =>
         acc.flatMap(l => linkParamToData(dictRow, dictCol, e).map(k => k :: l)))
       .flatMap(KerEval.multivariateKerEval(_))
-      .map(kerEval => new KerEval(nObs, kerEval))
+      .map(kerEval => new KerEval(nObsRow, nObsCol, kerEval))
   }
 
   /**
