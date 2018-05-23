@@ -48,10 +48,7 @@ object Base {
     val dik = DenseMatrix.tabulate[Double](nObs, nClass)(
       (i, k) => initialState.gram(i, i) // element {i, k} of dik is ||K_x_i - C_k||^2
         + squaredNormCk(k)
-        - 2.0 * Gram.scalarProduct(
-          initialState.gram,
-          initialState.param(::, k),
-          initialState.gram(::, i)))
+        - 2.0 * initialState.param(::, k).dot(initialState.gram(::, i)))
 
     val minLoc = dik(*, ::).map(r => argmin(r)) // line by line, find the min, get the column index
 
@@ -79,8 +76,8 @@ object Base {
     val nClass = param.cols
     val nObsLearning = param.rows
 
-    val dk = DenseVector.tabulate[Double](nClass)(k =>
-      kernel(obs, obs) // element {i, k} of dik is ||K_x_i - C_k||^2
+    val dk = DenseVector.tabulate[Double](nClass)(
+      k => kernel(obs, obs) // element {i, k} of dik is ||K_x_i - C_k||^2
         + squaredNormCk(k)
         - 2.0 * sum(DenseVector.tabulate[Double](nObsLearning)(i => param(i, k) * kernel(obs, learnObs(i)))))
 

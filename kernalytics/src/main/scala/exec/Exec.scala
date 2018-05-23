@@ -29,7 +29,7 @@ object Exec {
       data <- ReadVar.readAndParseVars(dataFile)
       param <- ReadParam.readAndParseParam(descFile)
       nPoint <- Success(data(0).data.nPoint)
-      kerEval <- CombineVarParam.generateGlobalKerEval(nPoint, nPoint, data, data, param)
+      kerEval <- CombineVarParam.generateGlobalKerEval(nPoint, nPoint, data, data, param) // the assumption here is that every algorithm need the complete Gram matrix
     } yield (AlgoParam(algo, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)
