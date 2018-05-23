@@ -64,7 +64,7 @@ object Base {
   /**
    * Similar to eStep, except that the prediction is made for a single observation which
    * was not part of the learning sample. This means that the gram matrix can not be used,
-   * and the kernel has to be called. This pattern is often seen in prediction. This is similar
+   * and the kernel function has to be called directly. This pattern is often seen in prediction. This is similar
    * to what happens in p01regression when the regression has to be called at some random sample points.
    */
   def predict(

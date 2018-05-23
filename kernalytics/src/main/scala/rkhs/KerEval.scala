@@ -56,7 +56,7 @@ object KerEval {
     def nPoint: Index = data.size
   }
 
-  class VarDescription(
+  class KerEvalFuncDescription(
     val weight: Real,
     val dataRow: DataRoot,
     val dataCol: DataRoot,
@@ -90,7 +90,7 @@ object KerEval {
   /**
    * Take data description, generate the individual kernels and compute linear combination to generate final kernel.
    */
-  def multivariateKerEval(data: List[VarDescription]): Try[(Index, Index) => Real] = {
+  def multivariateKerEval(data: List[KerEvalFuncDescription]): Try[(Index, Index) => Real] = {
     val nVar = data.size
     val weights = DenseVector.tabulate[Real](nVar)(i => data(i).weight) // extract the weights for linearCombKerEvalFunc
 

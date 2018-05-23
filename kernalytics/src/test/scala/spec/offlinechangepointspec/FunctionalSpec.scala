@@ -134,8 +134,8 @@ class FunctionalSpec extends FlatSpec with Matchers {
 
     val varDescription =
       List(
-        new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data0), KerEval.DenseVectorReal(data0), "Gaussian", "0.5"),
-        new KerEval.VarDescription(0.5, KerEval.DenseVectorReal(data1), KerEval.DenseVectorReal(data1), "Linear", ""))
+        new KerEval.KerEvalFuncDescription(0.5, KerEval.DenseVectorReal(data0), KerEval.DenseVectorReal(data0), "Gaussian", "0.5"),
+        new KerEval.KerEvalFuncDescription(0.5, KerEval.DenseVectorReal(data1), KerEval.DenseVectorReal(data1), "Linear", ""))
     val kerEval = KerEval.multivariateKerEval(varDescription)
     val seg = Test.segment(kerEval.get, dMax, nPoints, None)
 

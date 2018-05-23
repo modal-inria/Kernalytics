@@ -25,7 +25,7 @@ object CombineVarParam {
 
     param
       .reverse
-      .foldLeft[Try[List[KerEval.VarDescription]]](Success(Nil))((acc, e) =>
+      .foldLeft[Try[List[KerEval.KerEvalFuncDescription]]](Success(Nil))((acc, e) =>
         acc.flatMap(l => linkParamToData(dictRow, dictCol, e).map(k => k :: l)))
       .flatMap(KerEval.multivariateKerEval(_))
       .map(kerEval => new KerEval(nObsRow, nObsCol, kerEval))
@@ -34,9 +34,9 @@ object CombineVarParam {
   /**
    * Can fail if the parameter does not match any variable.
    */
-  def linkParamToData(dictRow: Map[String, KerEval.DataRoot], dictCol: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.VarDescription] =
+  def linkParamToData(dictRow: Map[String, KerEval.DataRoot], dictCol: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.KerEvalFuncDescription] =
     for {
       dataRow <- Try(dictRow(param.name))
       dataCol <- Try(dictCol(param.name))
-    } yield new KerEval.VarDescription(param.weight, dataRow, dataCol, param.kernel, param.param)
+    } yield new KerEval.KerEvalFuncDescription(param.weight, dataRow, dataCol, param.kernel, param.param)
 }
