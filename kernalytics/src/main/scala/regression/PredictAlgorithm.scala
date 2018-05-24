@@ -5,7 +5,7 @@ import breeze.linalg._
 import rkhs.KerEval
 import various.TypeDef._
 
-object Predict {
+object PredictAlgorithm {
   /**
    * The KerEval is a global KerEval which mixes learning and prediction observations.
    *

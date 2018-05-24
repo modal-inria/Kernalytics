@@ -5,15 +5,15 @@ import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
 import rkhs.KerEval
 import various.Def
 import various.TypeDef._
-import exec.learn.KMeans
-import exec.learn.OfflineChangePoint
-import exec.learn.Regression
-import exec.learn.SVM
-import exec.learn.TwoSampleTest
+import exec.predict.Regression
 
-object Learn {
+/**
+ * TODO: merge learn and predict observations in a bigger KerEval.
+ */
+object Predict {
   val algoFileName = "algo.csv"
-  val dataFileName = "learnData.csv"
+  val dataFileLearnName = "learnData.csv"
+  val dataFilePredictName = "predictData.csv"
   val descFileName = "desc.csv"
   
   case class AlgoParam(
@@ -26,12 +26,13 @@ object Learn {
    */
   def main(rootFolder: String): String = {
     val algoFile = rootFolder + Def.folderSep + algoFileName
-    val dataFile = rootFolder + Def.folderSep + dataFileName // the data used in the KerEval is always the data from the learning phase
+    val dataLearnFile = rootFolder + Def.folderSep + dataFileLearnName // the data used in the KerEval is always the data from the learning phase
+    val dataPredictFile = rootFolder + Def.folderSep + dataFilePredictName // the data used in the KerEval is always the data from the learning phase
     val descFile = rootFolder + Def.folderSep + descFileName
 
     val readAll = for {
       algo <- ReadAlgo.readAndParseFile(algoFile)
-      data <- ReadVar.readAndParseVars(dataFile)
+      data <- ReadVar.readAndParseVars2Files(dataLearnFile, dataPredictFile)
       param <- ReadParam.readAndParseParam(descFile)
       nPoint <- Success(data(0).data.nPoint)
       kerEval <- CombineVarParam.generateGlobalKerEval(nPoint, data, param) // the assumption here is that every algorithm need the complete Gram matrix
@@ -53,12 +54,12 @@ object Learn {
    */
   def callAlgo(param: AlgoParam): Try[Unit] =
     algoExistence(param).flatMap(a => a.algo("algo") match {
-      case "offlinechangepoint" => OfflineChangePoint.main(a)
-      case "twosampletest" => TwoSampleTest.main(a)
-      case "kmeans" => KMeans.main(a)
+//      case "offlinechangepoint" => OfflineChangePoint.main(a)
+//      case "twosampletest" => TwoSampleTest.main(a)
+//      case "kmeans" => KMeans.main(a)
       case "regression" => Regression.main(a)
-      case "svm" => SVM.main(a)
-      case _ => Failure(new Exception(s"Learn mode not available for algorithm $a."))
+//      case "svm" => SVM.main(a)
+      case _ => Failure(new Exception(s"Prediction mode not available for algorithm $a."))
     })
 
   def algoExistence(param: AlgoParam): Try[AlgoParam] = {

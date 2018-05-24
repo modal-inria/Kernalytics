@@ -1,46 +1,37 @@
-package exec.learn
+package exec.predict
 
 import breeze.linalg._
 import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.io.Source
 import scala.util.{ Try, Success, Failure }
-import regression.EstimationRidge
+import regression.{ EstimationRidge, PredictAlgorithm }
 import various.Def
 import various.TypeDef._
-import exec.Learn
+import exec.Predict
 import exec.Param
 
 object Regression {
-  val yFileName = "learnY.csv"
-  val betaFileName = "paramBeta.csv"
-  
-  def main(param: Learn.AlgoParam): Try[Unit] = {
-    val yFile = param.rootFolder + Def.folderSep + yFileName
+  def main(param: Predict.AlgoParam): Try[Unit] = {
+    val inBetaFileName = "paramBeta.csv"
+    val outYFileName = "predictY.csv"
 
     val res = for {
-      y <- parseY(param.kerEval.nObs, yFile)
-      lambda <- getLambda(param)
-      resAlgo <- Success(EstimationRidge.estimate(param.kerEval, y, lambda))
-      resWrite <- writeResults(param.rootFolder, resAlgo)
+      beta <- parseVectorFile(param.kerEval.nObs, param.rootFolder, inBetaFileName)
+      resAlgo <- Success(PredictAlgorithm.predict(param.kerEval, beta))
+      resWrite <- writeResults(param.rootFolder, outYFileName, resAlgo)
     } yield resWrite
 
     return res
   }
 
   /**
-   * Check that the parameter C has been provided, is convertible and strictly positive.
-   */
-  def getLambda(param: Learn.AlgoParam): Try[Real] =
-    Param.existence(param, "lambda")
-      .flatMap(C => Try(param.algo("lambda").toReal))
-      .flatMap(Param.realPositive(_, "lambda"))
-
-  /**
    * Check that the response file y has been provided and contains the right number of correctly formatted elements.
    * This should be moved later to io, as a response file in general has a lot of things to check.
    */
-  def parseY(nObs: Index, fileName: String): Try[DenseVector[Real]] = {
+  def parseVectorFile(nObs: Index, rootFolder: String, fileName: String): Try[DenseVector[Real]] = {
+    val inCompletePath = rootFolder + Def.folderSep + fileName
+
     Try(Source.fromFile(new File(fileName)))
       .map(_.getLines.map(_.split(Def.csvSep)).toArray.transpose)
       .flatMap(checkNElements(nObs, _))
@@ -49,16 +40,16 @@ object Regression {
   }
 
   /**
-   * Check that csv only has one columns, and the correct number of rows.
+   * Check that csv only has one column, and the correct number of rows.
    */
   def checkNElements(nObs: Index, data: Array[Array[String]]): Try[Array[Array[String]]] = {
     if (data.size == 1 && data(0).size == nObs)
       Success(data)
     else
-      Failure(new Exception(s"$yFileName must have one column and $nObs data rows."))
+      Failure(new Exception(s"y.csv must have one column and $nObs data rows."))
   }
 
-  def writeResults(rootFolder: String, res: DenseVector[Real]): Try[Unit] = {
+  def writeResults(rootFolder: String, betaFileName: String, res: DenseVector[Real]): Try[Unit] = {
     val outFile = rootFolder + Def.folderSep + betaFileName
     return Try(FileUtils.writeStringToFile(new File(outFile), res.data.mkString(Def.eol), "UTF-8"))
   }

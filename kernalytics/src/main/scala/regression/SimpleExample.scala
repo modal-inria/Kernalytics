@@ -32,7 +32,7 @@ object SimpleExample {
 
     val coefficients = EstimationBFGS.estimateCoefficient(gram, yLearn)
 
-    val yPredict = Predict.evaluateMinimize(
+    val yPredict = PredictAlgorithm.evaluateMinimize(
       xPredict,
       coefficients,
       xLearn,

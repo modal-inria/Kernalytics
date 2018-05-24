@@ -18,13 +18,31 @@ object ReadVar {
   class ParsedVar(val name: String, val data: KerEval.DataRoot) // type is not necessary, as data has been parsed into the correct type
  
   /**
-   * Create the list of parsed vars. The convoluted syntax with foldLeft is just a mechanism to catch the various errors that can occur.
+   * Create the list of parsed vars. The convoluted syntax with foldLeft is just a mechanism to catch the various errors that can occur, variable by variable.
    */
   def readAndParseVars(fileName: String): Try[Array[ParsedVar]] =
     readVars(fileName)
-    .flatMap(_.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flaMap passes the error on.
+    .flatMap(_.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flatMap passes the error on.
     .flatMap(checkUnicity)
     .map(_.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
+    
+  /**
+   * Create the list of parsed vars. The convoluted syntax with foldLeft is just a mechanism to catch the various errors that can occur, variable by variable.
+   */
+  def readAndParseVars2Files(fileNameA: String, fileNameB: String): Try[Array[ParsedVar]] = {
+    val read = for {
+      strA <- readVars(fileNameA)
+      strB <- readVars(fileNameB)
+    } yield (strA, strB)
+    
+    return read
+    .flatMap(p => mergeFilesContents(p._1, p._2))
+    .flatMap(_.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flatMap passes the error on.
+    .flatMap(checkUnicity)
+    .map(_.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
+    
+    ???
+  }
   
   /**
    * Format the data var by var, without parsing the individual values.
@@ -116,4 +134,13 @@ object ReadVar {
     else
       Success(data)
   }
+  
+  /**
+   * Merge learn and predict data to be used in a big KerEval. Can fail if both files contain different variables.
+   */
+  def mergeFilesContents(learnParsedVars: Array[Array[String]], predictParsedVars: Array[Array[String]]): Try[Array[Array[String]]] = {
+    ???
+  }
+  
+  def extractHeader(pVar: ParsedVar): String = ???
 }
