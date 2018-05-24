@@ -5,6 +5,11 @@ import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
 import rkhs.KerEval
 import various.Def
 import various.TypeDef._
+import exec.learn.KMeans
+import exec.learn.OfflineChangePoint
+import exec.learn.Regression
+import exec.learn.SVM
+import exec.learn.TwoSampleTest
 
 object Learn {
   val algoFileName = "learnAlgo.csv"

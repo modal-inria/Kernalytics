@@ -1,15 +1,14 @@
-package exec
+package exec.learn
 
 import breeze.linalg._
 import java.io.File
 import org.apache.commons.io.FileUtils
-import scala.io.Source
-import scala.util.{ Try, Success, Failure }
-
+import scala.util.{ Try, Success}
 import offlinechangepoint.{NumberSegmentSelection, Segmentation}
 import various.Def
 import various.TypeDef._
-import svm.CoreNoHeuristic
+import exec.Learn
+import exec.Param
 
 object OfflineChangePoint {
   val tauFileName = "paramTau.csv"

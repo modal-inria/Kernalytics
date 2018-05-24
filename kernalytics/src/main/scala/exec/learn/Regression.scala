@@ -1,14 +1,15 @@
-package exec
+package exec.learn
 
 import breeze.linalg._
 import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.io.Source
 import scala.util.{ Try, Success, Failure }
-
 import regression.EstimationRidge
 import various.Def
 import various.TypeDef._
+import exec.Learn
+import exec.Param
 
 object Regression {
   val headerSizeY = 2

@@ -1,6 +1,8 @@
-package exec
+package exec.learn
 
-object Test {
+import exec.Learn
+
+object Examples {
   def svm {
     val rootFolder = "data/exec/svm"
     val res = Learn.main(rootFolder)

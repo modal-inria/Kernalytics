@@ -24,7 +24,7 @@ object CombineVarParam {
       .foldLeft[Try[List[KerEval.KerEvalFuncDescription]]](Success(Nil))((acc, e) =>
         acc.flatMap(l => linkParamToData(dict, e).map(k => k :: l)))
       .flatMap(KerEval.multivariateKerEval(_))
-      .map(kerEval => new KerEval(nObs, kerEval))
+      .map(kerEval => new KerEval(nObs, 0, kerEval))
   }
 
   /**

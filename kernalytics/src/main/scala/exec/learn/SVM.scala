@@ -1,4 +1,4 @@
-package exec
+package exec.learn
 
 import breeze.linalg._
 import java.io.File
@@ -8,6 +8,8 @@ import scala.util.{ Try, Success, Failure }
 import various.Def
 import various.TypeDef._
 import svm.CoreNoHeuristic
+import exec.Learn
+import exec.Param
 
 object SVM {
   val headerSizeY = 2
