@@ -6,7 +6,7 @@ import various.Def
 import various.TypeDef._
 
 object Param {
-  def existence(param: Exec.AlgoParam, name: String): Try[Exec.AlgoParam] = {
+  def existence(param: Learn.AlgoParam, name: String): Try[Learn.AlgoParam] = {
     if (param.algo.contains(name))
       Success(param)
     else

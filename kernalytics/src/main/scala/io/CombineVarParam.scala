@@ -14,29 +14,24 @@ object CombineVarParam {
    * is the possibility that some parameters name do not match any variable name. A failure will also be returned
    * if no valid kernels are generated.
    */
-  def generateGlobalKerEval(nObsRow: Index, nObsCol: Index, dataRow: Array[ReadVar.ParsedVar], dataCol: Array[ReadVar.ParsedVar], param: Array[ReadParam.ParsedParam]): Try[KerEval] = {
-    val rowNames = dataRow.map(_.name)
-    val rowData = dataRow.map(_.data)
-    val dictRow = rowNames.zip(rowData).toMap
+  def generateGlobalKerEval(nObs: Index, parsedVars: Array[ReadVar.ParsedVar], parsedParams: Array[ReadParam.ParsedParam]): Try[KerEval] = {
+    val names = parsedVars.map(_.name)
+    val data = parsedVars.map(_.data)
+    val dict = names.zip(data).toMap
 
-    val colNames = dataCol.map(_.name)
-    val colData = dataRow.map(_.data)
-    val dictCol = colNames.zip(colData).toMap
-
-    param
+    parsedParams
       .reverse
       .foldLeft[Try[List[KerEval.KerEvalFuncDescription]]](Success(Nil))((acc, e) =>
-        acc.flatMap(l => linkParamToData(dictRow, dictCol, e).map(k => k :: l)))
+        acc.flatMap(l => linkParamToData(dict, e).map(k => k :: l)))
       .flatMap(KerEval.multivariateKerEval(_))
-      .map(kerEval => new KerEval(nObsRow, nObsCol, kerEval))
+      .map(kerEval => new KerEval(nObs, kerEval))
   }
 
   /**
    * Can fail if the parameter does not match any variable.
    */
-  def linkParamToData(dictRow: Map[String, KerEval.DataRoot], dictCol: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.KerEvalFuncDescription] =
+  def linkParamToData(dict:Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.KerEvalFuncDescription] =
     for {
-      dataRow <- Try(dictRow(param.name))
-      dataCol <- Try(dictCol(param.name))
-    } yield new KerEval.KerEvalFuncDescription(param.weight, dataRow, dataCol, param.kernel, param.param)
+      data <- Try(dict(param.name))
+    } yield new KerEval.KerEvalFuncDescription(param.weight, data, param.kernel, param.param)
 }

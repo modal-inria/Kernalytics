@@ -16,7 +16,7 @@ class ErrorSpec extends FlatSpec with Matchers {
     val paramStr = "-12.0"
     val data = KerEval.DenseVectorReal(DenseVector[Real](0.0, 12.0, -5.6))
     
-    val res = KerEvalGenerator.generateKernelFromParamData(kernelNameStr, paramStr, data, data)
+    val res = KerEvalGenerator.generateKernelFromParamData(kernelNameStr, paramStr, data)
     
     val mes = res match {
       case Success(_) => "No problem in parameters."

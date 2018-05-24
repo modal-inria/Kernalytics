@@ -15,7 +15,7 @@ object Regression {
   val yFileName = "learnY.csv"
   val betaFileName = "paramBeta.csv"
   
-  def main(param: Exec.AlgoParam): Try[Unit] = {
+  def main(param: Learn.AlgoParam): Try[Unit] = {
     val yFile = param.rootFolder + Def.folderSep + yFileName
 
     val res = for {
@@ -31,7 +31,7 @@ object Regression {
   /**
    * Check that the parameter C has been provided, is convertible and strictly positive.
    */
-  def getLambda(param: Exec.AlgoParam): Try[Real] =
+  def getLambda(param: Learn.AlgoParam): Try[Real] =
     Param.existence(param, "lambda")
       .flatMap(C => Try(param.algo("lambda").toReal))
       .flatMap(Param.realPositive(_, "lambda"))

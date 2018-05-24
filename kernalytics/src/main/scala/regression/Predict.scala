@@ -1,9 +1,21 @@
 package regression
 
 import breeze.linalg._
+
+import rkhs.KerEval
 import various.TypeDef._
 
+
 object Predict {
+  /**
+   * The KerEval is a global KerEval mixing 
+   * 
+   * The first nLearn observations are the learning set, the last observation are the prediction set.
+   */
+  def predict(ker: KerEval) {
+    ???
+  }
+  
   /**
    * Compute the evaluation of the minimizer function.
    */

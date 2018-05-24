@@ -14,7 +14,7 @@ import svm.CoreNoHeuristic
 object OfflineChangePoint {
   val tauFileName = "paramTau.csv"
   
-  def main(param: Exec.AlgoParam): Try[Unit] = {
+  def main(param: Learn.AlgoParam): Try[Unit] = {
     val res = for {
       DMax <- getDMax(param)
       resSegmentation <- Success(Segmentation.loopOverTauP(param.kerEval.nObs, param.kerEval.k, DMax))
@@ -28,7 +28,7 @@ object OfflineChangePoint {
   /**
    * Check that the parameter DMax has been provided, is convertible and strictly positive.
    */
-  def getDMax(param: Exec.AlgoParam): Try[Index] =
+  def getDMax(param: Learn.AlgoParam): Try[Index] =
     Param.existence(param, "DMax")
       .flatMap(DMax => Try(param.algo("DMax").toIndex))
       .flatMap(Param.indexStricltyPositive(_, "DMax"))

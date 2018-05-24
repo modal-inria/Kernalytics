@@ -15,7 +15,7 @@ object SVM {
   val alphaFileName = "paramAlpha.csv"
   val bFileName = "paramB.csv"
 
-  def main(param: Exec.AlgoParam): Try[Unit] = {
+  def main(param: Learn.AlgoParam): Try[Unit] = {
     val yFile = param.rootFolder + Def.folderSep + yFileName
 
     val res = for {
@@ -31,7 +31,7 @@ object SVM {
   /**
    * Check that the parameter C has been provided, is convertible and strictly positive.
    */
-  def getC(param: Exec.AlgoParam): Try[Real] =
+  def getC(param: Learn.AlgoParam): Try[Real] =
     Param.existence(param, "C")
       .flatMap(C => Try(param.algo("C").toReal))
       .flatMap(Param.realStricltyPositive(_, "C"))

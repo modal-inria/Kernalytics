@@ -11,17 +11,15 @@ import various.TypeDef._
  * Subsequent access should always be performed using k instead of kerEval, as k uses the cache if it has been computed.
  * TODO: implement low rank approximation in this class.
  */
-class KerEval(val nObsRow: Index, val nObsCol: Index, val f: (Index, Index) => Real) {
-  val nObs = nObsRow // definition for legacy algorithms, when KerEval was necessarily symmetric
-  
+class KerEval(val nObs: Index, val f: (Index, Index) => Real) {  
   val cacheMatrix = if (Def.cacheGram)
-    Some(DenseMatrix.tabulate[Real](nObsRow, nObsCol)((i, j) => f(i, j)))
+    Some(DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => f(i, j)))
   else
     None
 
   def getK: DenseMatrix[Real] = cacheMatrix match {
     case Some(m) => m
-    case None => DenseMatrix.tabulate[Real](nObsRow, nObsCol)((i, j) => f(i, j))
+    case None => DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => f(i, j))
   }
 
   val k: (Index, Index) => Real = cacheMatrix match {
@@ -58,8 +56,7 @@ object KerEval {
 
   class KerEvalFuncDescription(
     val weight: Real,
-    val dataRow: DataRoot,
-    val dataCol: DataRoot,
+    val data: DataRoot,
     val kernel: String,
     val param: String)
 
@@ -78,8 +75,8 @@ object KerEval {
    * @param kernel kernel function
    * @param gramCache
    */
-  def generateKerEvalFunc[Data](dataRow: DenseVector[Data], dataCol: DenseVector[Data], kernel: (Data, Data) => Real): (Index, Index) => Real =
-    (i, j) => kernel(dataRow(i), dataCol(j))
+  def generateKerEvalFunc[Data](data: DenseVector[Data], kernel: (Data, Data) => Real): (Index, Index) => Real =
+    (i, j) => kernel(data(i), data(j))
 
   def linearCombKerEvalFunc(kArray: Array[(Index, Index) => Real], weights: DenseVector[Real]): (Index, Index) => Real =
     (i, j) => {
@@ -97,7 +94,7 @@ object KerEval {
     return data
       .reverse
       .foldLeft[Try[List[(Index, Index) => Real]]](Success(Nil))((acc, e) =>
-        acc.flatMap(l => KerEvalGenerator.generateKernelFromParamData(e.kernel, e.param, e.dataRow, e.dataCol).map(k => k :: l)))
+        acc.flatMap(l => KerEvalGenerator.generateKernelFromParamData(e.kernel, e.param, e.data).map(k => k :: l)))
       .map(kList => linearCombKerEvalFunc(kList.toArray, weights))
   }
 }

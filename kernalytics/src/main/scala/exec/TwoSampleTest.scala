@@ -14,7 +14,7 @@ import various.TypeDef._
 object TwoSampleTest {
   val nullDataFile = "learnNull.csv"
   
-  def main(param: Exec.AlgoParam): Try[Unit] = {
+  def main(param: Learn.AlgoParam): Try[Unit] = {
     val res = for {
       nA <- getNA(param)
       alpha <- getAlpha(param)
@@ -25,12 +25,12 @@ object TwoSampleTest {
     return res
   }
 
-  def getNA(param: Exec.AlgoParam): Try[Index] =
+  def getNA(param: Learn.AlgoParam): Try[Index] =
     Param.existence(param, "nA")
       .flatMap(C => Try(param.algo("nA").toIndex))
       .flatMap(Param.indexStricltyPositive(_, "nA"))
 
-  def getAlpha(param: Exec.AlgoParam): Try[Real] =
+  def getAlpha(param: Learn.AlgoParam): Try[Real] =
     Param.existence(param, "alpha")
       .flatMap(C => Try(param.algo("alpha").toReal))
       .flatMap(Param.realBounds(_, 0.0, 1.0, "alpha"))

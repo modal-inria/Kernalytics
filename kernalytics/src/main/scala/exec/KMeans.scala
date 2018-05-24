@@ -15,7 +15,7 @@ object KMeans {
   val alphaFileName = "paramAlpha.csv"
   val labelFileName = "learnLabels.csv"
   
-  def main(param: Exec.AlgoParam): Try[Unit] = {
+  def main(param: Learn.AlgoParam): Try[Unit] = {
     val res = for {
       nClass <- getNClass(param)
       nIteration <- getNIteration(param)
@@ -26,12 +26,12 @@ object KMeans {
     return res
   }
 
-  def getNClass(param: Exec.AlgoParam): Try[Index] =
+  def getNClass(param: Learn.AlgoParam): Try[Index] =
     Param.existence(param, "nClass")
       .flatMap(C => Try(param.algo("nClass").toIndex))
       .flatMap(Param.indexStricltyPositive(_, "nClass"))
 
-  def getNIteration(param: Exec.AlgoParam): Try[Index] =
+  def getNIteration(param: Learn.AlgoParam): Try[Index] =
     Param.existence(param, "nIteration")
       .flatMap(C => Try(param.algo("nIteration").toIndex))
       .flatMap(Param.indexStricltyPositive(_, "nIteration"))
