@@ -19,12 +19,12 @@ class IOSpec extends FlatSpec with Matchers {
   "parseData" should "read correctly formatted data on drive" in {
     val fileName = "data/io/00 - 1VarReal.csv"
 
-    val data = ReadVar.readAndParseVars(fileName)
+    val res = ReadVar.readAndParseVars(fileName)
     val zeroVec = DenseVector.zeros[Real](4)
 
-    val (nameString, dataVector) = data match {
+    val (nameString, dataVector) = res match {
       case Failure(m) => (m.getMessage, zeroVec)
-      case Success(s) => (
+      case Success((s, _)) => (
         s(0).name,
         s(0).data match {
           case KerEval.DenseVectorReal(vec) => vec
@@ -50,7 +50,7 @@ class IOSpec extends FlatSpec with Matchers {
 
     val (nameString, dataVector) = data match {
       case Failure(m) => (m.toString, zeroVec)
-      case Success(s) => (
+      case Success((s, _)) => (
         s(0).name,
         s(0).data match {
           case KerEval.DenseVectorReal(vec) => vec
@@ -69,7 +69,7 @@ class IOSpec extends FlatSpec with Matchers {
 
     val (nameString, dataVector) = data match {
       case Failure(m) => (m.toString, zeroVec)
-      case Success(s) => (
+      case Success((s, _)) => (
         s(0).name,
         s(0).data match {
           case KerEval.DenseVectorReal(vec) => vec
@@ -89,7 +89,7 @@ class IOSpec extends FlatSpec with Matchers {
 
     val (errorMessage, parsedData) = readData match {
       case Failure(m) => (m.toString, errorData)
-      case Success(s) => ("", s)
+      case Success((s, _)) => ("", s)
     }
 
     errorMessage should ===("")

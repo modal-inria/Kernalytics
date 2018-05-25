@@ -32,10 +32,9 @@ object Predict {
 
     val readAll = for {
       algo <- ReadAlgo.readAndParseFile(algoFile)
-      data <- ReadVar.readAndParseVars2Files(dataLearnFile, dataPredictFile)
+      (data, nObsLearn, nObsPredict) <- ReadVar.readAndParseVars2Files(dataLearnFile, dataPredictFile)
       param <- ReadParam.readAndParseParam(descFile)
-      nPoint <- Success(data(0).data.nPoint)
-      kerEval <- CombineVarParam.generateGlobalKerEval(nPoint, data, param) // the assumption here is that every algorithm need the complete Gram matrix
+      kerEval <- CombineVarParam.generateGlobalKerEval(nObsLearn, nObsPredict, data, param) // the assumption here is that every algorithm need the complete Gram matrix
     } yield (AlgoParam(algo, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)

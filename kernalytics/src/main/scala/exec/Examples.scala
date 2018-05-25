@@ -1,6 +1,4 @@
-package exec.learn
-
-import exec.Learn
+package exec
 
 object Examples {
   def svm {
@@ -9,9 +7,15 @@ object Examples {
     println(res)
   }
 
-  def regression {
+  def regressionLearn {
     val rootFolder = "data/exec/regression"
     val res = Learn.main(rootFolder)
+    println(res)
+  }
+
+  def regressionPredict {
+    val rootFolder = "data/exec/regression"
+    val res = Predict.main(rootFolder)
     println(res)
   }
 

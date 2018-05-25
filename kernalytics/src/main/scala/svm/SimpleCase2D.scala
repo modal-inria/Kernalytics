@@ -32,10 +32,9 @@ object SimpleCase2D {
 
     val kerEvalTry =
       for {
-        data <- ReadVar.readAndParseVars(dataFile)
+        (data, nObs) <- ReadVar.readAndParseVars(dataFile)
         param <- ReadParam.readAndParseParam(descriptorFile)
-        nPoint <- Success(data(0).data.nPoint)
-        kerEval <- CombineVarParam.generateGlobalKerEval(nPoint, data, param)
+        kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param)
       } yield kerEval
 
     kerEvalTry match {

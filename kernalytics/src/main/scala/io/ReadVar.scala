@@ -22,34 +22,33 @@ object ReadVar {
   /**
    * Create the list of parsed vars. The convoluted syntax with foldLeft is just a mechanism to catch the various errors that can occur, variable by variable.
    */
-  def readAndParseVars(fileName: String): Try[Array[ParsedVar]] =
-    readVars(fileName)
-    .flatMap(_.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flatMap passes the error on.
-    .flatMap(checkUnicity)
-    .map(_.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
+  def readAndParseVars(fileName: String): Try[(Array[ParsedVar], Index)] =
+    for {
+      (names, nObs) <- readVars(fileName)
+      parsedVars <- names.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l))) // first error in parsing ends the parsing, because the flatMap passes the error on.
+      _ <- checkUnicity(parsedVars)
+    } yield (parsedVars.reverse.toArray, nObs)
     
   /**
    * Create the list of parsed vars. The convoluted syntax with foldLeft is just a mechanism to catch the various errors that can occur, variable by variable.
    */
-  def readAndParseVars2Files(fileNameA: String, fileNameB: String): Try[Array[ParsedVar]] = {
-    val read = for {
-      strA <- readVars(fileNameA)
-      strB <- readVars(fileNameB)
-    } yield (strA, strB)
-    
-    return read
-    .flatMap(p => mergeFilesContents(p._1, p._2)) // will fail if variables do not match in both files
-    .flatMap(_.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flatMap passes the error on.
-    .flatMap(checkUnicity)
-    .map(_.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
-  }
+  def readAndParseVars2Files(fileNameA: String, fileNameB: String): Try[(Array[ParsedVar], Index, Index)] =
+    for {
+      (strLearn, nObsLearn) <- readVars(fileNameA)
+      (strPredict, nObsPredict) <- readVars(fileNameB)
+      strMerged <- mergeFilesContents(strLearn, strPredict)
+      parsedVars <- strMerged.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l))) // first error in parsing ends the parsing, because the flatMap passes the error on.
+      _ <- checkUnicity(parsedVars)
+    } yield (parsedVars.reverse.toArray, nObsLearn, nObsPredict)
   
   /**
    * Format the data var by var, without parsing the individual values.
    */
-  def readVars(fileName: String): Try[Array[Array[String]]] =
-    Try(readNoParse(fileName))
-     .flatMap(checkObservationNumber)
+  def readVars(fileName: String): Try[(Array[Array[String]], Index)] =
+    for {
+      arrStr <- Try(readNoParse(fileName))
+      nObs <- checkObservationNumber(arrStr)
+    } yield (arrStr, nObs)
         
   /**
    * Generate a raw 2D array of string, without any processing. dataStr(var)(obs).
@@ -65,10 +64,10 @@ object ReadVar {
   /**
    * Check that all the variables have the same number of observations.
    */
-  def checkObservationNumber(data: Array[Array[String]]): Try[Array[Array[String]]] = {
+  def checkObservationNumber(data: Array[Array[String]]): Try[Index] = {
     val length = data.map(_.size)
     if (length.forall(_ == length(0)))
-      Success(data)
+      Success(length(0) - headerSize)
     else
       Failure(new Exception("All data must have the same number of observations."))
   }
@@ -124,13 +123,13 @@ object ReadVar {
   /**
    * Check that all variables have different names.
    */
-  def checkUnicity(data: List[ParsedVar]): Try[List[ParsedVar]] = {
+  def checkUnicity(data: List[ParsedVar]): Try[Unit] = {
     val allNames = data.map(_.name)
     
     if (allNames.toSet.size < allNames.size)
       Failure(new Exception("Variable names are not unique."))
     else
-      Success(data)
+      Success()
   }
   
   /**
@@ -154,5 +153,4 @@ object ReadVar {
     fileContentA
     .zip(fileContentB.map(_.drop(headerSize))) // drop headers of second file
     .map(p => p._1 ++ p._2) // concatenate corresponding variables
-
 }

@@ -31,10 +31,9 @@ object Learn {
 
     val readAll = for {
       algo <- ReadAlgo.readAndParseFile(algoFile)
-      data <- ReadVar.readAndParseVars(dataFile)
+      (data, nObs) <- ReadVar.readAndParseVars(dataFile)
       param <- ReadParam.readAndParseParam(descFile)
-      nPoint <- Success(data(0).data.nPoint)
-      kerEval <- CombineVarParam.generateGlobalKerEval(nPoint, data, param) // the assumption here is that every algorithm need the complete Gram matrix
+      kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param) // the assumption here is that every algorithm need the complete Gram matrix
     } yield (AlgoParam(algo, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)
