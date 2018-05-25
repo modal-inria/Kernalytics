@@ -15,6 +15,8 @@ import various.TypeDef._
  * - one line per observation
  */
 object ReadVar {
+  val headerSize = 2
+
   class ParsedVar(val name: String, val data: KerEval.DataRoot) // type is not necessary, as data has been parsed into the correct type
  
   /**
@@ -36,12 +38,10 @@ object ReadVar {
     } yield (strA, strB)
     
     return read
-    .flatMap(p => mergeFilesContents(p._1, p._2))
+    .flatMap(p => mergeFilesContents(p._1, p._2)) // will fail if variables do not match in both files
     .flatMap(_.foldLeft[Try[List[ParsedVar]]](Success[List[ParsedVar]](Nil))((acc, e) => acc.flatMap(l => parseIndividualVar(e).map(r => r :: l)))) // first error in parsing ends the parsing, because the flatMap passes the error on.
     .flatMap(checkUnicity)
     .map(_.reverse.toArray) // map to reverse the list and transform it to an Array, iff all the parsing were correct
-    
-    ???
   }
   
   /**
@@ -64,8 +64,6 @@ object ReadVar {
      
   /**
    * Check that all the variables have the same number of observations.
-   * 
-   * TODO: isn't this enforced by the transpose, which might only take into account the lower number of data in all the vars ?
    */
   def checkObservationNumber(data: Array[Array[String]]): Try[Array[Array[String]]] = {
     val length = data.map(_.size)
@@ -139,8 +137,22 @@ object ReadVar {
    * Merge learn and predict data to be used in a big KerEval. Can fail if both files contain different variables.
    */
   def mergeFilesContents(learnParsedVars: Array[Array[String]], predictParsedVars: Array[Array[String]]): Try[Array[Array[String]]] = {
-    ???
+    val learnSorted = learnParsedVars.sortBy(_.take(headerSize).mkString(Def.eol)) // sort variables by concatenated headers
+    val predictSorted = predictParsedVars.sortBy(_.take(headerSize).mkString(Def.eol))
+    
+    val learnHeader = learnSorted.map(_.take(headerSize).mkString(Def.eol))
+    val predictHeader = predictSorted.map(_.take(headerSize).mkString(Def.eol))
+    
+    return if (learnHeader.deep == predictHeader.deep) { // check equality of headers using deep comparison
+      Success(mergeContent(learnSorted, predictSorted))
+    } else {
+      Failure(new Exception("Data files in learn and predict do not contain the same variables."))
+    }
   }
   
-  def extractHeader(pVar: ParsedVar): String = ???
+  def mergeContent(fileContentA: Array[Array[String]], fileContentB: Array[Array[String]]): Array[Array[String]] =
+    fileContentA
+    .zip(fileContentB.map(_.drop(headerSize))) // drop headers of second file
+    .map(p => p._1 ++ p._2) // concatenate corresponding variables
+
 }
