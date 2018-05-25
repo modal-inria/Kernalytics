@@ -4,11 +4,11 @@ object Main extends App {
   //  exec.Test.mainRegression
 //  exec.Test.svm
 //  exec.Examples.regressionLearn
-//  exec.Test.offlinechangepoint
+//  exec.Examples.offlinechangepoint
 //  kmeans.SimpleExample.main
   
-  regression.SimpleExample.writeLearnData
-  regression.SimpleExample.writePredictData
+//  regression.SimpleExample.writeLearnData
+//  regression.SimpleExample.writePredictData
   exec.Examples.regressionLearn
   exec.Examples.regressionPredict
 }

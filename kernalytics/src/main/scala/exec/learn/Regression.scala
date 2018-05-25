@@ -34,7 +34,7 @@ object Regression {
   def getLambda(param: Learn.AlgoParam): Try[Real] =
     Param.existence(param, "lambda")
       .flatMap(C => Try(param.algo("lambda").toReal))
-      .flatMap(Param.realPositive(_, "lambda"))
+      .flatMap(Param.realStricltyPositive(_, "lambda"))
 
   /**
    * Check that the response file y has been provided and contains the right number of correctly formatted elements.
