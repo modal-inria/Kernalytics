@@ -1,2 +1,2 @@
-algo;C
-svm;1000000.0
+algo;C;cacheGram
+svm;1000000.0;true

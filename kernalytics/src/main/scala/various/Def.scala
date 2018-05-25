@@ -8,7 +8,6 @@ object Def {
   val folderSep = File.separator
   val csvSep = ";"
   val optionSep = ","
-  val cacheGram = true
   
   val epsilon = 1e-8
 }

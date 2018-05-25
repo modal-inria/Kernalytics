@@ -1,2 +1,2 @@
-algo;DMax
-offlinechangepoint;8
+algo;DMax;cacheGram
+offlinechangepoint;8;true

@@ -34,7 +34,7 @@ object SimpleCase2D {
       for {
         (data, nObs) <- ReadVar.readAndParseVars(dataFile)
         param <- ReadParam.readAndParseParam(descriptorFile)
-        kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param)
+        kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param, true)
       } yield kerEval
 
     kerEvalTry match {

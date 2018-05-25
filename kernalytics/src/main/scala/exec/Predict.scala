@@ -34,7 +34,7 @@ object Predict {
       algo <- ReadAlgo.readAndParseFile(algoFile)
       (data, nObsLearn, nObsPredict) <- ReadVar.readAndParseVars2Files(dataLearnFile, dataPredictFile)
       param <- ReadParam.readAndParseParam(descFile)
-      kerEval <- CombineVarParam.generateGlobalKerEval(nObsLearn, nObsPredict, data, param) // the assumption here is that every algorithm need the complete Gram matrix
+      kerEval <- CombineVarParam.generateGlobalKerEval(nObsLearn, nObsPredict, data, param, false) // the assumption here is that every algorithm need the complete Gram matrix
     } yield (AlgoParam(algo, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)

@@ -93,4 +93,8 @@ object SimpleExample {
     val yStr = yLearn.data.mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "predictExpectedY.csv"), yStr, "UTF-8")
   }
+  
+  def compareExpectedPredicted {
+    ???
+  }
 }

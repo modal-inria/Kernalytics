@@ -11,10 +11,10 @@ import various.TypeDef._
  * Subsequent access should always be performed using k instead of kerEval, as k uses the cache if it has been computed.
  * TODO: implement low rank approximation in this class.
  */
-class KerEval(val nObsLearn: Index, val nObsPredict: Index, val f: (Index, Index) => Real) {
+class KerEval(val nObsLearn: Index, val nObsPredict: Index, val f: (Index, Index) => Real, val cacheGram: Boolean) {
   val nObs = nObsLearn // for legacy algorithms
   
-  val cacheMatrix = if (Def.cacheGram)
+  val cacheMatrix = if (cacheGram)
     Some(DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => f(i, j)))
   else
     None

@@ -15,12 +15,12 @@ object Learn {
   val algoFileName = "algo.csv"
   val dataFileName = "learnData.csv"
   val descFileName = "desc.csv"
-  
+
   case class AlgoParam(
     val algo: Map[String, String],
     val kerEval: KerEval,
     val rootFolder: String)
-    
+
   /**
    * @return string that is empty on success, or that contains a description of the problems.
    */
@@ -31,9 +31,10 @@ object Learn {
 
     val readAll = for {
       algo <- ReadAlgo.readAndParseFile(algoFile)
+      cg <- cacheGram(algo)
       (data, nObs) <- ReadVar.readAndParseVars(dataFile)
       param <- ReadParam.readAndParseParam(descFile)
-      kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param) // the assumption here is that every algorithm need the complete Gram matrix
+      kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param, cg) // the assumption here is that every algorithm need the complete Gram matrix
     } yield (AlgoParam(algo, kerEval, rootFolder))
 
     val res = readAll.flatMap(callAlgo)
@@ -65,5 +66,13 @@ object Learn {
       Success(param)
     else
       Failure(new Exception(s"Algorithm name not found in $algoFileName."))
+  }
+
+  def cacheGram(param: Map[String, String]): Try[Boolean] = {
+    if (param.contains("cacheGram")) {
+      Try(param("cacheGram").toBoolean)
+    }
+    else
+      Failure(new Exception(s"$algoFileName must define cacheGram"))
   }
 }
