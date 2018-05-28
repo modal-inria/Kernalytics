@@ -4,6 +4,14 @@ Kernel-powered analytics.
 
 Kernel methods are versatile, and creating a generic computational engine that exploit them seems natural.
 
+# How to build
+
+Get Scala 2.12.x, on Ubuntu:
+
+sudo apt remove scala-library scala
+wget www.scala-lang.org/files/archive/scala-2.12.3.deb
+sudo dpkg -i scala-2.12.3.deb
+
 # How to add new data types and kernel
 
 The current way to handle data types and kernels is to use local pattern-matching. This is not optimal, as adding a new type or kernel implies modifying code scattered all over the package. Ideally, everything should be centralized so that all the logic could be contained in a single object for each type. This chapter contains links to the various locations that must be modified to add a new data type in the current implementation.
