@@ -93,7 +93,7 @@ object KerEval {
     val nVar = data.size
     val weights = DenseVector.tabulate[Real](nVar)(i => data(i).weight) // extract the weights for linearCombKerEvalFunc
 
-    if (min(weights) < 0.0) return Failure(new Exception("Kernel coefficients must positive."))
+    if (min(weights) < 0.0) return Failure(new Exception("Kernel coefficients must be positive."))
     
     return data
       .reverse
