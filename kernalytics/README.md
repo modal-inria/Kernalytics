@@ -8,9 +8,11 @@ Kernel methods are versatile, and creating a generic computational engine that e
 
 Get Scala 2.12.x, on Ubuntu:
 
+```bash
 sudo apt remove scala-library scala
 wget www.scala-lang.org/files/archive/scala-2.12.3.deb
 sudo dpkg -i scala-2.12.3.deb
+```
 
 # How to add new data types and kernel
 
