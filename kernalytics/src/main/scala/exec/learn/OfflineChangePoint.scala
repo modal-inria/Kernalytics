@@ -17,7 +17,7 @@ object OfflineChangePoint {
     val res = for {
       DMax <- getDMax(param)
       resSegmentation <- Success(Segmentation.loopOverTauP(param.kerEval.nObs, param.kerEval.k, DMax))
-      resSelection <- Success(NumberSegmentSelection.optimalNumberSegments(resSegmentation, param.kerEval.nObs, Some(param.rootFolder)))
+      resSelection <- Success(NumberSegmentSelection.optimalNumberSegments(resSegmentation, param.kerEval.nObs, None))
       resWrite <- writeResults(param.rootFolder, resSelection)
     } yield resWrite
 

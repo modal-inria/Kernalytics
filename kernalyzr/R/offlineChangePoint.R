@@ -1,3 +1,0 @@
-offlineChangePoint <- function() {
-
-}

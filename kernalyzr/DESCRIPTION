@@ -1,6 +1,6 @@
-Package: Kernalizr
+Package: kernalizr
 Type: Package
-Title: Kernalizr
+Title: kernalizr
 Version: 0.1.0
 Author: Vincent KUBICKI <vincent.kubicki@inria.fr>
 Maintainer: Vincent KUBICKI <vincent.kubicki@inria.fr>
