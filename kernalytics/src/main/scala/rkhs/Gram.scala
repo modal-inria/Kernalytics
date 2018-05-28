@@ -38,7 +38,14 @@ object Gram {
       DenseVector[Real](3.0, 4.0),
       DenseVector[Real](5.0, 6.0))
 
-    val gram = generate(obs, Kernel.Legacy.Rn.linear)
+    //    val gram = generate(obs, Kernel.Legacy.Rn.linear)
+
+    val ker = Kernel.InnerProduct.linear(
+      _: DenseVector[Real],
+      _: DenseVector[Real],
+      Algebra.DenseVectorReal.InnerProductSpace)
+
+    val gram = generate(obs, ker)
 
     println(gram)
   }

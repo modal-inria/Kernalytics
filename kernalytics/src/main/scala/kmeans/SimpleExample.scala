@@ -1,13 +1,20 @@
 package kmeans
 
 import breeze.linalg._
-import rkhs.{ Gram, Kernel }
+
+import rkhs.{ Algebra, Gram, Kernel }
 import kmeans.Base.ComputationState
 import various.Iterate
 
 object SimpleExample {
   def main {
-    val kernel: (DenseVector[Double], DenseVector[Double]) => Double = Kernel.Legacy.Rn.linear
+    //    val kernel: (DenseVector[Double], DenseVector[Double]) => Double = Kernel.Legacy.Rn.linear
+    
+    val kernel = Kernel.InnerProduct.linear(
+      _: DenseVector[Double],
+      _: DenseVector[Double],
+      Algebra.DenseVectorReal.InnerProductSpace)
+      
     val sd = 10.0
 
     val proportion = DenseVector[Double](0.3, 0.7)

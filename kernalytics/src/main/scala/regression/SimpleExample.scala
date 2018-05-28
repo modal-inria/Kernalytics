@@ -6,7 +6,7 @@ import breeze.stats.distributions._
 import java.io.File
 import org.apache.commons.io.FileUtils
 
-import rkhs.{ Gram, Kernel }
+import rkhs.{ Algebra, Gram, Kernel }
 import various.Def
 import various.TypeDef._
 
@@ -14,8 +14,15 @@ object SimpleExample {
   val rootFolder = "data/exec/regression"
 
   def main {
-    //    val kernel = Kernel.product(_, _)
-    val kernel = (x: Double, y: Double) => Kernel.Legacy.R.gaussian(x, y, 1.0)
+    // val kernel = Kernel.product(_, _)
+    // val kernel = (x: Double, y: Double) => Kernel.Legacy.R.gaussian(x, y, 1.0)
+
+    val kernel = Kernel.InnerProduct.gaussian(
+      _: Real,
+      _: Real,
+      Algebra.R.InnerProductSpace,
+      1.0)
+
     val min = -3.0
     val max = 18.0
 
@@ -93,7 +100,7 @@ object SimpleExample {
     val yStr = yLearn.data.mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "predictExpectedY.csv"), yStr, "UTF-8")
   }
-  
+
   def compareExpectedPredicted {
     ???
   }

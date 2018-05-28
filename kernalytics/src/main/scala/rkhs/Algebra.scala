@@ -11,8 +11,7 @@ object Algebra {
       def ip(x: T, y: T): Real
     }
 
-    trait NormedSpace[T] {
-      val ipSpace: InnerProductSpace[T]
+    trait NormedSpace[T] extends InnerProductSpace[T] {
       def norm(x: T): Real
     }
 
@@ -22,7 +21,8 @@ object Algebra {
 
     def NormedSpaceFromInnerProductSpace[T](v: InnerProductSpace[T]): NormedSpace[T] = {
       object NormedSpace extends NormedSpace[T] {
-        val ipSpace = v
+        def -(x: T, y: T): T = v.-(x, y)
+        def ip(x: T, y: T): Real = v.ip(x, y)
         def norm(x: T) = math.sqrt(v.ip(x, x))
       }
 
@@ -31,7 +31,7 @@ object Algebra {
 
     def MetricSpaceFromNormedSpace[T](n: NormedSpace[T]): MetricSpace[T] = {
       object MetricSpace extends MetricSpace[T] {
-        def distance(x: T, y: T) = n.norm(n.ipSpace.-(x, y))
+        def distance(x: T, y: T) = n.norm(n.-(x, y))
       }
 
       return MetricSpace

@@ -2,7 +2,7 @@ package twosampletest
 
 import breeze.linalg._
 import breeze.stats.distributions._
-import rkhs.{ Gram, Kernel }
+import rkhs.{ Algebra, Gram, Kernel }
 import kmeans.Base.ComputationState
 
 object SimpleExample {
@@ -16,7 +16,16 @@ object SimpleExample {
     val data = generateData(nA, nB) // generation of data
     val part = new Base.Partition((0 to nA - 1).toArray, (nA to nA + nB - 1).toArray)
 
-    val gram = Gram.generate(data, (x: Double, y: Double) => Kernel.Legacy.R.gaussian(x, y, kernelSd)) // computation of the complete gram matrix, with data from the two distributions as it will be used in
+//    val gram = Gram.generate(data, (x: Double, y: Double) => Kernel.Legacy.R.gaussian(x, y, kernelSd)) // computation of the complete gram matrix, with data from the two distributions as it will be used in
+
+    val kernel = Kernel.InnerProduct.gaussian(
+      _: Double,
+      _: Double,
+      Algebra.R.InnerProductSpace,
+      kernelSd)
+      
+    val gram = Gram.generate(data, kernel)
+
     val k = Base.permutationTestCriticalValue(nSample, nA, nB, alpha, gram) // get critical value for the hypothesis testing
     val p = Base.mmdUnbiasedEstimator(gram, part)
 

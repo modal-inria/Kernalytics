@@ -40,6 +40,10 @@ object Kernel {
     }
   }
 
+  object Normed {
+    
+  }
+
   object Metric {
     def gaussian[Data](
       x: Data,
@@ -52,20 +56,5 @@ object Kernel {
       y: Data,
       n: Algebra.Traits.MetricSpace[Data],
       alpha: Real): Real = math.exp(-alpha * n.distance(x, y))
-  }
-
-  /**
-   * Previous kernel system, not based on algebraic structures. Should not be used anymore.
-   */
-  @deprecated("Use algebra-based kernels instead.")
-  object Legacy {
-    object R {
-      def product(x: Real, y: Real): Real = x * y
-      def gaussian(x: Real, y: Real, sd: Real): Real = math.exp(-math.pow(x - y, 2.0) / (2.0 * math.pow(sd, 2.0)))
-    }
-
-    object Rn {
-      def linear(x: DenseVector[Real], y: DenseVector[Real]): Real = x dot y
-    }
   }
 }
