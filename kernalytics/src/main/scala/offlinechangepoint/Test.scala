@@ -31,8 +31,8 @@ object Test {
     val res = Segmentation.loopOverTauP(nPoints, kerEval, dMax)
 //    Segmentation.printAllPartitions(res)
 
-    val bestD = NumberSegmentSelection.optimalNumberSegments(res, nPoints, visualOutput)
+    val bestD = NumberSegmentSelection.optimalNumberSegments(res, nPoints)
     
-    return bestD
+    return bestD.segPoints
   }
 }

@@ -14,9 +14,6 @@ object SimpleExample {
   val rootFolder = "data/exec/regression"
 
   def main {
-    // val kernel = Kernel.product(_, _)
-    // val kernel = (x: Double, y: Double) => Kernel.Legacy.R.gaussian(x, y, 1.0)
-
     val kernel = Kernel.InnerProduct.gaussian(
       _: Real,
       _: Real,

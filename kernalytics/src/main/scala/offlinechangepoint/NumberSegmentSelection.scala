@@ -7,6 +7,12 @@ import various.TypeDef._
 import various.{ Def, Math }
 
 object NumberSegmentSelection {
+  class optimalNumberSegmentsReturn(
+    val segPoints: Array[Index],
+    val rawCost: Array[Real],
+    val regCost: DenseVector[Real],
+    val penCost: DenseVector[Real])
+
   /**
    * Take the risk for every value of D, compute the penalized risk using a slope heuristic, then return an oracle
    * estimate of the optimal number of segments.
@@ -16,8 +22,7 @@ object NumberSegmentSelection {
    */
   def optimalNumberSegments(
     resFromSegmentation: Segmentation.Accumulator,
-    nObs: Index,
-    visualOutput: Option[String]): Array[Index] = {
+    nObs: Index): optimalNumberSegmentsReturn = {
     val cost = resFromSegmentation.L.map(_.head.cost)
 
     val DMax = cost.size - 1
@@ -50,45 +55,25 @@ object NumberSegmentSelection {
         cost(D) + penalty
       })
 
-    visualOutput.map(baseDir => { // Option.map is only executed if visualOutput is of subtype Some
-      val regressedCost =
-        DenseVector.tabulate[Real](cost.size)(D => {
-          DenseVector(funcs.map(_(D))).dot(beta)
-        })
+    val regressedCost =
+      DenseVector.tabulate[Real](cost.size)(D => {
+        DenseVector(funcs.map(_(D))).dot(beta)
+      })
 
-      val f = Figure()
-      f.visible = false
-      val p = f.subplot(0)
-
-      p += plot(
-        (1 to DMax).map(_.toReal),
-        penalizedCost(1 to DMax),
-        name = "Penalized Cost")
-
-      p += plot(
-        (1 to DMax).map(_.toReal),
-        cost.slice(1, DMax + 1),
-        name = "Cost")
-
-      p += plot(
-        (1 to DMax).map(_.toReal),
-        regressedCost(1 to DMax),
-        name = "Regressed Cost")
-
-      p.title = "Penalized Cost"
-      p.xlabel = "D"
-      p.ylabel = "Cost"
-      f.saveas(baseDir + "/lines.png")
-    })
+    val regCost = regressedCost(1 to DMax)
+    val penCost = penalizedCost(1 to DMax)
+    val rawCost = cost.slice(1, DMax + 1)
 
     val bestD = argmin(penalizedCost)
 
-    return resFromSegmentation
+    val segPoints = resFromSegmentation
       .L
       .map(_.head)
       .apply(bestD)
       .seg
       .reverse
       .toArray
+
+    return new optimalNumberSegmentsReturn(segPoints, rawCost, regCost, penCost)
   }
 }
