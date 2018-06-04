@@ -12,16 +12,17 @@ import various.TypeDef._
  * TODO: implement low rank approximation in this class.
  */
 class KerEval(val nObsLearn: Index, val nObsPredict: Index, val f: (Index, Index) => Real, val cacheGram: Boolean) {
-  val nObs = nObsLearn // for legacy algorithms
+  val totalObs = nObsLearn + nObsPredict
+  val nObs = totalObs // for legacy code compatibility
   
   val cacheMatrix = if (cacheGram)
-    Some(DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => f(i, j)))
+    Some(DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => f(i, j)))
   else
     None
 
   def getK: DenseMatrix[Real] = cacheMatrix match {
     case Some(m) => m
-    case None => DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => f(i, j))
+    case None => DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => f(i, j))
   }
 
   val k: (Index, Index) => Real = cacheMatrix match {
