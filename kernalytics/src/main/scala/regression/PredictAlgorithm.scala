@@ -14,11 +14,12 @@ object PredictAlgorithm {
    * @return The regression function evaluated at each point in the prediction set.
    */
   def predict(ker: KerEval, beta: DenseVector[Real]): DenseVector[Real] = {
-    println(s"nObsLearn: ${ker.nObs}")
-    println(s"nObsPredict: ${ker.nObsPredict}")
-    println(ker.getK)
-    DenseVector.tabulate[Real](ker.nObsPredict)(i => {
-      sum(DenseVector.tabulate[Real](ker.nObs)(j => beta(j) * ker.k(j, i)))
+//    println(s"nObsLearn: ${ker.nObsLearn}")
+//    println(s"nObsPredict: ${ker.nObsPredict}")
+//    println(ker.getK)
+    DenseVector.tabulate[Real](ker.nObsPredict)(j => {
+      val globalJ = j + ker.nObsLearn
+      sum(DenseVector.tabulate[Real](ker.nObsLearn)(i => beta(i) * ker.k(i, globalJ)))
     })
   }
 }

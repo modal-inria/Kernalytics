@@ -15,16 +15,17 @@ import various.TypeDef._
  */
 object EstimationRidge {
   def estimate(kerEval: KerEval, y: DenseVector[Real], lambda: Real): DenseVector[Real] = {
-    val mat = kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObs)
-    val invMat = inv(mat)
-    println(lambda)
-    println(det(mat))
-    println(det(invMat))
-    csvwrite(new File("debug/k.csv"), kerEval.getK, separator=';')
-    csvwrite(new File("debug/mat.csv"), mat, separator=';')
-    csvwrite(new File("debug/invMat.csv"), invMat, separator=';')
+    val mat = kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObsLearn)
+    
+//    val invMat = inv(mat)
+//    println(lambda)
+//    println(det(mat))
+//    println(det(invMat))
+//    csvwrite(new File("debug/k.csv"), kerEval.getK, separator=';')
+//    csvwrite(new File("debug/mat.csv"), mat, separator=';')
+//    csvwrite(new File("debug/invMat.csv"), invMat, separator=';')
     
 //    inv((kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObs))) * y
-    (kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObs)) \ y
+    mat \ y
   }
 }
