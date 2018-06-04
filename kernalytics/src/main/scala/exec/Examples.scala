@@ -8,13 +8,13 @@ object Examples {
   }
 
   def regressionLearn {
-    val rootFolder = "data/exec/regression"
+    val rootFolder = "data/exec/regression/Linear"
     val res = Learn.main(rootFolder)
     println(res)
   }
 
   def regressionPredict {
-    val rootFolder = "data/exec/regression"
+    val rootFolder = "data/exec/regression/Linear"
     val res = Predict.main(rootFolder)
     println(res)
   }

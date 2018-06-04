@@ -24,6 +24,7 @@ object EstimationRidge {
     csvwrite(new File("debug/mat.csv"), mat, separator=';')
     csvwrite(new File("debug/invMat.csv"), invMat, separator=';')
     
-    inv((kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObs))) * y
+//    inv((kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObs))) * y
+    (kerEval.getK + lambda * DenseMatrix.eye[Real](kerEval.nObs)) \ y
   }
 }

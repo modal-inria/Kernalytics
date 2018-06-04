@@ -7,8 +7,7 @@ object Main extends App {
 //  exec.Examples.offlinechangepoint
 //  kmeans.SimpleExample.main
   
-//  regression.SimpleExample.writeLearnData
-//  regression.SimpleExample.writePredictData
+  regression.examples.Linear.writeAll
   exec.Examples.regressionLearn
   exec.Examples.regressionPredict
 }

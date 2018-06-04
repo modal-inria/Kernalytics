@@ -20,7 +20,7 @@ object CoreNoHeuristic {
     optimizeImpl(nObs, kerEval, y, C, alpha, b0)
   }
 
-  var b: Real = 0.0 // global var are ugly, but necessary to keep the syntax close to the article
+  var b: Real = 0.0 // global var are ugly, but necessary here to keep the syntax close to the article
   val nSweep = 100
 
   /**

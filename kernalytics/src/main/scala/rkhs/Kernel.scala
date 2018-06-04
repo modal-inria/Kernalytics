@@ -40,9 +40,7 @@ object Kernel {
     }
   }
 
-  object Normed {
-    
-  }
+  object Normed {}
 
   object Metric {
     def gaussian[Data](
