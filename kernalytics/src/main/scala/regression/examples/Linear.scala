@@ -16,11 +16,11 @@ object Linear {
   val rootFolder = "data/exec/regression/Linear"
 
   def writeAll {
-    writeLearnData
+    writeData
     writeConfig
   }
 
-  def writeLearnData {
+  def writeData {
     val min = 0.0
     val max = 1.0
 
