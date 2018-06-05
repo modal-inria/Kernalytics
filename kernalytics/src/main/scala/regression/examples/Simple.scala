@@ -5,6 +5,8 @@ import breeze.plot._
 import breeze.stats.distributions._
 import java.io.File
 import org.apache.commons.io.FileUtils
+import scala.io.Source
+
 import rkhs.{ Algebra, Gram, Kernel }
 import various.Def
 import various.TypeDef._
@@ -13,7 +15,7 @@ import regression.EstimationBFGS
 import regression.PredictAlgorithm
 
 object Simple {
-  val rootFolder = "data/exec/regression/Simple"
+  val rootFolder = "data/exec/regression"
 
   def writeAll {
     writeData
@@ -34,7 +36,7 @@ object Simple {
       1.0, // sd
       min, // min
       max, // max,
-      100) // nPoints
+      nPoints) // nPoints
 
     val xLearnStr = varName + Def.eol + varType + Def.eol + xLearn.data.mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "learnData.csv"), xLearnStr, "UTF-8")
@@ -48,7 +50,7 @@ object Simple {
       1.0, // sd
       min, // min
       max, // max,
-      100) // nPoints
+      nPoints) // nPoints
 
     val xPredictStr = varName + Def.eol + varType + Def.eol + xPredict.data.mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "predictData.csv"), xPredictStr, "UTF-8")
@@ -73,6 +75,28 @@ object Simple {
   }
 
   def compareExpectedPredicted {
-    ???
+    val x = getCsvData(rootFolder + Def.folderSep + "predictData.csv", 2)
+    val yComputed = getCsvData(rootFolder + Def.folderSep + "predictY.csv", 0)
+    val yExpected = getCsvData(rootFolder + Def.folderSep + "predictExpectedY.csv", 0)
+
+    val f = Figure()
+    f.visible = false
+    
+    val p = f.subplot(0)
+    
+    p += plot(x, yComputed, style = '-')
+    p += plot(x, yExpected, style = '.')
+    
+    p.title = "Observed vs regressed"
+    p.xlabel = "Time"
+    p.ylabel = "Value"
+    
+    f.saveas(rootFolder + Def.folderSep + "plot.png")
+  }
+
+  def getCsvData(file: String, headerSize: Index): DenseVector[Real] = {
+    val data = Source.fromFile(file).getLines.drop(headerSize).map(_.toReal).toArray
+    
+    return DenseVector[Real](data)
   }
 }

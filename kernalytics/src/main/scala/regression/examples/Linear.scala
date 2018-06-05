@@ -13,7 +13,7 @@ import regression.EstimationBFGS
 import regression.PredictAlgorithm
 
 object Linear {
-  val rootFolder = "data/exec/regression/Linear"
+  val rootFolder = "data/exec/regression"
 
   def writeAll {
     writeData

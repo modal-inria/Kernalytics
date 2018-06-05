@@ -39,7 +39,8 @@ object Data {
 
     val uni = new Uniform(min, max)
 
-    val x = DenseVector.rand[Double](nPoints, uni)
+//    val x = DenseVector.rand[Double](nPoints, uni)
+    val x = DenseVector[Double](Array.fill[Double](nPoints)(uni.sample).sorted)
 
     val gauss = new Gaussian(0.0, sd)
 
