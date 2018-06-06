@@ -11,12 +11,12 @@ import various.TypeDef._
  * Subsequent access should always be performed using k instead of kerEval, as k uses the cache if it has been computed.
  * TODO: implement low rank approximation in this class.
  */
-class KerEval(val nObsLearn: Index, val nObsPredict: Index, val f: (Index, Index) => Real, val cacheGram: Boolean) {
+class KerEval(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val cacheGram: Boolean) {
   val totalObs = nObsLearn + nObsPredict
   val nObs = totalObs // for legacy code compatibility
 
   val cacheMatrix = if (cacheGram)
-    Some(DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => f(i, j)))
+    Some(DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j)))
   else
     None
 
@@ -25,7 +25,7 @@ class KerEval(val nObsLearn: Index, val nObsPredict: Index, val f: (Index, Index
    */
   def getK: DenseMatrix[Real] = cacheMatrix match {
     case Some(m) => m
-    case None => DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => f(i, j))
+    case None => DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j))
   }
 
   /**
@@ -35,7 +35,7 @@ class KerEval(val nObsLearn: Index, val nObsPredict: Index, val f: (Index, Index
    */
   val k: (Index, Index) => Real = cacheMatrix match {
     case Some(m) => (i, j) => m(i, j)
-    case None => (i, j) => f(i, j)
+    case None => (i, j) => kerEvalFunc(i, j)
   }
 }
 

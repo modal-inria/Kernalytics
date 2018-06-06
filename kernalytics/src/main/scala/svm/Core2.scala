@@ -19,7 +19,10 @@ object Core2 {
   val eps: Real = 1e-8
 
   def binaryOptimization(i1: Index, i2: Index, alpha: DenseVector[Real], b: Real, y: DenseVector[Real], cache: DenseVector[Real], kerEval: KerEval, C: Real): Option[(Real, Real, Real)] = {
-    if (i1 == i2) return None
+    if (i1 == i2) {
+      println("i1 == i2")
+      return None
+    }
 
     val alph1 = alpha(i1)
     val alph2 = alpha(i2)
@@ -37,7 +40,10 @@ object Core2 {
         (max(0.0, alph2 + alph1 - C), min(C, alph2 + alph1))
       }
 
-    if (l == h) return None // TODO: use epsilon for floating point number comparison
+    if (l == h) {
+      println("l == h")
+      return None // TODO: use epsilon for floating point number comparison
+    }
 
     val k11 = kerEval.k(i1, i1)
     val k12 = kerEval.k(i1, i2)
@@ -64,9 +70,12 @@ object Core2 {
         else if (hObj + eps < lObj) h
         else alph2
       }
-    
-    if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) return None
-    
+
+    if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) {
+      println("a2 == alph2")
+      return None
+    }
+
     val a1 = alph1 + s * (alph2 - a2)
 
     val b1 = e1 + y1 * (a1 - alph1) * k11 + y2 * (a2 - alph2) * k12 + b // update threshold to reflect change in Lagrange multiplier
@@ -76,7 +85,27 @@ object Core2 {
       if (0.0 < a1 && a1 < C) b1
       else if (0.0 < a2 && a2 < C) b2
       else (b1 + b2) / 2.0
-    
+
     return Some((a1, a2, ub))
+  }
+
+  /**
+   * Update the error cache which contains u_i - y_i. This occurs any time a component of \alpha is modified.
+   * u_i = w * x_i - b in the linear case
+   * w = \sum_{i = 1}^N y_i \alpha_i x_i in the kernel case
+   * u = \sum_{j = 1}^N y_j \alpha_j K(x_j, x)
+   */
+  def computeCache(alpha: DenseVector[Real], b: Real, y: DenseVector[Real], kerEval: KerEval): DenseVector[Real] = {
+    val nObs = alpha.length
+    val u = DenseVector.zeros[Real](nObs)
+
+    for (i <- 0 to nObs - 1) {
+      u(i) = -b
+      for (j <- 0 to nObs - 1) {
+        u(i) = u(i) + y(j) * alpha(j) * kerEval.k(j, i)
+      }
+    }
+
+    return u - y
   }
 }

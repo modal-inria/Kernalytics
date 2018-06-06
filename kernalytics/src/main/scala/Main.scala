@@ -2,17 +2,18 @@ object Main extends App {
   //  regression.SimpleExample.main
   //  regression.SimpleExample.writeData
   //  exec.Test.mainRegression
-//  exec.Test.svm
-//  exec.Examples.regressionLearn
-//  exec.Examples.offlinechangepoint
-//  kmeans.SimpleExample.main
-  
-//  regression.examples.Simple.writeAll
-//  exec.Examples.regressionLearn
-//  exec.Examples.regressionPredict
-//  regression.examples.Simple.compareExpectedPredicted
-  
-//  exec.Examples.svm
-  
-  svm.SimpleCase2D.main
+  //  exec.Test.svm
+  //  exec.Examples.regressionLearn
+  //  exec.Examples.offlinechangepoint
+  //  kmeans.SimpleExample.main
+
+  //  regression.examples.Simple.writeAll
+  //  exec.Examples.regressionLearn
+  //  exec.Examples.regressionPredict
+  //  regression.examples.Simple.compareExpectedPredicted
+
+  //  exec.Examples.svm
+
+  //  svm.SimpleCase2D.main
+  svm.TestSandBox.testOptim
 }
