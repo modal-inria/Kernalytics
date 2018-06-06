@@ -15,26 +15,48 @@ import io.ReadVar
  */
 object TestSandBox {
   def testOptim {
-//    val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
-//    val b: Real = 2.0
-//    val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
-//    val C: Real = 1000 // large value to penalize non compliance with margins
-//    
-//    val nObs = alpha.length
-//
-//    val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorReal(alpha)).get
-//    val kerEval = new KerEval(nObs, 0, kerEvalFunc, false)
-//    
-//    val cache = Core2.computeCache(alpha, b, y, kerEval)
-//    println(cache)
-//    
-//    val res = Core2.binaryOptimization(0, 1, alpha, b, y, cache, kerEval, C)
-//    
-//    res match {
-//      case Some((a1, a2, b)) => println(s"a1: $a1, a2: $a2, b: $b")
-//      case None => println(None)
-//    }
-//    
-//    println(res == None)
+    val x = DenseVector[DenseVector[Real]](
+      DenseVector[Real](3, 1),
+      DenseVector[Real](3, -1),
+      DenseVector[Real](6, 1),
+      DenseVector[Real](6, -1),
+      DenseVector[Real](1, 0),
+      DenseVector[Real](0, 1),
+      DenseVector[Real](-1, 0),
+      DenseVector[Real](0, -1))
+    val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
+    val b: Real = 2.0
+    val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
+    val C: Real = 1000000 // large value to penalize non compliance with margins
+
+    val nObs = alpha.length
+
+    val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
+    val kerEval = new KerEval(nObs, 0, kerEvalFunc, false)
+
+    Core2.checkSolution(kerEval, alpha, y, C)
+
+    alpha(0) += 0.25 // perturb solution
+    alpha(1) -= 0.25
+
+    Core2.checkSolution(kerEval, alpha, y, C)
+
+    val cache = Core2.computeCache(alpha, b, y, kerEval)
+    println(cache)
+    val res = Core2.binaryOptimization(0, 1, alpha, b, y, cache, kerEval, C)
+
+    res match {
+      case Some((a1, a2, b)) => {
+        println(s"a1: $a1, a2: $a2, b: $b")
+        alpha(0) = a1
+        alpha(1) = a2
+
+        Core2.checkSolution(kerEval, alpha, y, C)
+      }
+
+      case None => println(None)
+    }
+
+    println(res == None)
   }
 }

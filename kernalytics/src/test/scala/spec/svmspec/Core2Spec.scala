@@ -18,6 +18,16 @@ import svm.Core2
  * Test IO, using data present on file.
  */
 class Core2Spec extends FlatSpec with Matchers {
+  val x = DenseVector[DenseVector[Real]](
+    DenseVector[Real](3, 1),
+    DenseVector[Real](3, -1),
+    DenseVector[Real](6, 1),
+    DenseVector[Real](6, -1),
+    DenseVector[Real](1, 0),
+    DenseVector[Real](0, 1),
+    DenseVector[Real](-1, 0),
+    DenseVector[Real](0, -1))
+
   "binaryOptimization" should "return None when optimum is provided as input" in {
     val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
     val b: Real = 2.0
@@ -26,7 +36,7 @@ class Core2Spec extends FlatSpec with Matchers {
 
     val nObs = alpha.length
 
-    val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorReal(alpha)).get
+    val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
     val kerEval = new KerEval(nObs, 0, kerEvalFunc, false)
 
     val cache = Core2.computeCache(alpha, b, y, kerEval)
