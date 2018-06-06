@@ -16,9 +16,9 @@ object Core2 {
    * @return If optimization takes place, return (alpha1, alpha2, b), otherwise return None
    */
 
-  class binaryData(alpha: Real, y: Real, e: Real)
+  val eps: Real = 1e-8
 
-  def binaryOptimization(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], cache: DenseVector[Real], kerEval: KerEval, C: Real): Option[(Real, Real, Real)] = {
+  def binaryOptimization(i1: Index, i2: Index, alpha: DenseVector[Real], b: Real, y: DenseVector[Real], cache: DenseVector[Real], kerEval: KerEval, C: Real): Option[(Real, Real, Real)] = {
     if (i1 == i2) return None
 
     val alph1 = alpha(i1)
@@ -26,7 +26,7 @@ object Core2 {
     val y1 = y(i1)
     val y2 = y(i2)
     val e1 = cache(i1)
-    val E2 = cache(i2)
+    val e2 = cache(i2)
 
     val s = y1 * y2
 
@@ -47,11 +47,36 @@ object Core2 {
 
     val a2: Real =
       if (0.0 < eta) { // TODO: use epsilon for floating point number comparison
-        ???
-      } else {
-        ???
-      }
+        val ua2 = alph2 + y2 * (e1 - e2) / eta // unbounded a2
 
-    ???
+        if (ua2 < l) l
+        else if (ua2 > h) h
+        else ua2
+      } else {
+        val f1 = y1 * (e1 + b) - alph1 * k11 - s * alph2 * k12
+        val f2 = y2 * (e2 + b) - s * alph1 * k12 - alph2 * k22
+        val l1 = alph1 + s * (alph2 - l)
+        val h1 = alph1 + s * (alph2 - h)
+        val lObj = l1 * f1 + l * f2 + 0.5 * l1 * l1 * k11 + 0.5 * l * l * k22 + s * l * l1 * k12
+        val hObj = h1 * f1 + h * f2 + 0.5 * h1 * h1 * k11 + 0.5 * h * h * k22 + s * h * h1 * k12
+
+        if (lObj < hObj - eps) l
+        else if (hObj + eps < lObj) h
+        else alph2
+      }
+    
+    if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) return None
+    
+    val a1 = alph1 + s * (alph2 - a2)
+
+    val b1 = e1 + y1 * (a1 - alph1) * k11 + y2 * (a2 - alph2) * k12 + b // update threshold to reflect change in Lagrange multiplier
+    val b2 = e2 + y1 * (a1 - alph1) * k12 + y2 * (a2 - alph2) * k22 + b
+
+    val ub = // updated b
+      if (0.0 < a1 && a1 < C) b1
+      else if (0.0 < a2 && a2 < C) b2
+      else (b1 + b2) / 2.0
+    
+    return Some((a1, a2, ub))
   }
 }
