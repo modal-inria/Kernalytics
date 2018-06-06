@@ -9,8 +9,11 @@ import various.TypeDef._
 import rkhs.Algebra
 import org.scalactic.source.Position.apply
 
-// http://www.scalatest.org/user_guide/using_matchers
-
+/**
+ * http://www.scalatest.org/user_guide/using_matchers
+ * 
+ * TODO: Note that the linear constraint sum_i \alpha_i y_i = 0 is not satisfied by the solution. Take it with caution...
+ */
 class MathSpec extends FlatSpec with Matchers {
   "factorial" should "compute factorial values correctly" in {
     (0 to 5).toList.map(Math.factorial) should ===(List(1, 1, 2, 6, 24, 120))

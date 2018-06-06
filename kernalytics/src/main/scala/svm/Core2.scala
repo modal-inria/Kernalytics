@@ -12,6 +12,7 @@ object Core2 {
   /**
    * Equivalent to takeStep in the article.
    * Optimize the problem for two given values of alpha.
+   * Lots of sources point so initialization with alpha_i = 0 and b = 0, for example: http://www.cs.utsa.edu/~bylander/cs4793/smo.pdf
    *
    * @return If optimization takes place, return (alpha1, alpha2, b), otherwise return None
    */
@@ -40,8 +41,10 @@ object Core2 {
         (max(0.0, alph2 + alph1 - C), min(C, alph2 + alph1))
       }
 
+    println(s"l: $l, h: $h")
+
     if (l == h) {
-      println("l == h")
+      println("l == h ")
       return None // TODO: use epsilon for floating point number comparison
     }
 
@@ -50,15 +53,18 @@ object Core2 {
     val k22 = kerEval.k(i2, i2)
 
     val eta = k11 + k22 - 2.0 * k12
+    println(s"e1: $e1, e2: $e2, eta: $eta")
 
     val a2: Real =
       if (0.0 < eta) { // TODO: use epsilon for floating point number comparison
+        println("0.0 < eta")
         val ua2 = alph2 + y2 * (e1 - e2) / eta // unbounded a2
 
         if (ua2 < l) l
         else if (ua2 > h) h
         else ua2
       } else {
+        println("0.0 >= eta")
         val f1 = y1 * (e1 + b) - alph1 * k11 - s * alph2 * k12
         val f2 = y2 * (e2 + b) - s * alph1 * k12 - alph2 * k22
         val l1 = alph1 + s * (alph2 - l)
@@ -130,7 +136,7 @@ object Core2 {
       if (alpha(i) < 0.0) println(s"checkSolution, alpha($i) < 0.0")
       if (C < alpha(i)) println(s"checkSolution, C < alpha($i)")
     }
-    
+
     val dotCond = y.dot(alpha)
 
     return (psi, dotCond)

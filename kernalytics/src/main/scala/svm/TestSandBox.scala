@@ -25,32 +25,41 @@ object TestSandBox {
     DenseVector[Real](-1, 0),
     DenseVector[Real](0, -1))
 
+  val nObs = x.length
+
+  val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
+
+  val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
+
+  val kerEval = new KerEval(x.length, 0, kerEvalFunc, false)
+
+  /**
+   * Note that i1 and i2 must be chosen with y1 != y2, otherwise the linear constraint force them to stay at 0.
+   */
   def testOptim {
-    val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
-    val b: Real = 2.0
-    val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
+    val i1 = 0
+    val i2 = 5
+    val alpha = DenseVector.zeros[Real](nObs)
+    val b: Real = 0.0
     val C: Real = 1000000 // large value to penalize non compliance with margins
-    val perturbation = 0.25
-
-    val nObs = alpha.length
-
-    val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
-    val kerEval = new KerEval(nObs, 0, kerEvalFunc, false)
-
-    val (psiUnperturbed, _) = Core2.checkSolution(kerEval, alpha, y, C)
-
-    alpha(0) += perturbation // perturb solution
-    alpha(1) -= perturbation
-
-    val (psiPerturbed, _) = Core2.checkSolution(kerEval, alpha, y, C)
 
     val cache = Core2.computeCache(alpha, b, y, kerEval)
-    val res = Core2.binaryOptimization(0, 1, alpha, b, y, cache, kerEval, C).map(t => t match {
-      case (a1, a2, b) => {
-        (math.abs(a1 - 0.75) < Def.epsilon) && (math.abs(a2 - 0.75) < Def.epsilon)
+    val (psi0, _) = Core2.checkSolution(kerEval, alpha, y, C)
+    
+    val res = Core2.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C).map(t => t match {
+      case (a1, a2, bNew) => {
+        println(s"bNew: $bNew")
+        alpha(i1) = a1
+        alpha(i2) = a2
+        
+        println(s"a1: $a1, a2: $a2, bNew: $bNew")
+
+        val (psi1, _) = Core2.checkSolution(kerEval, alpha, y, C)
+        println(s"psi0: $psi0, psi1: $psi1")
+        psi1 - psi0
       }
     })
 
-    println(res.contains(true))
+    println(res.exists(_ < 0.0))
   }
 }
