@@ -7,7 +7,7 @@ import scala.io.Source
 import scala.util.{ Try, Success, Failure }
 import various.Def
 import various.TypeDef._
-import svm.CoreNoHeuristic
+import svm.Core
 import exec.Learn
 import exec.Param
 
@@ -23,7 +23,7 @@ object SVM {
     val res = for {
       y <- parseY(param.kerEval.nObs, yFile)
       C <- getC(param)
-      resAlgo <- Success(CoreNoHeuristic.optimize(param.kerEval.nObs, param.kerEval.k, y, C))
+      resAlgo <- Success(Core.optimize(param.kerEval.nObs, param.kerEval.k, y, C))
       resWrite <- writeResults(param.rootFolder, resAlgo)
     } yield resWrite
 

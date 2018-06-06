@@ -7,8 +7,12 @@ object Main extends App {
 //  exec.Examples.offlinechangepoint
 //  kmeans.SimpleExample.main
   
-  regression.examples.Simple.writeAll
-  exec.Examples.regressionLearn
-  exec.Examples.regressionPredict
-  regression.examples.Simple.compareExpectedPredicted
+//  regression.examples.Simple.writeAll
+//  exec.Examples.regressionLearn
+//  exec.Examples.regressionPredict
+//  regression.examples.Simple.compareExpectedPredicted
+  
+//  exec.Examples.svm
+  
+  svm.SimpleCase2D.main
 }

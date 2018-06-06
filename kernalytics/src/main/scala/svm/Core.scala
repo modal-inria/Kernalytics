@@ -18,8 +18,8 @@ import various.TypeDef._
  * https://github.com/davidar/jclassification/blob/master/src/cc/vidr/jclassification/svm/SMO.java
  */
 object Core {
-  val tolAlpha: Real = 1.0e-3 // tolerance in alpha space
-  val tolObjective: Real = 1.0e-3 // tolerance in objective function value space (when kerEval is evaluated)
+  val tol: Real = 3.0e-10 // value at the end of article
+  val eps: Real = 1.0e-8 // tolerance in alpha space
 
   /**
    * Call optimizeImpl with default initial values.
@@ -59,7 +59,7 @@ object Core {
         }
       } else { // Only examine the bound observations (observation for which a constraint is active)
         for (i <- 0 to nObs - 1) {
-          if (tolAlpha < alpha(i) || alpha(i) < C - tolAlpha) {
+          if (0.0 < alpha(i) || alpha(i) < C) {
             numChanged += examineExample(i, alpha, y, C, cached, kerEval)
           }
         }
@@ -91,7 +91,7 @@ object Core {
         u(i) += y(j) * alpha(j) * kerEval(j, i)
       }
 
-      cached(i) = u(i) - y(i)
+      cached(i) = u(i) - y(i) // cached is a val, but is mutable
     }
   }
 
@@ -110,7 +110,7 @@ object Core {
     val E2 = cached(i2)
     val r2 = E2 * y2
 
-    if ((r2 < -tolAlpha && alph2 < C - tolObjective) || (r2 > tolAlpha && alph2 > tolObjective)) { // KKT violated AND non-bound observation
+    if ((r2 < -tol && alph2 < C) || (r2 > tol && alph2 > 0)) { // KKT violated AND non-bound observation
       println("examineExample, KKT violated")
       val randomIndices = randomNonBoundIndices(alpha, C)
 
@@ -150,7 +150,7 @@ object Core {
   def randomNonBoundIndices(alpha: DenseVector[Real], C: Real): (IndexedSeq[Index], IndexedSeq[Index]) = {
     val nObs = alpha.length
     val all = util.Random.shuffle(0 to nObs - 1)
-    return (all.filter(i => tolAlpha > alpha(i) || alpha(i) < C - tolAlpha), all)
+    return (all.filter(i => 0.0 < alpha(i) || alpha(i) < C), all)
   }
 
   def takeStep(i1: Index, i2: Index, alpha: DenseVector[Real], y: DenseVector[Real], C: Real, cached: DenseVector[Real], kerEval: (Index, Index) => Real): Index = {
@@ -177,8 +177,8 @@ object Core {
 
     println(s"takeStep: l: $l, h: $h")
 
-    if (math.abs(l - h) < tolAlpha) {
-      println("l and h are too close")
+    if (l == h) { // TODO: use epsilon for comparison
+      println("l and h are equal")
       return 0
     }
 
@@ -186,12 +186,12 @@ object Core {
     val k12 = kerEval(i1, i2)
     val k22 = kerEval(i2, i2)
 
-    val eta = k11 + k22 - 2 * k12
+    val eta = k11 + k22 - 2.0 * k12
 
     var a2: Real = 0.0 // use of a var to have a syntax similar to the article
 
-    if (tolObjective < eta) {
-      println("eta > 0.0")
+    if (0.0 < eta) {
+      println("0.0 < eta")
       a2 = alph2 + y2 * (E1 - E2) / eta
       if (a2 < l) {
         a2 = l
@@ -206,9 +206,9 @@ object Core {
       val psiL = L1 * f1 + l * f2 + 0.5 * L1 * L1 * k11 + 0.5 * l * l * k22 + s * l * L1 * k12
       val phiH = H1 * f1 + h * f2 + 0.5 * H1 * H1 * k11 + 0.5 * h * h * k22 + s * h * H1 * k12
 
-      if (psiL < phiH - tolObjective) {
+      if (psiL < phiH - eps) {
         a2 = l
-      } else if (psiL > phiH + tolObjective) {
+      } else if (psiL > phiH + eps) {
         a2 = h
       } else {
         a2 = alph2
@@ -217,7 +217,7 @@ object Core {
 
     println(s"takeStep, a2: $a2")
 
-    if (math.abs(a2 - alph2) < tolAlpha * (a2 + alph2 + tolObjective)) {
+    if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) {
       println("a2 step too small")
       return 0
     }
@@ -227,9 +227,9 @@ object Core {
     val b1 = E1 + y1 * (a1 - alph1) * k11 + y2 * (a2 - alph2) * k12 + b // update threshold to reflect change in Lagrange multiplier
     val b2 = E2 + y1 * (a1 - alph1) * k12 + y2 * (a2 - alph2) * k22 + b
 
-    if (tolAlpha < a1 && a1 < C - tolAlpha) {
+    if (0.0 < a1 && a1 < C) {
       b = b1
-    } else if (tolAlpha < a2 && a2 < C - tolAlpha) {
+    } else if (0.0 < a2 && a2 < C) {
       b = b2
     } else {
       b = (b1 + b2) / 2.0
@@ -251,7 +251,7 @@ object Core {
    */
   def checkSolution(kerEval: (Index, Index) => Real, alpha: DenseVector[Real], y: DenseVector[Real], C: Real) {
     val nObs = alpha.length
-    var psi = 0.0
+    var psi = 0.0 // objective function
 
     for (i <- 0 to nObs - 1) {
       for (j <- 0 to nObs - 1) {
@@ -269,6 +269,6 @@ object Core {
       if (C < alpha(i)) println(s"checkSolution, C < alpha($i)")
     }
 
-    if (tolAlpha < math.abs(y.dot(alpha))) println("checkSolution, y.dot(alpha) != 0.0")
+    if (0.0 < math.abs(y.dot(alpha))) println("checkSolution, y.dot(alpha) != 0.0")
   }
 }

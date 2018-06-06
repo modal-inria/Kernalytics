@@ -14,17 +14,25 @@ import various.TypeDef._
 class KerEval(val nObsLearn: Index, val nObsPredict: Index, val f: (Index, Index) => Real, val cacheGram: Boolean) {
   val totalObs = nObsLearn + nObsPredict
   val nObs = totalObs // for legacy code compatibility
-  
+
   val cacheMatrix = if (cacheGram)
     Some(DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => f(i, j)))
   else
     None
 
+  /**
+   * Return the Gram matrix. If it has been computed in cache, return it, otherwise compute it completely.
+   */
   def getK: DenseMatrix[Real] = cacheMatrix match {
     case Some(m) => m
     case None => DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => f(i, j))
   }
 
+  /**
+   * Generate the k function. If there is a cache matrix, this would access the element, otherwise this would directly compute the result using f.
+   * 
+   * Never call f directly, because you would ignore if the user wanted to cache the Gram matrix content.
+   */
   val k: (Index, Index) => Real = cacheMatrix match {
     case Some(m) => (i, j) => m(i, j)
     case None => (i, j) => f(i, j)
@@ -95,7 +103,7 @@ object KerEval {
     val weights = DenseVector.tabulate[Real](nVar)(i => data(i).weight) // extract the weights for linearCombKerEvalFunc
 
     if (min(weights) < 0.0) return Failure(new Exception("Kernel coefficients must be positive."))
-    
+
     return data
       .reverse
       .foldLeft[Try[List[(Index, Index) => Real]]](Success(Nil))((acc, e) =>
