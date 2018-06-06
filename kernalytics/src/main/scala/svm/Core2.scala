@@ -113,7 +113,7 @@ object Core2 {
    * Output the objective function value to check convergence of the algorithm, and check the constraints.
    * Only useful in debug.
    */
-  def checkSolution(kerEval: KerEval, alpha: DenseVector[Real], y: DenseVector[Real], C: Real) {
+  def checkSolution(kerEval: KerEval, alpha: DenseVector[Real], y: DenseVector[Real], C: Real): (Real, Real) = {
     val nObs = alpha.length
     var psi = 0.0 // objective function
 
@@ -126,13 +126,13 @@ object Core2 {
     psi /= 2.0
     psi -= sum(alpha)
 
-    println(s"checkSolution, psi = $psi")
-
     for (i <- 0 to nObs - 1) {
       if (alpha(i) < 0.0) println(s"checkSolution, alpha($i) < 0.0")
       if (C < alpha(i)) println(s"checkSolution, C < alpha($i)")
     }
+    
+    val dotCond = y.dot(alpha)
 
-    println(s"checkSolution, y.dot(alpha) = ${y.dot(alpha)}")
+    return (psi, dotCond)
   }
 }
