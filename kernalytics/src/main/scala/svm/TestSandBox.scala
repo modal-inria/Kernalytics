@@ -38,7 +38,7 @@ object TestSandBox {
    */
   def testOptim {
     val i1 = 0
-    val i2 = 5
+    val i2 = 4
     val alpha = DenseVector.zeros[Real](nObs)
     val b: Real = 0.0
     val C: Real = 1000000 // large value to penalize non compliance with margins
