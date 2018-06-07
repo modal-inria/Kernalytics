@@ -9,6 +9,8 @@ import various.TypeDef._
  * This package contains the heuristics used to selects the pairs to be optimized.
  */
 object Heuristics {
+  val tol: Real = 1e-3 // tolerance on KKT violation
+
   /**
    * Loop over all the possible pairs, for a given number of iterations. Used as a first approach, for debugging.
    *
@@ -57,7 +59,7 @@ object Heuristics {
       val indices = randomIndices(alpha, C, examineAll)
 
       for (i2 <- indices) {
-        selectI1(i2, alpha, kerEval, y, C, cache) match {
+        selectI1(i2, alpha, b, kerEval, y, C, cache) match {
           case Some((i1, (a1, a2, newB))) => {
             alpha(i1) = a1
             alpha(i2) = a2
@@ -69,7 +71,7 @@ object Heuristics {
           case None => {}
         }
       }
-      
+
       if (examineAll == true) {
         examineAll = false
       } else if (numChanged == 0) {
@@ -94,39 +96,48 @@ object Heuristics {
    *
    * @return what Core.binaryOptimization returns
    */
-  def selectI1(i2: Index, alpha: DenseVector[Real], kerEval: KerEval, y: DenseVector[Real], C: Real, cache: DenseVector[Real]): Option[(Index, (Real, Real, Real))] = {
-    //    println(s"examineExample, i2: $i2")
-    //    val nObs = alpha.length
-    //
-    //    val y2 = y(i2)
-    //    val alph2 = alpha(i2)
-    //    val E2 = cached(i2)
-    //    val r2 = E2 * y2
-    //
-    //    if ((r2 < -tol && alph2 < C) || (r2 > tol && alph2 > 0)) { // KKT violated AND non-bound observation
-    //      println("examineExample, KKT violated")
-    //      val randomIndices = randomNonBoundIndices(alpha, C)
-    //
-    //      if (randomIndices._1.length > 1) {
-    //        println("examineExample, first heuristic")
-    //        val i1 = secondChoiceHeuristic(E2, cached)
-    //        if (takeStep(i1, i2, alpha, y, C, cached, kerEval) == 1) return 1 // if takeStep returns 0, switch to next heuristic
-    //      }
-    //
-    //      for (i1 <- 0 to randomIndices._1.length - 1) { // loop over all non-zero and non-C alpha, starting at random point
-    //        println("examineExample, second heuristic")
-    //        if (takeStep(i1, i2, alpha, y, C, cached, kerEval) == 1) return 1
-    //      }
-    //
-    //      for (i1 <- 0 to nObs - 1) { // loop over all non-zero and non-C alpha, starting at random point TODO: there is no need to loop over the previously discarded non bound cases
-    //        println("examineExample, third heuristic")
-    //        if (takeStep(i1, i2, alpha, y, C, cached, kerEval) == 1) return 1
-    //      }
-    //    }
-    //
-    //    return 0 // no second Lagrange multiplier was a good enough candidate for the heuristic
+  def selectI1(i2: Index, alpha: DenseVector[Real], b: Real, kerEval: KerEval, y: DenseVector[Real], C: Real, cache: DenseVector[Real]): Option[(Index, (Real, Real, Real))] = {
+    val y2 = y(i2)
+    val alph2 = alpha(i2)
+    val e2 = cache(i2)
+    val r2 = e2 * y2
 
-    ???
+    if ((r2 < -tol && alph2 < C) || (r2 > tol && alph2 > 0)) { // KKT violated AND non-bound observation
+      val indices = bothRandomIndices(alpha, C)
+
+      if (indices._1.length > 1) {
+        val i1 = secondChoiceHeuristic(e2, cache)
+        Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C) match {
+          case Some((a1, a2, b)) => return Some((i1, (a1, a2, b)))
+          case None => {}
+        }
+      }
+
+      for (i1 <- indices._1) { // loop over all non-zero and non-C alpha, starting at random point
+        Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C) match {
+          case Some((a1, a2, b)) => return Some((i1, (a1, a2, b)))
+          case None => {}
+        }
+      }
+
+      for (i1 <- indices._2) { // loop over all bound alpha
+        Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C) match {
+          case Some((a1, a2, b)) => return Some((i1, (a1, a2, b)))
+          case None => {}
+        }
+      }
+    }
+
+    return None // no second Lagrange multiplier was a good enough candidate for the heuristic
+  }
+
+  /**
+   * Get the indices of non-bound Lagrange multiplier, in a random order to avoid bias in the algorithm.
+   */
+  def bothRandomIndices(alpha: DenseVector[Real], C: Real): (IndexedSeq[Index], IndexedSeq[Index]) = {
+    val nObs = alpha.length
+    val all = util.Random.shuffle(0 to nObs - 1)
+    return (all.filter(i => 0.0 < alpha(i) || alpha(i) < C), all.filter(i => 0.0 == alpha(i) || alpha(i) == C))
   }
 
   /**
@@ -134,8 +145,7 @@ object Heuristics {
    */
   def secondChoiceHeuristic(E2: Real, cached: DenseVector[Real]): Index = {
     val nObs = cached.length
-    val dis = cached.map(E1 => math.abs(E2 - E1))
-
+    val dis = cached.map(E1 => math.abs(E1 - E2))
     return argmax(dis)
   }
 
