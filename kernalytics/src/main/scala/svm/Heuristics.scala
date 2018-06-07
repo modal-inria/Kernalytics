@@ -69,6 +69,12 @@ object Heuristics {
           case None => {}
         }
       }
+      
+      if (examineAll == true) {
+        examineAll = false
+      } else if (numChanged == 0) {
+        examineAll = true
+      }
     }
 
     return (alpha, b)
