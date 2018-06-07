@@ -1,6 +1,10 @@
 package algo.svm.examples
 
 import breeze.linalg._
+import java.io.File
+import org.apache.commons.io.FileUtils
+
+import various.Def
 import various.TypeDef._
 
 /**
@@ -9,53 +13,35 @@ import various.TypeDef._
  */
 object SimpleCase2D {
   val rootFolder = "data/exec/svm"
-  
+  val varName = "v1"
+  val varType = "VectorReal,2"
+
   def writeData {
     val nPoints = 1000
     val xLim = (0.0, 10.0)
     val yLim = (0.0, 10.0)
-    
+
     val C: Real = 1000 // large value to penalize non compliance with margins
-    
-    val data = Array.fill[(Real, Real)](nPoints)({
+
+    val data = Array.fill[Array[Real]](nPoints)({
       ???
     })
-//    val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
-//
-//    val alpha0 = DenseVector.zeros[Real](8) // standard initialization
-//    val b0: Real = 0.0
-//
-//    //        val alpha0 = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution
-//    //        val b0: Real = 2.0
-//
-////    val alpha0 = DenseVector[Real](0.65, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // perturbed analytic solution
-////    val b0: Real = 2.0
-//
-//    val dataFile = rootFolder + Def.folderSep + "learnData.csv"
-//    val descriptorFile = rootFolder + Def.folderSep + "desc.csv"
-//
-//    val kerEvalTry =
-//      for {
-//        (data, nObs) <- ReadVar.readAndParseVars(dataFile)
-//        param <- ReadParam.readAndParseParam(descriptorFile)
-//        kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param, true)
-//      } yield kerEval
-//
-//    kerEvalTry match {
-//      case Failure(m) => { println("Parsing error: " + m.toString) }
-//      case Success(s) => {}
-//    }
-//
-//    // println(errorMessage)
-//
-//    // TODO: output lambda coefficients to a a csv file
-//
-//    kerEvalTry
-//      .map(kerEval => Core.optimizeImpl(kerEval.nObs, kerEval.k, y, C, alpha0, b0))
-//      .map(res => { println(res._1); println(res._2) })
+
+    val y = data.map(computeY)
+
+    val dataStr = data.map(a => a.mkString(Def.optionSep)).mkString(Def.eol)
+    val xLearnStr = varName + Def.eol + varType + Def.eol + dataStr
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "learnData.csv"), xLearnStr, "UTF-8")
+
+    val yLearnStr = y.mkString(Def.eol)
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "learnY.csv"), yLearnStr, "UTF-8")
   }
-  
+
+  def computeY(point: Array[Real]): Real = {
+    ???
+  }
+
   def writeConfig {
-    
+
   }
 }
