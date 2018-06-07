@@ -15,8 +15,16 @@ import various.TypeDef._
 object SimpleCase2D {
   val rootFolder = "data/exec/svm"
   
-  def main {
-//    val C: Real = 1000 // large value to penalize non compliance with margins
+  def writeData {
+    val nPoints = 1000
+    val xLim = (0.0, 10.0)
+    val yLim = (0.0, 10.0)
+    
+    val C: Real = 1000 // large value to penalize non compliance with margins
+    
+    val data = Array.fill[(Real, Real)](nPoints)({
+      ???
+    })
 //    val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
 //
 //    val alpha0 = DenseVector.zeros[Real](8) // standard initialization
@@ -50,5 +58,9 @@ object SimpleCase2D {
 //    kerEvalTry
 //      .map(kerEval => Core.optimizeImpl(kerEval.nObs, kerEval.k, y, C, alpha0, b0))
 //      .map(res => { println(res._1); println(res._2) })
+  }
+  
+  def writeConfig {
+    
   }
 }

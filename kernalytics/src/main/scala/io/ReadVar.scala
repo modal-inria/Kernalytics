@@ -83,43 +83,14 @@ object ReadVar {
     val data = v.drop(2)
     
     val typeName = varType(0)
-    val typeParam = varType.drop(1)
+    val typeParam = varType.drop(1) // if no options have been provided, the length will be 0
     
     typeName match {
-      case "Real" => parseReal(varName,typeParam, data)
-      case "VectorReal" => parseVectorReal(varName, typeParam, data)
+      case "Real" => Try(new ParsedVar(varName, KerEval.DenseVectorReal(DenseVector.tabulate(data.size)(i => data(i).toReal))))
+      case "VectorReal" => ParseVectorReal.parse(varName, typeParam, data)
     }
   }
-  
-  /**
-   * Parse Real values.
-   */
-  def parseReal(varName: String, typeParam: Array[String], data: Array[String]): Try[ParsedVar] = {
-    Try(new ParsedVar(varName, KerEval.DenseVectorReal(DenseVector.tabulate(data.size)(i => data(i).toReal))))
-  }
-    
-  /**
-   * Parse vector of Real values, with fixed size.
-   */
-  def parseVectorReal(varName: String, typeParam: Array[String], data: Array[String]): Try[ParsedVar] = {
-    Try({
-      val nCoeff = typeParam(0).toIndex
-      
-      val convertedData =
-        data
-        .map(_.split(Def.optionSep))
-        .map(_.map(_.toReal))
-        .map(new DenseVector[Real](_))
-        
-      val allCorrectSize = convertedData.forall(o => o.length == nCoeff)
-        
-      if (allCorrectSize)
-        new ParsedVar(varName, KerEval.DenseVectorDenseVectorReal(DenseVector[DenseVector[Real]](convertedData)))
-      else
-        throw new Exception(s"VectorReal elements do not all have $nCoeff elements as required.")
-    })
-  }
-  
+
   /**
    * Check that all variables have different names.
    */
