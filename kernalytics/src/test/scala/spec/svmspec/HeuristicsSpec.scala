@@ -47,7 +47,22 @@ class HeuristicsSpec extends FlatSpec with Matchers {
     val (psi1, _) = Core.checkSolution(kerEval, alpha1, y, C) // optimized value
 
     val delta = psi1 - psi0
-    
+
+    delta should be < 0.0
+  }
+
+  "kkt heuristic" should "reduce the objective function" in {
+    val alpha0 = DenseVector.zeros[Real](nObs)
+    val b0: Real = 0.0
+    val C: Real = 1000000 // large value to penalize non compliance with margins
+    val nLoop = 100 // complete loops over all pairs (i1, i2)
+
+    val (psi0, _) = Core.checkSolution(kerEval, alpha0, y, C) // baseline value
+    val (alpha1, b) = Heuristics.kkt(kerEval, y, C)
+    val (psi1, _) = Core.checkSolution(kerEval, alpha1, y, C) // optimized value
+
+    val delta = psi1 - psi0
+
     delta should be < 0.0
   }
 }
