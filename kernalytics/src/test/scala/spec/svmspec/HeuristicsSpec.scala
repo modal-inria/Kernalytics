@@ -13,7 +13,7 @@ import various.Def
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
 import io.ReadVar
-import svm.{ Core2, Heuristics }
+import svm.{ Core, Heuristics }
 
 /**
  * Test IO, using data present on file.
@@ -42,9 +42,9 @@ class HeuristicsSpec extends FlatSpec with Matchers {
     val C: Real = 1000000 // large value to penalize non compliance with margins
     val nLoop = 100 // complete loops over all pairs (i1, i2)
 
-    val (psi0, _) = Core2.checkSolution(kerEval, alpha0, y, C) // baseline value
+    val (psi0, _) = Core.checkSolution(kerEval, alpha0, y, C) // baseline value
     val (alpha1, b) = Heuristics.naive(kerEval, y, C, nLoop)
-    val (psi1, _) = Core2.checkSolution(kerEval, alpha1, y, C) // optimized value
+    val (psi1, _) = Core.checkSolution(kerEval, alpha1, y, C) // optimized value
 
     val delta = psi1 - psi0
     

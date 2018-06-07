@@ -13,7 +13,7 @@ import various.Def
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
 import io.ReadVar
-import svm.Core2
+import svm.Core
 
 /**
  * Test IO, using data present on file.
@@ -41,8 +41,8 @@ class Core2Spec extends FlatSpec with Matchers {
     val b: Real = 2.0
     val C: Real = 1000 // large value to penalize non compliance with margins
 
-    val cache = Core2.computeCache(alpha, b, y, kerEval)
-    val res = Core2.binaryOptimization(0, 1, alpha, b, y, cache, kerEval, C)
+    val cache = Core.computeCache(alpha, b, y, kerEval)
+    val res = Core.binaryOptimization(0, 1, alpha, b, y, cache, kerEval, C)
 
     res shouldBe None
   }
@@ -53,15 +53,15 @@ class Core2Spec extends FlatSpec with Matchers {
     val C: Real = 1000000 // large value to penalize non compliance with margins
     val perturbation = 0.25
 
-    val (psiUnperturbed, _) = Core2.checkSolution(kerEval, alpha, y, C)
+    val (psiUnperturbed, _) = Core.checkSolution(kerEval, alpha, y, C)
 
     alpha(0) += perturbation // perturb solution
     alpha(1) -= perturbation
 
-    val (psiPerturbed, _) = Core2.checkSolution(kerEval, alpha, y, C)
+    val (psiPerturbed, _) = Core.checkSolution(kerEval, alpha, y, C)
 
-    val cache = Core2.computeCache(alpha, b, y, kerEval)
-    val res = Core2.binaryOptimization(0, 1, alpha, b, y, cache, kerEval, C).map(t => t match {
+    val cache = Core.computeCache(alpha, b, y, kerEval)
+    val res = Core.binaryOptimization(0, 1, alpha, b, y, cache, kerEval, C).map(t => t match {
       case (a1, a2, b) => {
         (math.abs(a1 - 0.75) < Def.epsilon) && (math.abs(a2 - 0.75) < Def.epsilon)
       }
@@ -77,10 +77,10 @@ class Core2Spec extends FlatSpec with Matchers {
     val b: Real = 0.0
     val C: Real = 1000000 // large value to penalize non compliance with margins
 
-    val cache = Core2.computeCache(alpha, b, y, kerEval)
-    val (psi0, _) = Core2.checkSolution(kerEval, alpha, y, C)
+    val cache = Core.computeCache(alpha, b, y, kerEval)
+    val (psi0, _) = Core.checkSolution(kerEval, alpha, y, C)
 
-    val res = Core2.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C).map(t => t match {
+    val res = Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C).map(t => t match {
       case (a1, a2, bNew) => {
         println(s"bNew: $bNew")
         alpha(i1) = a1
@@ -88,7 +88,7 @@ class Core2Spec extends FlatSpec with Matchers {
 
         println(s"a1: $a1, a2: $a2, bNew: $bNew")
 
-        val (psi1, _) = Core2.checkSolution(kerEval, alpha, y, C)
+        val (psi1, _) = Core.checkSolution(kerEval, alpha, y, C)
         println(s"psi0: $psi0, psi1: $psi1")
         psi1 - psi0
       }

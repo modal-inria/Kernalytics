@@ -18,16 +18,18 @@ object SVM {
   val bFileName = "paramB.csv"
 
   def main(param: Learn.AlgoParam): Try[Unit] = {
-    val yFile = param.rootFolder + Def.folderSep + yFileName
-
-    val res = for {
-      y <- parseY(param.kerEval.nObs, yFile)
-      C <- getC(param)
-      resAlgo <- Success(Core.optimize(param.kerEval.nObs, param.kerEval.k, y, C))
-      resWrite <- writeResults(param.rootFolder, resAlgo)
-    } yield resWrite
-
-    return res
+//    val yFile = param.rootFolder + Def.folderSep + yFileName
+//
+//    val res = for {
+//      y <- parseY(param.kerEval.nObs, yFile)
+//      C <- getC(param)
+//      resAlgo <- Success(Core.optimize(param.kerEval.nObs, param.kerEval.k, y, C))
+//      resWrite <- writeResults(param.rootFolder, resAlgo)
+//    } yield resWrite
+//
+//    return res
+    
+    ???
   }
 
   /**
