@@ -1,8 +1,11 @@
-package svm
+package spec.iospec
 
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions._
+import org.scalactic._
+import org.scalatest._
+import org.scalatest.TryValues._
 import scala.util.{ Try, Success, Failure }
 
 import rkhs.{ Algebra, KerEval, KerEvalGenerator, Kernel }
@@ -10,11 +13,12 @@ import various.Def
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
 import io.ReadVar
+import svm.{ Core2, Heuristics }
 
 /**
- * Formal solution has been derived in http://axon.cs.byu.edu/Dan/678/miscellaneous/SVM.example.pdf
+ * Test IO, using data present on file.
  */
-object TestSandBox {
+class HeuristicsSpec extends FlatSpec with Matchers {
   val x = DenseVector[DenseVector[Real]](
     DenseVector[Real](3, 1),
     DenseVector[Real](3, -1),
@@ -30,13 +34,9 @@ object TestSandBox {
   val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
 
   val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
-
   val kerEval = new KerEval(x.length, 0, kerEvalFunc, false)
 
-  /**
-   * Note that i1 and i2 must be chosen with y1 != y2, otherwise the linear constraint force them to stay at 0.
-   */
-  def testOptim {
+  "naive heuristic" should "reduce the objective function" in {
     val alpha0 = DenseVector.zeros[Real](nObs)
     val b0: Real = 0.0
     val C: Real = 1000000 // large value to penalize non compliance with margins
@@ -46,7 +46,8 @@ object TestSandBox {
     val (alpha1, b) = Heuristics.naive(kerEval, y, C, nLoop)
     val (psi1, _) = Core2.checkSolution(kerEval, alpha1, y, C) // optimized value
 
-    println(s"$psi0: $psi0, psi1: $psi1")
-    println(psi1 < psi0)
+    val delta = psi1 - psi0
+    
+    delta should be < 0.0
   }
 }
