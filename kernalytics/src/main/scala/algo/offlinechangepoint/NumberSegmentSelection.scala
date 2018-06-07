@@ -1,10 +1,9 @@
-package offlinechangepoint
+package algo.offlinechangepoint
 
 import breeze.linalg._
 import breeze.plot._
-import java.io.File
 import various.TypeDef._
-import various.{ Def, Math }
+import various.{ Math }
 
 object NumberSegmentSelection {
   class optimalNumberSegmentsReturn(

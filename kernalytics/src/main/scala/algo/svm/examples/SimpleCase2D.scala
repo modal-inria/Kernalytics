@@ -1,11 +1,6 @@
-package svm
+package algo.svm.examples
 
 import breeze.linalg._
-import scala.util.{ Try, Success, Failure }
-
-import io.{ CombineVarParam, ReadVar, ReadParam }
-import rkhs.{ KerEval, KerEvalGenerator }
-import various.Def
 import various.TypeDef._
 
 /**

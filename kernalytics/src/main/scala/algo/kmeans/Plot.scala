@@ -1,10 +1,8 @@
-package kmeans
+package algo.kmeans
 
 import breeze.linalg._
 import breeze.plot._
-import rkhs.{ Gram, Kernel }
-import kmeans.Base.ComputationState
-import various.Iterate
+import rkhs.{ Gram }
 
 object Plot {
   class plotLim(

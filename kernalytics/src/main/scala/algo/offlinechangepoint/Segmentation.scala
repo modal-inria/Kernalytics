@@ -1,10 +1,9 @@
-package offlinechangepoint
+package algo.offlinechangepoint
 
-import breeze.linalg.{ argmin, DenseVector } // not imported using _ to avoid masking Scala Vector with Breeze Vector
+import breeze.linalg.{ DenseVector }
 import scala.annotation.tailrec
-
-import rkhs.Gram
 import various.TypeDef._
+import offlinechangepoint.CostMatrix
 
 /**
  * The index of the first observation is 0 and not 1 as in the article.

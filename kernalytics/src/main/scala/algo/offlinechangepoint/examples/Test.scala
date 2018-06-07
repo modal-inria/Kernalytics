@@ -4,6 +4,8 @@ import breeze.linalg._
 import rkhs.{ Algebra, KerEval, Kernel }
 import various.TypeDef._
 import scala.reflect.ClassTag
+import algo.offlinechangepoint.NumberSegmentSelection
+import algo.offlinechangepoint.Segmentation
 
 /**
  * Generic functions for easy testing of kernels.

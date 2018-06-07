@@ -1,9 +1,8 @@
-package kmeans
+package algo.kmeans
 
 import breeze.linalg._
-
 import rkhs.KerEval
-import various.{ Def, Iterate }
+import various.{ Iterate }
 import various.TypeDef._
 
 object IO {

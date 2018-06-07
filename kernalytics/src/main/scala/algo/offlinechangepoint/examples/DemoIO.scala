@@ -1,16 +1,13 @@
-package offlinechangepoint
+package algo.offlinechangepoint.examples
 
 import breeze.linalg._
 import breeze.numerics._
 import breeze.plot._
 import java.io.File
 import org.apache.commons.io.FileUtils
-import scala.util.{ Try, Success, Failure }
-
-import rkhs.{ KerEval }
 import various.Def
 import various.TypeDef._
-import io.{ CombineVarParam, ReadVar, ReadParam, Write }
+import offlinechangepoint.Test
 
 /**
  * Demo with data input / output from the hard drive.

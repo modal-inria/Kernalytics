@@ -5,7 +5,7 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.io.Source
 import scala.util.{ Try, Success, Failure }
-import regression.EstimationRidge
+import algo.regression.EstimationRidge
 import various.Def
 import various.TypeDef._
 import exec.Learn

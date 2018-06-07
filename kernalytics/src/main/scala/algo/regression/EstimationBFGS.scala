@@ -1,4 +1,4 @@
-package regression
+package algo.regression
 
 import breeze.linalg._
 import breeze.optimize._

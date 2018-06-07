@@ -7,7 +7,7 @@ import scala.io.Source
 import scala.util.{ Try, Success, Failure }
 import various.Def
 import various.TypeDef._
-import svm.Heuristics
+import algo.svm.Heuristics
 import exec.Learn
 import exec.Param
 

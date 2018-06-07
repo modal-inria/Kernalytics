@@ -1,9 +1,7 @@
-package kmeans
+package algo.kmeans
 
 import breeze.linalg._
-
 import rkhs.{ Algebra, Gram, Kernel }
-import kmeans.Base.ComputationState
 import various.Iterate
 
 object SimpleExample {
@@ -37,7 +35,7 @@ object SimpleExample {
 
     val gram = Gram.generate(data.data, kernel) // compute Gram matrix
     val param = Base.init(nObs, nClass) // initialize the algorithm by selecting a representative element per class and setting the class centers using them
-    val zeroCompState = new ComputationState(
+    val zeroCompState = new Base.ComputationState(
       0,
       gram,
       param,
@@ -46,8 +44,8 @@ object SimpleExample {
 
     val res = Iterate.iterate( // launch the real computation, which alternates E and M steps, updating the computation state
       initCompState,
-      Base.emIteration,
-      (s: ComputationState) => s.nIteration == nIteration)
+      Base.emIteration(_),
+      (s: Base.ComputationState) => s.nIteration == nIteration)
 
     val ziComputed = DenseVector.tabulate[Int](nObs)(i => argmax(res.zik(i, ::)))
     val matConf = computeMatConf(nClass, data.zi, ziComputed)

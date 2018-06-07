@@ -7,13 +7,12 @@ import org.scalactic._
 import org.scalatest._
 import org.scalatest.TryValues._
 import scala.util.{ Try, Success, Failure }
-
 import rkhs.{ Algebra, KerEval, KerEvalGenerator, Kernel }
 import various.Def
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
 import io.ReadVar
-import svm.{ Core, Heuristics }
+import algo.svm.{ Core, Heuristics }
 
 /**
  * Test IO, using data present on file.

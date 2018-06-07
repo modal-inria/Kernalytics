@@ -1,9 +1,7 @@
-package twosampletest
+package algo.twosampletest
 
 import breeze.linalg._
-
 import rkhs.KerEval
-import various.{ Def, Iterate }
 import various.TypeDef._
 
 object IO {

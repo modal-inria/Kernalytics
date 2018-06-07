@@ -1,15 +1,12 @@
-package svm
+package algo.svm.examples
 
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions._
-import scala.util.{ Try, Success, Failure }
-
-import rkhs.{ Algebra, KerEval, KerEvalGenerator, Kernel }
-import various.Def
+import rkhs.{ KerEval, KerEvalGenerator}
 import various.TypeDef._
-import offlinechangepoint.{ CostMatrix, Test }
-import io.ReadVar
+import algo.svm.Core
+import algo.svm.Heuristics
 
 /**
  * Formal solution has been derived in http://axon.cs.byu.edu/Dan/678/miscellaneous/SVM.example.pdf

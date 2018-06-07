@@ -1,11 +1,8 @@
-package regression
+package algo.regression
 
 import breeze.linalg._
 import breeze.optimize._
-import java.io.File
-
 import rkhs.KerEval
-import various.Def
 import various.TypeDef._
 
 /**

@@ -1,16 +1,14 @@
-package regression.examples
+package algo.regression.examples
 
 import breeze.linalg._
 import breeze.plot._
 import breeze.stats.distributions._
 import java.io.File
 import org.apache.commons.io.FileUtils
-import rkhs.{ Algebra, Gram, Kernel }
 import various.Def
 import various.TypeDef._
-import regression.Data
-import regression.EstimationBFGS
-import regression.PredictAlgorithm
+import algo.regression.EstimationBFGS
+import algo.regression.PredictAlgorithm
 
 object Linear {
   val rootFolder = "data/exec/regression"

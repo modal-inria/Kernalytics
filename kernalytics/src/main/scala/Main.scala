@@ -15,5 +15,5 @@ object Main extends App {
   //  exec.Examples.svm
 
   //  svm.SimpleCase2D.main
-  svm.TestSandBox.testOptim
+  algo.svm.examples.TestSandBox.testOptim
 }

@@ -1,4 +1,4 @@
-package kmeans
+package algo.kmeans
 
 import breeze.linalg._
 import breeze.stats.distributions._

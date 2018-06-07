@@ -1,9 +1,9 @@
-package twosampletest
+package algo.twosampletest.examples
 
 import breeze.linalg._
 import breeze.stats.distributions._
 import rkhs.{ Algebra, Gram, Kernel }
-import kmeans.Base.ComputationState
+import algo.twosampletest.Base
 
 object SimpleExample {
   def main {

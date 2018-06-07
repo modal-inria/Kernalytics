@@ -1,7 +1,6 @@
-package svm
+package algo.svm
 
 import breeze.linalg._
-
 import rkhs.KerEval
 import various.TypeDef._
 

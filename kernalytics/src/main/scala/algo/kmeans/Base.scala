@@ -1,7 +1,8 @@
-package kmeans
+package algo.kmeans
 
 import breeze.linalg._
-import rkhs.{ Gram, KerEval }
+import rkhs.{ Gram }
+import breeze.linalg.Transpose.LiftApply
 
 object Base {
   /**

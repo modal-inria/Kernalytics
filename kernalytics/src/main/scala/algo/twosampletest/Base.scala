@@ -1,7 +1,6 @@
-package twosampletest
+package algo.twosampletest
 
 import breeze.linalg._
-import rkhs.{ Gram, Kernel }
 import various.Def
 import scala.util.Random
 

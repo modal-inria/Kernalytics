@@ -13,7 +13,7 @@ import various.Def
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
 import io.ReadVar
-import svm.Core
+import algo.svm.Core
 
 /**
  * Test IO, using data present on file.

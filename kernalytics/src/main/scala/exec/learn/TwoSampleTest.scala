@@ -4,7 +4,7 @@ import breeze.linalg._
 import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.util.{ Try, Success}
-import twosampletest.IO
+import algo.twosampletest.IO
 import various.Def
 import various.TypeDef._
 import exec.Learn

@@ -4,7 +4,7 @@ import breeze.linalg._
 import java.io.File
 import org.apache.commons.io.FileUtils
 import scala.util.{ Try, Success}
-import kmeans.IO
+import algo.kmeans.IO
 import various.Def
 import various.TypeDef._
 import exec.Learn

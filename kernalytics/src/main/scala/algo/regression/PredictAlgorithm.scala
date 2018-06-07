@@ -1,7 +1,6 @@
-package regression
+package algo.regression
 
 import breeze.linalg._
-
 import rkhs.KerEval
 import various.TypeDef._
 
