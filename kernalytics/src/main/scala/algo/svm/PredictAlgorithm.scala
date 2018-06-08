@@ -1,11 +1,11 @@
-package svm
+package algo.svm
 
 import breeze.linalg._
 
 import rkhs.KerEval
 import various.TypeDef._
 
-object Predict {
+object PredictAlgorithm {
   /**
    * Formula for prediction with kernels is u_i = \sum_{j = 1}^N y_j \alpha_j K(x_j, x_i) - b
    * 
@@ -15,7 +15,7 @@ object Predict {
     val res = DenseVector.tabulate[Real](kerEval.nObsPredict)(i => {
       val absoluteI = i + kerEval.nObsLearn
       val components = DenseVector.tabulate[Real](kerEval.nObsLearn)(j => y(j) * alpha(j) * kerEval.k(j, absoluteI))
-      sum(components) - b
+      math.signum(sum(components) - b)
     })
     
     return res

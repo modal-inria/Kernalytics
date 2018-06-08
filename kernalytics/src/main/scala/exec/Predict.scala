@@ -5,7 +5,7 @@ import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
 import rkhs.KerEval
 import various.Def
 import various.TypeDef._
-import exec.predict.Regression
+import exec.predict.{ Regression, SVM }
 
 /**
  * TODO: merge learn and predict observations in a bigger KerEval.
@@ -57,7 +57,7 @@ object Predict {
 //      case "twosampletest" => TwoSampleTest.main(a)
 //      case "kmeans" => KMeans.main(a)
       case "regression" => Regression.main(a)
-//      case "svm" => SVM.main(a)
+      case "svm" => SVM.main(a)
       case _ => Failure(new Exception(s"Prediction mode not available for algorithm $a."))
     })
 

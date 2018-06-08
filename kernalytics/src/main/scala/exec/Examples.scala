@@ -1,9 +1,15 @@
 package exec
 
 object Examples {
-  def svm {
+  def svmLearn {
     val rootFolder = "data/exec/svm"
     val res = Learn.main(rootFolder)
+    println(res)
+  }
+
+  def svmPredict {
+    val rootFolder = "data/exec/svm"
+    val res = Predict.main(rootFolder)
     println(res)
   }
 

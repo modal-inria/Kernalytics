@@ -21,7 +21,7 @@ object SimpleCase2D {
     writeData
     writeConfig
   }
-  
+
   def writeData {
     val nPoints = 100
 
@@ -30,15 +30,25 @@ object SimpleCase2D {
     val xSample = new Uniform(0.0, 2.0 * math.Pi)
     val ySample = new Uniform(0.0, 1.0)
 
-    val data = Array.fill[Array[Real]](nPoints)(Array[Real](xSample.sample, ySample.sample))
-    val y = data.map(computeY)
+    val dataLearn = Array.fill[Array[Real]](nPoints)(Array[Real](xSample.sample, ySample.sample))
+    val yLearn = dataLearn.map(computeY)
 
-    val dataStr = data.map(a => a.mkString(Def.optionSep)).mkString(Def.eol)
-    val xLearnStr = varName + Def.eol + varType + Def.eol + dataStr
+    val dataLearnStr = dataLearn.map(a => a.mkString(Def.optionSep)).mkString(Def.eol)
+    val xLearnStr = varName + Def.eol + varType + Def.eol + dataLearnStr
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "learnData.csv"), xLearnStr, "UTF-8")
 
-    val yLearnStr = y.mkString(Def.eol)
+    val yLearnStr = yLearn.mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "learnY.csv"), yLearnStr, "UTF-8")
+
+    val dataPredict = Array.fill[Array[Real]](nPoints)(Array[Real](xSample.sample, ySample.sample))
+    val yPredict = dataPredict.map(computeY)
+
+    val dataPredictStr = dataPredict.map(a => a.mkString(Def.optionSep)).mkString(Def.eol)
+    val xPredictStr = varName + Def.eol + varType + Def.eol + dataPredictStr
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "predictData.csv"), xPredictStr, "UTF-8")
+
+    val yPredictStr = yPredict.mkString(Def.eol)
+    FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "predictYExpected.csv"), yPredictStr, "UTF-8")
   }
 
   def computeY(point: Array[Real]): Real =
@@ -58,9 +68,9 @@ object SimpleCase2D {
     val descStr = desc.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "desc.csv"), descStr, "UTF-8")
   }
-  
+
   /**
-   * Compute and exports confusion matrix.  
+   * Compute and export confusion matrix.
    */
   def checkPrediction {
     ???
