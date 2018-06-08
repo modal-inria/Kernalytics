@@ -20,7 +20,7 @@ object Core {
 
   def binaryOptimization(i1: Index, i2: Index, alpha: DenseVector[Real], b: Real, y: DenseVector[Real], cache: DenseVector[Real], kerEval: KerEval, C: Real): Option[(Real, Real, Real)] = {
     if (i1 == i2) {
-      println("i1 == i2")
+//      println("i1 == i2")
       return None
     }
 
@@ -40,10 +40,10 @@ object Core {
         (max(0.0, alph2 + alph1 - C), min(C, alph2 + alph1))
       }
 
-    println(s"l: $l, h: $h")
+//    println(s"l: $l, h: $h")
 
     if (l == h) {
-      println("l == h ")
+//      println("l == h ")
       return None // TODO: use epsilon for floating point number comparison
     }
 
@@ -52,18 +52,18 @@ object Core {
     val k22 = kerEval.k(i2, i2)
 
     val eta = k11 + k22 - 2.0 * k12
-    println(s"e1: $e1, e2: $e2, eta: $eta")
+//    println(s"e1: $e1, e2: $e2, eta: $eta")
 
     val a2: Real =
       if (0.0 < eta) { // TODO: use epsilon for floating point number comparison
-        println("0.0 < eta")
+//        println("0.0 < eta")
         val ua2 = alph2 + y2 * (e1 - e2) / eta // unbounded a2
 
         if (ua2 < l) l
         else if (ua2 > h) h
         else ua2
       } else {
-        println("0.0 >= eta")
+//        println("0.0 >= eta")
         val f1 = y1 * (e1 + b) - alph1 * k11 - s * alph2 * k12
         val f2 = y2 * (e2 + b) - s * alph1 * k12 - alph2 * k22
         val l1 = alph1 + s * (alph2 - l)
@@ -77,7 +77,7 @@ object Core {
       }
 
     if (math.abs(a2 - alph2) < eps * (a2 + alph2 + eps)) {
-      println("a2 == alph2")
+//      println("a2 == alph2")
       return None
     }
 

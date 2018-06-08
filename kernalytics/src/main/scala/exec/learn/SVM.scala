@@ -12,7 +12,6 @@ import exec.Learn
 import exec.Param
 
 object SVM {
-  val headerSizeY = 2
   val yFileName = "learnY.csv"
   val alphaFileName = "paramAlpha.csv"
   val bFileName = "paramB.csv"
@@ -42,22 +41,21 @@ object SVM {
    * Check that the response file y has been provided and contains the right number of correctly formatted elements.
    * This should be moved later to io, as a response file in general has a lot of things to check.
    */
-  def parseY(nObs: Index, fileName: String): Try[DenseVector[Real]] = {
+  def parseY(nObs: Index, fileName: String): Try[DenseVector[Real]] =
     Try(Source.fromFile(new File(fileName)))
       .map(_.getLines.map(_.split(Def.csvSep)).toArray.transpose)
       .flatMap(checkNElements(nObs, _))
-      .flatMap(d => Try(d(0).drop(headerSizeY).map(s => s.toReal)))
+      .flatMap(d => Try(d(0).map(s => s.toReal)))
       .map(DenseVector[Real])
-  }
 
   /**
    * Check that csv only has one columns, and the correct number of rows.
    */
   def checkNElements(nObs: Index, data: Array[Array[String]]): Try[Array[Array[String]]] = {
-    if (data.size == 1 && data(0).size == nObs + headerSizeY)
+    if (data.size == 1 && data(0).size == nObs)
       Success(data)
     else
-      Failure(new Exception(s"y.csv must have one column and $nObs data rows."))
+      Failure(new Exception(s"$yFileName must have one column and $nObs data rows."))
   }
 
   /**

@@ -14,17 +14,17 @@ object ParseVectorReal {
    */
   def parse(varName: String, typeParam: Array[String], data: Array[String]): Try[ReadVar.ParsedVar] =
     for {
-      _ <- checkNumberOfParameters(varName, data, 1)
+      _ <- checkNumberOfParameters(varName, typeParam, 1)
       nCoeff <- Try(typeParam(0).toIndex)
       convertedData <- convertData(data)
       _ <- checkAllCorrectSize(convertedData, nCoeff)
     } yield (new ReadVar.ParsedVar(varName, KerEval.DenseVectorDenseVectorReal(DenseVector[DenseVector[Real]](convertedData))))
 
-  def checkNumberOfParameters(varName: String, data: Array[String], n: Index): Try[Unit] =
-    if (data.length == n)
+  def checkNumberOfParameters(varName: String, typeParam: Array[String], n: Index): Try[Unit] =
+    if (typeParam.length == n)
       Success()
     else
-      Failure(new Exception(s"Type for variable varName should contain $n parameters."))
+      Failure(new Exception(s"Type for variable $varName should contain $n parameters."))
 
   def convertData(data: Array[String]): Try[Array[DenseVector[Real]]] = {
     Try(
