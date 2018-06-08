@@ -23,7 +23,7 @@ object SimpleCase2D {
   }
   
   def writeData {
-    val nPoints = 1000
+    val nPoints = 100
 
     val C: Real = 1000 // large value to penalize non compliance with margins
 
@@ -54,8 +54,15 @@ object SimpleCase2D {
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "algo.csv"), algoStr, "UTF-8")
 
     val desc = Array(
-      Array(varName, "1.0", "Gaussian(0.1)"))
+      Array(varName, "1.0", "Gaussian(10.0)"))
     val descStr = desc.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "desc.csv"), descStr, "UTF-8")
+  }
+  
+  /**
+   * Compute and exports confusion matrix.  
+   */
+  def checkPrediction {
+    ???
   }
 }
