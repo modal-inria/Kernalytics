@@ -10,15 +10,16 @@ import various.TypeDef._
 
 /**
  * Comparison with basic imputation using the mean household value.
- * 
+ *
  * TODO: use optimization algorithm to find the kernel coefficients and parameters
  */
 object Format {
   val rootFolder = "realdata/housing"
   val rawDataFile = rootFolder + Def.folderSep + "raw/housing.data"
-  val formatDataFile = rootFolder + Def.folderSep + "learnData.csv"
+  val learnDataFile = rootFolder + Def.folderSep + "learnData.csv"
   val algoFile = rootFolder + Def.folderSep + "algo.csv"
   val descFile = rootFolder + Def.folderSep + "desc.csv"
+  val yFile = rootFolder + Def.folderSep + "learnY.csv"
 
   val sampleLine = " 0.00632  18.00   2.310  0  0.5380  6.5750  65.20  4.0900   1  296.0  15.30 396.90   4.98  24.00"
   val varName = Array("CRIM", "ZN", "INDUS", "CHAS", "NOX", "RM", "AGE", "DIS", "RAD", "TAX", "PTRATIO", "B", "LSTAT", "MEDV")
@@ -28,7 +29,7 @@ object Format {
     writeData
     writeConfig
   }
-  
+
   def parseLine(line: String): Array[String] = {
     val pattern = new Regex("[0-9.]+")
     pattern.findAllIn(line).toArray
@@ -42,12 +43,26 @@ object Format {
         .toList
         .map(parseLine)
 
-    val completeContent =
+    val allVars =
       (List(varName, dataType) ++ content)
+        .toArray
+        .transpose
+
+    val learnData =
+      allVars
+        .dropRight(1)
+        .transpose
         .map(_.mkString(Def.csvSep))
         .mkString(Def.eol)
 
-    FileUtils.writeStringToFile(new File(formatDataFile), completeContent, "UTF-8")
+    val yData =
+      allVars
+      .last
+      .drop(2) // no header in y file
+      .mkString(Def.eol)
+
+    FileUtils.writeStringToFile(new File(learnDataFile), learnData, "UTF-8")
+    FileUtils.writeStringToFile(new File(yFile), yData, "UTF-8")
   }
 
   def writeConfig {
@@ -59,8 +74,8 @@ object Format {
     val algoStr = algo.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(algoFile), algoStr, "UTF-8")
 
-    val desc = varName.map(Array(_, "1.0", "Gaussian(1.0)"))
-      
+    val desc = varName.dropRight(1).map(Array(_, "1.0", "Gaussian(1.0)"))
+
     val descStr = desc.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(descFile), descStr, "UTF-8")
   }
