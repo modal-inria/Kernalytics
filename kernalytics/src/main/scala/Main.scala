@@ -16,8 +16,10 @@ object Main extends App {
 
   //  svm.SimpleCase2D.main
   //  algo.svm.examples.TestSandBox.testOptim
-  algo.svm.examples.SimpleCase2D.writeAll
-  exec.Examples.svmLearn
-  exec.Examples.svmPredict
-  algo.svm.examples.SimpleCase2D.checkPrediction
+//  algo.svm.examples.SimpleCase2D.writeAll
+//  exec.Examples.svmLearn
+//  exec.Examples.svmPredict
+//  algo.svm.examples.SimpleCase2D.checkPrediction
+  
+  realdata.housing.Format.main
 }
