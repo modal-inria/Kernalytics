@@ -13,56 +13,57 @@ import various.TypeDef._
  *
  * TODO: use optimization algorithm to find the kernel coefficients and parameters
  */
-object Format {
+object GenerateData {
   val rootFolder = "realdata/housing"
   val rawDataFile = rootFolder + Def.folderSep + "raw/housing.data"
   val learnDataFile = rootFolder + Def.folderSep + "learnData.csv"
+  val predictDataFile = rootFolder + Def.folderSep + "predictData.csv"
   val algoFile = rootFolder + Def.folderSep + "algo.csv"
   val descFile = rootFolder + Def.folderSep + "desc.csv"
-  val yFile = rootFolder + Def.folderSep + "learnY.csv"
+  val learnYFile = rootFolder + Def.folderSep + "learnY.csv"
+  val predictYFileExpected = rootFolder + Def.folderSep + "predictYExpected.csv"
 
   val sampleLine = " 0.00632  18.00   2.310  0  0.5380  6.5750  65.20  4.0900   1  296.0  15.30 396.90   4.98  24.00"
   val varName = Array("CRIM", "ZN", "INDUS", "CHAS", "NOX", "RM", "AGE", "DIS", "RAD", "TAX", "PTRATIO", "B", "LSTAT", "MEDV")
   val dataType = Array.fill(varName.size)("Real")
-
-  def writeAll {
-    writeData
-    writeConfig
-  }
 
   def parseLine(line: String): Array[String] = {
     val pattern = new Regex("[0-9.]+")
     pattern.findAllIn(line).toArray
   }
 
-  def writeData {
+  def writeData(learnObs: Array[Index], predictObs: Array[Index]) {
     val content =
       Source
         .fromFile(rawDataFile)
         .getLines
-        .toList
+        .toArray
         .map(parseLine)
 
+    writeDataAndY(learnObs.map(content), learnDataFile, learnYFile)
+    writeDataAndY(predictObs.map(content), predictDataFile, predictYFileExpected)
+  }
+
+  def writeDataAndY(completeData: Array[Array[String]], dataFile: String, yFile: String) {
     val allVars =
-      (List(varName, dataType) ++ content)
-        .toArray
+      (Array(varName, dataType) ++ completeData)
         .transpose
 
-    val learnData =
+    val data =
       allVars
         .dropRight(1)
         .transpose
         .map(_.mkString(Def.csvSep))
         .mkString(Def.eol)
 
-    val yData =
+    val y =
       allVars
-      .last
-      .drop(2) // no header in y file
-      .mkString(Def.eol)
+        .last
+        .drop(2) // no header in y file
+        .mkString(Def.eol)
 
-    FileUtils.writeStringToFile(new File(learnDataFile), learnData, "UTF-8")
-    FileUtils.writeStringToFile(new File(yFile), yData, "UTF-8")
+    FileUtils.writeStringToFile(new File(dataFile), data, "UTF-8")
+    FileUtils.writeStringToFile(new File(yFile), y, "UTF-8")
   }
 
   def writeConfig {

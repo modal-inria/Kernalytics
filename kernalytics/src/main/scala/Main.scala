@@ -20,7 +20,6 @@
 //  algo.svm.examples.SimpleCase2D.checkPrediction
 
 object Main extends App {
-  realdata.housing.Format.writeAll
   realdata.housing.Run.main
 }
 
