@@ -19,13 +19,17 @@
 
 //  algo.svm.examples.SimpleCase2D.checkPrediction
 
-object Main extends App {
-  realdata.housing.Run.main
-  
-}
+//object Main extends App {
+//  realdata.housing.Run.main
+//  
+//}
 
 //object Main extends App {
 //  algo.svm.examples.SimpleCase2D.writeAll
 //  exec.Examples.svmLearn
 //  exec.Examples.svmPredict
 //}
+
+object Main extends App {
+  linalg.IncompleteCholesky.test
+}
