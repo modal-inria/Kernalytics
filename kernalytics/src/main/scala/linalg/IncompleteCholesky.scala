@@ -14,26 +14,32 @@ object IncompleteCholesky {
     val d = diag(kMat)
     val ikVec = DenseVector.zeros[Index](m) // set Ik in the articles: list of selected pivots
     val jkSet = (0 to (m - 1)).to[SortedSet]
+    var jKBuffer = jkSet.toBuffer // toArray would be useless, as Array does not have the IndexedSeq trait required for slicing...
 
     for (k <- 0 to m - 1) {
-      val ik = argmax(d) // take as pivot the i_k which maximizes the lower bound
+      val ik = argmax(d(jKBuffer)) // take as pivot the i_k which maximizes the lower bound
+      println(s"k: $k, ik: $ik")
+      println(s"g:\n$g")
+      println(s"d: $d")
       ikVec(k) = ik // update IK
       jkSet -= ik //update JK
+      jKBuffer = jkSet.toBuffer // update IndexedSet version of jkSet
       
       g(ik, k) = math.sqrt(d(ik))
-      val jKBuffer = jkSet.toBuffer // toArray would be useless, as Array does not have the IndexedSeq trait required for slicing...
 
       val sumTerm = DenseVector.zeros[Real](jKBuffer.size)
       for (j <- 0 to k - 2) {
+        println(s"j: $j")
         sumTerm += g(jKBuffer, j) *:* g(ik, j)
+        println(sumTerm)
       }
 
       val scale = 1.0 / g(ik, k)
-      for (j <- 0 to jKBuffer.size - 1) {
+      for (j <- jKBuffer) {
         g(j, k) = scale * (kMat(j, ik) - sumTerm(j)) // g(jKBuffer, k) = ... not possible, hence the manual slicing
       }
       
-      for (j <- jkSet) {
+      for (j <- jKBuffer) {
         d(j) = d(j) - g(j, k) * g(j, k)
       }
     }
