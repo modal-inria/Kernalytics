@@ -1,6 +1,7 @@
 package linalg
 
 import breeze.linalg._
+import breeze.stats.distributions._
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.SortedSet
 
@@ -14,7 +15,7 @@ object IncompleteCholesky {
     val g = DenseMatrix.zeros[Real](nrow, m)
     val d = diag(kMat)
     val ikVec = ArrayBuffer.fill[Index](ncol)(0) // set Ik in the articles: list of selected pivots
-    val jkSet = (0 to (m - 1)).to[SortedSet] // mutable SortedSet
+    val jkSet = (0 to (ncol - 1)).to[SortedSet] // mutable SortedSet
     var jkBuffer = jkSet.toBuffer // a buffer is an indexedSeq with constant access, that could be used for slicing
     println(s"jkBuffer: $jkBuffer")
 
@@ -55,22 +56,61 @@ object IncompleteCholesky {
       }
     }
 
-//    println(s"ikVec: $ikVec")
-//    println("unordered")
-//    println(g)
-//    return g(ikVec.toBuffer, ::).toDenseMatrix
+    //    println(s"ikVec: $ikVec")
+    //    println("unordered")
+    //    println(g)
+    //    return g(ikVec.toBuffer, ::).toDenseMatrix
     return g
   }
 
   def test {
-    val nObs = 3
+    val nObs = 5
 
     val kMat = DenseMatrix(
       (2.0, -1.0, 0.0),
       (-1.0, 2.0, -1.0),
       (0.0, -1.0, 2.0))
 
+    println(det(kMat))
+
     val res = icd(kMat, 3)
+    println("g")
+    println(res)
+    println("g * g.t")
+    println(res * res.t)
+  }
+
+  def test2 {
+    val nObs = 5
+    val m = 3
+
+    val lambda = 1.0 // A + lambda * Id to get positive definite matrix
+    val A = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => i * nObs + j) // column vectors will be used to generate a Gram matrix
+    val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
+    println(det(A))
+    println(det(kMat))
+    println(kMat)
+
+    val res = icd(kMat, m)
+    println("g")
+    println(res)
+    println("g * g.t")
+    println(res * res.t)
+  }
+
+  def test3 {
+    val nObs = 5
+    val m = 3
+    val lambda = 1.0 // A + lambda * Id to get positive definite matrix
+    val normalLaw = Gaussian(0.0, 1.0)
+    
+    val A = DenseMatrix.fill[Real](nObs, nObs)(normalLaw.sample) // column vectors will be used to generate a Gram matrix
+    val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
+    println(det(A))
+    println(det(kMat))
+    println(kMat)
+
+    val res = icd(kMat, m)
     println("g")
     println(res)
     println("g * g.t")
