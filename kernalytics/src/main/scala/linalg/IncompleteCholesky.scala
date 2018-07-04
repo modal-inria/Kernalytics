@@ -45,4 +45,38 @@ object IncompleteCholesky {
 
     return g
   }
+
+  def icd(nObs: Index, kerEvalFunc: (Index, Index) => Real, m: Index): DenseMatrix[Real] = {
+    val g = DenseMatrix.zeros[Real](nObs, m)
+    val d = DenseVector.tabulate[Real](nObs)(i => kerEvalFunc(i, i))
+    val jkSet = (0 to (nObs - 1)).to[SortedSet] // mutable SortedSet
+    var jkBuffer = jkSet.toBuffer // a buffer is an indexedSeq with constant access, that could be used for slicing
+
+    for (k <- 0 to m - 1) {
+      val ik =
+        jkBuffer
+          .map(j => (j, d(j)))
+          .reduceLeft((p1, p2) => if (p1._2 < p2._2) p2 else p1)
+          ._1
+
+      jkSet -= ik //update JK
+      jkBuffer = jkSet.toBuffer // update IndexedSet version of jkSet (used for slicing)
+
+      g(ik, k) = math.sqrt(d(ik))
+
+      val sumTerm = DenseVector.zeros[Real](jkBuffer.size)
+      for (j <- 0 to k - 1) {
+        sumTerm += g(jkBuffer, j) *:* g(ik, j)
+      }
+
+      val scale = 1.0 / g(ik, k)
+      
+      for (j <- jkBuffer) {
+        g(j, k) = scale * (kerEvalFunc(j, ik) - sumTerm(j))
+        d(j) = d(j) - g(j, k) * g(j, k)
+      }
+    }
+
+    return g
+  }
 }

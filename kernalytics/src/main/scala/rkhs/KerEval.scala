@@ -3,25 +3,60 @@ package rkhs
 import breeze.linalg._
 import scala.util.{ Try, Success, Failure }
 
+import linalg.IncompleteCholesky
 import various.Def
 import various.TypeDef._
+
+sealed trait KerEvalTrait {
+  val totalObs: Index
+  def getK: DenseMatrix[Real]
+  def k(i: Index, j: Index): Real
+}
+
+/** No cache nor optimization, each value is computed directly when needed. */
+class KerEvalDirect(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEvalTrait {
+  val totalObs = nObsLearn + nObsPredict
+  def getK: DenseMatrix[Real] = DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j))
+  def k(i: Index, j: Index): Real = kerEvalFunc(i, j)
+}
+
+/** Gram matrix is computed and cached. kernel evaluation is coefficient evaluation. */
+class KerEvalCache(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEvalTrait {
+  val totalObs = nObsLearn + nObsPredict
+  
+  val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => k(i, j))
+  
+  def getK: DenseMatrix[Real] = cache
+  def k(i: Index, j: Index): Real = cache(i, j)
+}
+
+/** Low rank approximation is G is cached. Computation is obtained from the product G * G^t. */
+class KerEvalLowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val m: Index) extends KerEvalTrait {
+  val totalObs = nObsLearn + nObsPredict
+  
+  val g = (IncompleteCholesky.icd(totalObs, kerEvalFunc, m)).t
+  
+  def getK: DenseMatrix[Real] = DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => k(i, j))
+  def k(i: Index, j: Index): Real = g(i, ::).dot(g(j, ::))
+}
 
 /**
  * Rich container for kernel, instead of just having a function (Index, Index) => Real.
  * Subsequent access should always be performed using k instead of kerEval, as k uses the cache if it has been computed.
  * TODO: implement low rank approximation in this class.
  */
-class KerEval(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val cacheGram: Boolean) {
+class KerEval(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val cacheGram: Boolean, val cacheGramUp: KerEval.gramOpti = new KerEval.None) {
   val totalObs = nObsLearn + nObsPredict
   val nObs = totalObs // for legacy code compatibility
-
+  
   val cacheMatrix = if (cacheGram)
     Some(DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j)))
   else
     None
 
   /**
-   * Return the Gram matrix. If it has been computed in cache, return it, otherwise compute it completely.
+   * Return the completely computed Gram matrix. If it has been computed in cache, return it, otherwise compute it completely. If it has
+   * been computed using reduced rank, perform the DenseMatrix computation from the reduced rank version.
    */
   def getK: DenseMatrix[Real] = cacheMatrix match {
     case Some(m) => m
@@ -30,7 +65,7 @@ class KerEval(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (In
 
   /**
    * Generate the k function. If there is a cache matrix, this would access the element, otherwise this would directly compute the result using f.
-   * 
+   *
    * Never call f directly, because you would ignore if the user wanted to cache the Gram matrix content.
    */
   val k: (Index, Index) => Real = cacheMatrix match {
@@ -40,6 +75,17 @@ class KerEval(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (In
 }
 
 object KerEval {
+  /**
+   * Algebraic type to record the various ways to optimize the Gram matrix.
+   */
+  case class gramOpti()
+  /** k(x, y) recomputed each time it is called. */
+  class None extends gramOpti
+  /** k(x, y) computed once, then call from cache. */
+  class cacheGram extends gramOpti
+  /** A reduced rank matrix is computed on a subset of indices to approximate the rank matrix. */
+  class lowRank(val m: Index)
+
   /**
    * Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example).
    * Note that any type of containers could be used, not just DenseVector, because the data container is not specified in DataRoot, but in the derived
