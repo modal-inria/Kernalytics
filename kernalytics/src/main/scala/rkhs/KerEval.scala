@@ -9,35 +9,33 @@ import various.TypeDef._
 
 sealed trait KerEvalTrait {
   val totalObs: Index
-  def getK: DenseMatrix[Real]
+  def getK: DenseMatrix[Real] = DenseMatrix.tabulate[Real](totalObs, totalObs)(k)
   def k(i: Index, j: Index): Real
 }
 
 /** No cache nor optimization, each value is computed directly when needed. */
 class KerEvalDirect(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEvalTrait {
   val totalObs = nObsLearn + nObsPredict
-  def getK: DenseMatrix[Real] = DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j))
+  
   def k(i: Index, j: Index): Real = kerEvalFunc(i, j)
 }
 
 /** Gram matrix is computed and cached. kernel evaluation is coefficient evaluation. */
 class KerEvalCache(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEvalTrait {
   val totalObs = nObsLearn + nObsPredict
-  
-  val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => k(i, j))
-  
-  def getK: DenseMatrix[Real] = cache
+
+  val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)(k)
+
   def k(i: Index, j: Index): Real = cache(i, j)
 }
 
 /** Low rank approximation is G is cached. Computation is obtained from the product G * G^t. */
 class KerEvalLowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val m: Index) extends KerEvalTrait {
   val totalObs = nObsLearn + nObsPredict
-  
-  val g = (IncompleteCholesky.icd(totalObs, kerEvalFunc, m)).t
-  
-  def getK: DenseMatrix[Real] = DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => k(i, j))
-  def k(i: Index, j: Index): Real = g(i, ::).dot(g(j, ::))
+
+  val gt = (IncompleteCholesky.icd(totalObs, kerEvalFunc, m)).t
+
+  def k(i: Index, j: Index): Real = gt(::, i).dot(gt(::, j)) // column slices are more efficient in column major storage, that is why the transpose of g is stored
 }
 
 /**
@@ -48,7 +46,7 @@ class KerEvalLowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFu
 class KerEval(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val cacheGram: Boolean, val cacheGramUp: KerEval.gramOpti = new KerEval.None) {
   val totalObs = nObsLearn + nObsPredict
   val nObs = totalObs // for legacy code compatibility
-  
+
   val cacheMatrix = if (cacheGram)
     Some(DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j)))
   else

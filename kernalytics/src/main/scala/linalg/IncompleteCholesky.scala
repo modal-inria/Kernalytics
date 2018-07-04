@@ -71,8 +71,12 @@ object IncompleteCholesky {
 
       val scale = 1.0 / g(ik, k)
       
+      for (j <- 0 to jkBuffer.size - 1) {
+        val absJ = jkBuffer(j)
+        g(absJ, k) = scale * (kerEvalFunc(absJ, ik) - sumTerm(j))
+      }
+
       for (j <- jkBuffer) {
-        g(j, k) = scale * (kerEvalFunc(j, ik) - sumTerm(j))
         d(j) = d(j) - g(j, k) * g(j, k)
       }
     }

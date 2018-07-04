@@ -32,19 +32,19 @@ class IncompleteCholeskySpec extends FlatSpec with Matchers {
   }
 
   "icd" should "provide an exact decomposition even when a function is provided" in {
-//    val nObs = 6
-//    val m = nObs
-//
-//    val lambda = 1.0 // A + lambda * Id to get from semi positive definite to positive definite matrix
-//    val A = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => i * nObs + j) // column vectors will be used to generate a Gram matrix
-//    val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
-//
-//    def kerEvalFunc(i: Index, j: Index) = kMat(i, j)
-//    
-//    val res = IncompleteCholesky.icd(nObs, kerEvalFunc, m)
-//    val approxKMat = res * res.t
-//
-//    val maxRelativeError = max(abs(approxKMat - kMat))
-//    maxRelativeError should ===(0.0 +- 1e-8)
+    val nObs = 6
+    val m = nObs
+
+    val lambda = 1.0 // A + lambda * Id to get from semi positive definite to positive definite matrix
+    val A = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => i * nObs + j) // column vectors will be used to generate a Gram matrix
+    val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
+
+    def kerEvalFunc(i: Index, j: Index): Real = kMat(i, j)
+    
+    val res = IncompleteCholesky.icd(nObs, kerEvalFunc, m)
+    val approxKMat = res * res.t
+
+    val maxRelativeError = max(abs(approxKMat - kMat))
+    maxRelativeError should ===(0.0 +- 1e-8)
   }
 }
