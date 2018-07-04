@@ -82,14 +82,10 @@ class Core2Spec extends FlatSpec with Matchers {
 
     val res = Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C).map(t => t match {
       case (a1, a2, bNew) => {
-        println(s"bNew: $bNew")
         alpha(i1) = a1
         alpha(i2) = a2
 
-        println(s"a1: $a1, a2: $a2, bNew: $bNew")
-
         val (psi1, _) = Core.checkSolution(kerEval, alpha, y, C)
-        println(s"psi0: $psi0, psi1: $psi1")
         psi1 - psi0
       }
     })

@@ -31,5 +31,5 @@
 //}
 
 object Main extends App {
-  linalg.IncompleteCholesky.test
+  linalg.IncompleteCholesky.test2
 }

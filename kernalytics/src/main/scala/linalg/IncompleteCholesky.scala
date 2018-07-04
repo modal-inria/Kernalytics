@@ -1,6 +1,7 @@
 package linalg
 
 import breeze.linalg._
+import breeze.numerics._
 import breeze.stats.distributions._
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.SortedSet
@@ -13,11 +14,10 @@ object IncompleteCholesky {
     val ncol = kMat.cols
 
     val g = DenseMatrix.zeros[Real](nrow, m)
-    val d = diag(kMat)
+    val d = diag(kMat).copy
     val ikVec = ArrayBuffer.fill[Index](ncol)(0) // set Ik in the articles: list of selected pivots
     val jkSet = (0 to (ncol - 1)).to[SortedSet] // mutable SortedSet
     var jkBuffer = jkSet.toBuffer // a buffer is an indexedSeq with constant access, that could be used for slicing
-    println(s"jkBuffer: $jkBuffer")
 
     for (k <- 0 to m - 1) {
       //      val ik = argmax(d(jkBuffer)) // take as pivot the i_k which maximizes the lower bound, TODO: use absolute indexing, not slice indexing
@@ -29,23 +29,15 @@ object IncompleteCholesky {
           .reduceLeft((p1, p2) => if (p1._2 < p2._2) p2 else p1)
           ._1
 
-      println(s"k: $k, ik: $ik")
-      println(s"g:\n$g")
-      println(s"d: $d")
       ikVec(k) = ik // update IK
       jkSet -= ik //update JK
       jkBuffer = jkSet.toBuffer // update IndexedSet version of jkSet (used for slicing)
-      println(s"jkBuffer: $jkBuffer")
 
       g(ik, k) = math.sqrt(d(ik))
-      println(s"g(ik, k): ${g(ik, k)}")
 
       val sumTerm = DenseVector.zeros[Real](jkBuffer.size)
       for (j <- 0 to k - 1) {
-        println(s"j: $j")
         sumTerm += g(jkBuffer, j) *:* g(ik, j)
-        println("sumTerm:")
-        println(sumTerm)
       }
 
       val scale = 1.0 / g(ik, k)
@@ -56,10 +48,6 @@ object IncompleteCholesky {
       }
     }
 
-    //    println(s"ikVec: $ikVec")
-    //    println("unordered")
-    //    println(g)
-    //    return g(ikVec.toBuffer, ::).toDenseMatrix
     return g
   }
 
@@ -82,20 +70,24 @@ object IncompleteCholesky {
 
   def test2 {
     val nObs = 5
-    val m = 3
+    val m = nObs
 
-    val lambda = 1.0 // A + lambda * Id to get positive definite matrix
+    val lambda = 1.0 // A + lambda * Id to get from semi positive definite to positive definite matrix
     val A = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => i * nObs + j) // column vectors will be used to generate a Gram matrix
     val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
     println(det(A))
     println(det(kMat))
+    println(A)
+    println("")
     println(kMat)
 
     val res = icd(kMat, m)
-    println("g")
+    val approxKMat = res * res.t
     println(res)
-    println("g * g.t")
-    println(res * res.t)
+    println("")
+    println(approxKMat)
+    println("")
+    println(kMat)
   }
 
   def test3 {
@@ -103,7 +95,7 @@ object IncompleteCholesky {
     val m = 3
     val lambda = 1.0 // A + lambda * Id to get positive definite matrix
     val normalLaw = Gaussian(0.0, 1.0)
-    
+
     val A = DenseMatrix.fill[Real](nObs, nObs)(normalLaw.sample) // column vectors will be used to generate a Gram matrix
     val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
     println(det(A))
