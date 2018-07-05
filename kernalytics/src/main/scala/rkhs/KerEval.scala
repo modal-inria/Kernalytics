@@ -16,37 +16,26 @@ sealed trait KerEval {
   def k(i: Index, j: Index): Real
 }
 
-/** No cache nor optimization, each value is computed directly when needed. */
-class KerEvalDirect(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEval {
-  val totalObs = nObsLearn + nObsPredict
-  def k(i: Index, j: Index): Real = kerEvalFunc(i, j)
-}
-
-/** Gram matrix is computed and cached. kernel evaluation is coefficient evaluation. */
-class KerEvalCache(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEval {
-  val totalObs = nObsLearn + nObsPredict
-  val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)(k)
-  def k(i: Index, j: Index): Real = cache(i, j)
-}
-
-/** Low rank approximation is G is cached. Computation is obtained from the product G * G^t. */
-class KerEvalLowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val m: Index) extends KerEval {
-  val totalObs = nObsLearn + nObsPredict
-  val gt = (IncompleteCholesky.icd(totalObs, kerEvalFunc, m)).t
-  def k(i: Index, j: Index): Real = gt(::, i).dot(gt(::, j)) // column slices are more efficient in column major storage, that is why the transpose of g is stored
-}
-
 object KerEval {
-  /**
-   * Algebraic type to record the various ways to optimize the Gram matrix.
-   */
-  case class gramOpti()
-  /** k(x, y) recomputed each time it is called. */
-  class None extends gramOpti
-  /** k(x, y) computed once, then call from cache. */
-  class cacheGram extends gramOpti
-  /** A reduced rank matrix is computed on a subset of indices to approximate the rank matrix. */
-  class lowRank(val m: Index)
+  /** No cache nor optimization, each value is computed directly when needed. */
+  class Direct(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEval {
+    val totalObs = nObsLearn + nObsPredict
+    def k(i: Index, j: Index): Real = kerEvalFunc(i, j)
+  }
+
+  /** Gram matrix is computed and cached. kernel evaluation is coefficient evaluation. */
+  class Cache(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEval {
+    val totalObs = nObsLearn + nObsPredict
+    val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)(k)
+    def k(i: Index, j: Index): Real = cache(i, j)
+  }
+
+  /** Low rank approximation is G is cached. Computation is obtained from the product G * G^t. */
+  class LowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val m: Index) extends KerEval {
+    val totalObs = nObsLearn + nObsPredict
+    val gt = (IncompleteCholesky.icd(totalObs, kerEvalFunc, m)).t
+    def k(i: Index, j: Index): Real = gt(::, i).dot(gt(::, j)) // column slices are more efficient in column major storage, that is why the transpose of g is stored
+  }
 
   /**
    * Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example).

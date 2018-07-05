@@ -2,7 +2,7 @@ package exec
 
 import scala.util.{ Try, Success, Failure }
 import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
-import rkhs.KerEval
+import rkhs.{ GramOpti, KerEval }
 import various.Def
 import various.TypeDef._
 import exec.learn.KMeans
@@ -15,6 +15,8 @@ object Learn {
   val algoFileName = "algo.csv"
   val dataFileName = "learnData.csv"
   val descFileName = "desc.csv"
+
+  val gramOptiName = "gramOpti"
 
   case class AlgoParam(
     val algo: Map[String, String],
@@ -68,11 +70,29 @@ object Learn {
       Failure(new Exception(s"Algorithm name not found in $algoFileName."))
   }
 
-  def cacheGram(param: Map[String, String]): Try[Boolean] = {
-    if (param.contains("cacheGram")) {
-      Try(param("cacheGram").toBoolean)
+  def parseParam(str: String): Try[(String, String)] = {
+    val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
+    val t = Try({ val t = paramPattern.findAllIn(str); (t.group(1), t.group(2)) })
+
+    t match {
+      case Success(_) => t
+      case Failure(_) => Failure(new Exception(str + " is not a valid parameter String")) // default exception for pattern matching is not expressive enough
     }
-    else
+  }
+
+  def cacheGram(param: Map[String, String]): Try[GramOpti] = {
+    val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
+
+    if (param.contains(gramOptiName)) {
+      val rawStr = param(gramOptiName)
+      val t = Try({ val t = paramPattern.findAllIn(rawStr); (t.group(1), t.group(2)) })
+      t match {
+        case Success(("Direct", "")) => GramOpti.Direct()
+        case Success(("Cache", "")) => GramOpti.Cache()
+        case Success(("LowRank", m)) => Try(m.toIndex).map(mIndex => GramOpti.LowRank(mIndex))
+        case _ => Failure(new Exception(s"Could not parse $gramOptiName entry: "))
+      }
+    } else
       Failure(new Exception(s"$algoFileName must define cacheGram"))
   }
 }

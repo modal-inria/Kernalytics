@@ -22,6 +22,8 @@ object Predict {
     val rootFolder: String)
     
   /**
+   * Note that cacheGram is not parsed at all in prediction.
+   * 
    * @return string that is empty on success, or that contains a description of the problems.
    */
   def main(rootFolder: String): String = {
