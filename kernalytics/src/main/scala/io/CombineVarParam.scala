@@ -2,8 +2,8 @@ package io
 
 import scala.util.{ Try, Success, Failure }
 
-import rkhs.KerEval
 import various.TypeDef._
+import rkhs.{KerEval, KerEvalCache, KerEvalDirect}
 
 object CombineVarParam {
   /**
@@ -24,7 +24,10 @@ object CombineVarParam {
       .foldLeft[Try[List[KerEval.KerEvalFuncDescription]]](Success(Nil))((acc, e) =>
         acc.flatMap(l => linkParamToData(dict, e).map(k => k :: l)))
       .flatMap(KerEval.multivariateKerEval(_))
-      .map(kerEval => new KerEval(nObsLearn, nObsPredict, kerEval, cacheGram))
+      .map(kerEvalFunc => cacheGram match {
+        case true => new KerEvalCache(nObsLearn, nObsPredict, kerEvalFunc)
+        case false => new KerEvalDirect(nObsLearn, nObsPredict, kerEvalFunc)
+      })
   }
 
   /**

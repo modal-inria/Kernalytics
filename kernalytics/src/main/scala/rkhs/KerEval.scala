@@ -7,69 +7,33 @@ import linalg.IncompleteCholesky
 import various.Def
 import various.TypeDef._
 
-sealed trait KerEvalTrait {
+sealed trait KerEval {
+  val nObs: Index = nObsLearn
+  val nObsLearn: Index
+  val nObsPredict: Index
   val totalObs: Index
   def getK: DenseMatrix[Real] = DenseMatrix.tabulate[Real](totalObs, totalObs)(k)
   def k(i: Index, j: Index): Real
 }
 
 /** No cache nor optimization, each value is computed directly when needed. */
-class KerEvalDirect(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEvalTrait {
+class KerEvalDirect(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEval {
   val totalObs = nObsLearn + nObsPredict
-  
   def k(i: Index, j: Index): Real = kerEvalFunc(i, j)
 }
 
 /** Gram matrix is computed and cached. kernel evaluation is coefficient evaluation. */
-class KerEvalCache(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEvalTrait {
+class KerEvalCache(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEval {
   val totalObs = nObsLearn + nObsPredict
-
   val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)(k)
-
   def k(i: Index, j: Index): Real = cache(i, j)
 }
 
 /** Low rank approximation is G is cached. Computation is obtained from the product G * G^t. */
-class KerEvalLowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val m: Index) extends KerEvalTrait {
+class KerEvalLowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val m: Index) extends KerEval {
   val totalObs = nObsLearn + nObsPredict
-
   val gt = (IncompleteCholesky.icd(totalObs, kerEvalFunc, m)).t
-
   def k(i: Index, j: Index): Real = gt(::, i).dot(gt(::, j)) // column slices are more efficient in column major storage, that is why the transpose of g is stored
-}
-
-/**
- * Rich container for kernel, instead of just having a function (Index, Index) => Real.
- * Subsequent access should always be performed using k instead of kerEval, as k uses the cache if it has been computed.
- * TODO: implement low rank approximation in this class.
- */
-class KerEval(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val cacheGram: Boolean, val cacheGramUp: KerEval.gramOpti = new KerEval.None) {
-  val totalObs = nObsLearn + nObsPredict
-  val nObs = totalObs // for legacy code compatibility
-
-  val cacheMatrix = if (cacheGram)
-    Some(DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j)))
-  else
-    None
-
-  /**
-   * Return the completely computed Gram matrix. If it has been computed in cache, return it, otherwise compute it completely. If it has
-   * been computed using reduced rank, perform the DenseMatrix computation from the reduced rank version.
-   */
-  def getK: DenseMatrix[Real] = cacheMatrix match {
-    case Some(m) => m
-    case None => DenseMatrix.tabulate[Real](totalObs, totalObs)((i, j) => kerEvalFunc(i, j))
-  }
-
-  /**
-   * Generate the k function. If there is a cache matrix, this would access the element, otherwise this would directly compute the result using f.
-   *
-   * Never call f directly, because you would ignore if the user wanted to cache the Gram matrix content.
-   */
-  val k: (Index, Index) => Real = cacheMatrix match {
-    case Some(m) => (i, j) => m(i, j)
-    case None => (i, j) => kerEvalFunc(i, j)
-  }
 }
 
 object KerEval {
