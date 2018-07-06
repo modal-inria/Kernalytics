@@ -3,7 +3,7 @@ package io
 import scala.util.{ Try, Success, Failure }
 
 import various.TypeDef._
-import rkhs.{ GramOpti, KerEval }
+import rkhs.{ DataRoot, GramOpti, KerEval }
 
 object CombineVarParam {
   /**
@@ -34,7 +34,7 @@ object CombineVarParam {
   /**
    * Can fail if the parameter does not match any variable.
    */
-  def linkParamToData(dict: Map[String, KerEval.DataRoot], param: ReadParam.ParsedParam): Try[KerEval.KerEvalFuncDescription] =
+  def linkParamToData(dict: Map[String, DataRoot], param: ReadParam.ParsedParam): Try[KerEval.KerEvalFuncDescription] =
     for {
       data <- Try(dict(param.name))
     } yield new KerEval.KerEvalFuncDescription(param.weight, data, param.kernel, param.param)

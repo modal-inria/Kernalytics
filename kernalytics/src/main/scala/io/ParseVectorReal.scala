@@ -4,7 +4,7 @@ import breeze.linalg._
 import scala.io.Source
 import scala.util.{ Try, Success, Failure }
 
-import rkhs.KerEval
+import rkhs.{ DataRoot, KerEval }
 import various.Def
 import various.TypeDef._
 
@@ -18,7 +18,7 @@ object ParseVectorReal {
       nCoeff <- Try(typeParam(0).toIndex)
       convertedData <- convertData(data)
       _ <- checkAllCorrectSize(convertedData, nCoeff)
-    } yield (new ReadVar.ParsedVar(varName, KerEval.DenseVectorDenseVectorReal(DenseVector[DenseVector[Real]](convertedData))))
+    } yield (new ReadVar.ParsedVar(varName, DataRoot.VectorReal(DenseVector[DenseVector[Real]](convertedData))))
 
   def checkNumberOfParameters(varName: String, typeParam: Array[String], n: Index): Try[Unit] =
     if (typeParam.length == n)

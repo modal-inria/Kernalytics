@@ -6,7 +6,7 @@ import org.scalactic._
 import org.scalatest._
 
 import various.TypeDef._
-import rkhs.{ KerEvalGenerator, KerEval }
+import rkhs.{ DataRoot, KerEvalGenerator, KerEval }
 
 // http://www.scalatest.org/user_guide/using_matchers
 
@@ -14,7 +14,7 @@ class ErrorSpec extends FlatSpec with Matchers {
   "generateKernel" should "detect an error in parameters provided" in {
     val kernelNameStr = "Gaussian"
     val paramStr = "-12.0"
-    val data = KerEval.DenseVectorReal(DenseVector[Real](0.0, 12.0, -5.6))
+    val data = DataRoot.RealVal(DenseVector[Real](0.0, 12.0, -5.6))
     
     val res = KerEvalGenerator.generateKernelFromParamData(kernelNameStr, paramStr, data)
     

@@ -14,17 +14,19 @@ sealed trait DataRoot {
   def nPoint: Index
 }
 
-case class DenseVectorReal(val data: DenseVector[Real]) extends DataRoot {
-  val typeName = "Real"
-  def nPoint: Index = data.size
-}
+object DataRoot {
+  case class RealVal(val data: DenseVector[Real]) extends DataRoot { // because case class Real will not work, it will replace definition of Real in this file
+    val typeName = "Real"
+    def nPoint: Index = data.size
+  }
 
-case class DenseVectorDenseVectorReal(val data: DenseVector[DenseVector[Real]]) extends DataRoot {
-  val typeName = "VectorReal"
-  def nPoint: Index = data.size
-}
+  case class VectorReal(val data: DenseVector[DenseVector[Real]]) extends DataRoot {
+    val typeName = "VectorReal"
+    def nPoint: Index = data.size
+  }
 
-case class DenseVectorDenseMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DataRoot {
-  val typeName = "Matrix of Real"
-  def nPoint: Index = data.size
+  case class MatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DataRoot {
+    val typeName = "Matrix of Real"
+    def nPoint: Index = data.size
+  }
 }

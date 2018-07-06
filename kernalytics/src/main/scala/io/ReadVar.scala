@@ -4,7 +4,7 @@ import breeze.linalg._
 import scala.io.Source
 import scala.util.{Try, Success, Failure}
 
-import rkhs.KerEval
+import rkhs.{DataRoot, KerEval}
 import various.Def
 import various.TypeDef._
 
@@ -17,7 +17,7 @@ import various.TypeDef._
 object ReadVar {
   val headerSize = 2
 
-  class ParsedVar(val name: String, val data: KerEval.DataRoot) // type is not necessary, as data has been parsed into the correct type
+  class ParsedVar(val name: String, val data: DataRoot) // type is not necessary, as data has been parsed into the correct type
  
   /**
    * Create the list of parsed vars. The convoluted syntax with foldLeft is just a mechanism to catch the various errors that can occur, variable by variable.
@@ -86,7 +86,7 @@ object ReadVar {
     val typeParam = varType.drop(1) // if no options have been provided, the length will be 0
     
     typeName match {
-      case "Real" => Try(new ParsedVar(varName, KerEval.DenseVectorReal(DenseVector.tabulate(data.size)(i => data(i).toReal))))
+      case "Real" => Try(new ParsedVar(varName, DataRoot.RealVal(DenseVector.tabulate(data.size)(i => data(i).toReal))))
       case "VectorReal" => ParseVectorReal.parse(varName, typeParam, data)
     }
   }

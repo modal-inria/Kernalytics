@@ -7,7 +7,7 @@ import org.scalactic._
 import org.scalatest._
 import org.scalatest.TryValues._
 import scala.util.{ Try, Success, Failure }
-import rkhs.{ Algebra, KerEval, KerEvalGenerator, Kernel }
+import rkhs.{ Algebra, DataRoot, KerEval, KerEvalGenerator, Kernel }
 import various.Def
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
@@ -32,7 +32,7 @@ class HeuristicsSpec extends FlatSpec with Matchers {
 
   val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
 
-  val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
+  val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new DataRoot.VectorReal(x)).get
   val kerEval = new KerEval.Direct(x.length, 0, kerEvalFunc)
 
   "naive heuristic" should "reduce the objective function" in {

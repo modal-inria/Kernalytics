@@ -37,31 +37,6 @@ object KerEval {
     def k(i: Index, j: Index): Real = gt(::, i).dot(gt(::, j)) // column slices are more efficient in column major storage, that is why the transpose of g is stored
   }
 
-  /**
-   * Definition of traits to encapsulate container types, and avoid type erasure in pattern matching (in function detectDenseVectorType for example).
-   * Note that any type of containers could be used, not just DenseVector, because the data container is not specified in DataRoot, but in the derived
-   * types.
-   */
-  sealed trait DataRoot {
-    val typeName: String
-    def nPoint: Index
-  }
-
-  case class DenseVectorReal(val data: DenseVector[Real]) extends DataRoot {
-    val typeName = "Real"
-    def nPoint: Index = data.size
-  }
-
-  case class DenseVectorDenseVectorReal(val data: DenseVector[DenseVector[Real]]) extends DataRoot {
-    val typeName = "VectorReal"
-    def nPoint: Index = data.size
-  }
-
-  case class DenseVectorDenseMatrixReal(val data: DenseVector[DenseMatrix[Real]]) extends DataRoot {
-    val typeName = "Matrix of Real"
-    def nPoint: Index = data.size
-  }
-
   class KerEvalFuncDescription(
     val weight: Real,
     val data: DataRoot,

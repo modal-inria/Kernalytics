@@ -16,8 +16,8 @@ object KerEvalGenerator {
   /**
    * Generate a single var KerEval from a combination of parameter string and data.
    */
-  def generateKernelFromParamData(kernelNameStr: String, paramStr: String, data: KerEval.DataRoot): Try[(Index, Index) => Real] = data match {
-    case KerEval.DenseVectorReal(data) if kernelNameStr == "Linear" => {
+  def generateKernelFromParamData(kernelNameStr: String, paramStr: String, data: DataRoot): Try[(Index, Index) => Real] = data match {
+    case DataRoot.RealVal(data) if kernelNameStr == "Linear" => {
       Success(KerEval.generateKerEvalFunc(
         data,
         Kernel.InnerProduct.linear(
@@ -26,7 +26,7 @@ object KerEvalGenerator {
           Algebra.R.InnerProductSpace)))
     }
 
-    case KerEval.DenseVectorReal(data) if kernelNameStr == "Gaussian" => {
+    case DataRoot.RealVal(data) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be striclty superior to 0."))
         .map(sd => {
@@ -40,7 +40,7 @@ object KerEvalGenerator {
         })
     }
 
-    case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Linear" => {
+    case DataRoot.VectorReal(data) if kernelNameStr == "Linear" => {
       Success(KerEval.generateKerEvalFunc(
         data,
         Kernel.InnerProduct.linear(
@@ -49,7 +49,7 @@ object KerEvalGenerator {
           Algebra.DenseVectorReal.InnerProductSpace)))
     }
 
-    case KerEval.DenseVectorDenseVectorReal(data) if kernelNameStr == "Gaussian" => {
+    case DataRoot.VectorReal(data) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
@@ -63,7 +63,7 @@ object KerEvalGenerator {
         })
     }
 
-    case KerEval.DenseVectorDenseMatrixReal(data) if kernelNameStr == "Gaussian" => {
+    case DataRoot.MatrixReal(data) if kernelNameStr == "Gaussian" => {
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {

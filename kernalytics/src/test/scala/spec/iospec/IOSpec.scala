@@ -7,7 +7,7 @@ import org.scalactic._
 import org.scalatest._
 import scala.util.{ Try, Success, Failure }
 
-import rkhs.{ Algebra, KerEval, Kernel }
+import rkhs.{ Algebra, DataRoot, KerEval, Kernel }
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
 import io.ReadVar
@@ -27,7 +27,7 @@ class IOSpec extends FlatSpec with Matchers {
       case Success((s, _)) => (
         s(0).name,
         s(0).data match {
-          case KerEval.DenseVectorReal(vec) => vec
+          case DataRoot.RealVal(vec) => vec
           case _ => zeroVec
         })
     }
@@ -53,7 +53,7 @@ class IOSpec extends FlatSpec with Matchers {
       case Success((s, _)) => (
         s(0).name,
         s(0).data match {
-          case KerEval.DenseVectorReal(vec) => vec
+          case DataRoot.RealVal(vec) => vec
           case _ => zeroVec
         })
     }
@@ -72,7 +72,7 @@ class IOSpec extends FlatSpec with Matchers {
       case Success((s, _)) => (
         s(0).name,
         s(0).data match {
-          case KerEval.DenseVectorReal(vec) => vec
+          case DataRoot.RealVal(vec) => vec
           case _ => zeroVec
         })
     }
@@ -96,7 +96,7 @@ class IOSpec extends FlatSpec with Matchers {
 
     parsedData(0).name should ===("GaussData1")
     val parsedVec0 = parsedData(0).data match {
-      case KerEval.DenseVectorReal(vec) => vec
+      case DataRoot.RealVal(vec) => vec
       case _ => zeroVec
     }
     val expected0 = DenseVector[Real](
@@ -108,7 +108,7 @@ class IOSpec extends FlatSpec with Matchers {
 
     parsedData(1).name should ===("GaussData2")
     val parsedVec1 = parsedData(1).data match {
-      case KerEval.DenseVectorReal(vec) => vec
+      case DataRoot.RealVal(vec) => vec
       case _ => zeroVec
     }
     val expected1 = DenseVector[Real](
