@@ -8,7 +8,7 @@ import org.scalatest._
 import org.scalatest.TryValues._
 import scala.util.{ Try, Success, Failure }
 
-import rkhs.{ Algebra, KerEval, KerEvalDirect, KerEvalGenerator, Kernel }
+import rkhs.{ Algebra, KerEval, KerEvalGenerator, Kernel }
 import various.Def
 import various.TypeDef._
 import offlinechangepoint.{ CostMatrix, Test }
@@ -34,7 +34,7 @@ class Core2Spec extends FlatSpec with Matchers {
   val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
 
   val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
-  val kerEval = new KerEvalDirect(x.length, 0, kerEvalFunc)
+  val kerEval = new KerEval.Direct(x.length, 0, kerEvalFunc)
 
   "binaryOptimization" should "return None when optimum is already provided as input" in {
     val alpha = DenseVector[Real](0.75, 0.75, 0.0, 0.0, 3.5, 0.0, 0.0, 0.0) // analytic solution

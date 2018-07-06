@@ -3,11 +3,10 @@ package algo.svm.examples
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions._
-import rkhs.{ KerEval, KerEvalDirect, KerEvalGenerator}
+import rkhs.{ KerEval, KerEvalGenerator}
 import various.TypeDef._
 import algo.svm.Core
 import algo.svm.Heuristics
-import rkhs.KerEvalDirect
 
 /**
  * Formal solution has been derived in http://axon.cs.byu.edu/Dan/678/miscellaneous/SVM.example.pdf
@@ -29,7 +28,7 @@ object TestSandBox {
 
   val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new KerEval.DenseVectorDenseVectorReal(x)).get
 
-  val kerEval = new KerEvalDirect(x.length, 0, kerEvalFunc)
+  val kerEval = new KerEval.Direct(x.length, 0, kerEvalFunc)
 
   /**
    * Note that i1 and i2 must be chosen with y1 != y2, otherwise the linear constraint force them to stay at 0.

@@ -87,10 +87,10 @@ object Learn {
       val rawStr = param(gramOptiName)
       val t = Try({ val t = paramPattern.findAllIn(rawStr); (t.group(1), t.group(2)) })
       t match {
-        case Success(("Direct", "")) => GramOpti.Direct()
-        case Success(("Cache", "")) => GramOpti.Cache()
+        case Success(("Direct", "")) => Success(new GramOpti.Direct)
+        case Success(("Cache", "")) => Success(new GramOpti.Cache)
         case Success(("LowRank", m)) => Try(m.toIndex).map(mIndex => GramOpti.LowRank(mIndex))
-        case _ => Failure(new Exception(s"Could not parse $gramOptiName entry: "))
+        case _ => Failure(new Exception(s"Could not parse $gramOptiName entry: $rawStr"))
       }
     } else
       Failure(new Exception(s"$algoFileName must define cacheGram"))

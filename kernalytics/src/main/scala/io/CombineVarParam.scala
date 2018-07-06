@@ -3,7 +3,7 @@ package io
 import scala.util.{ Try, Success, Failure }
 
 import various.TypeDef._
-import rkhs.{ GramOpti, GramOptiDirect, GramOptiCache, GramOptiLowRank, KerEval }
+import rkhs.{ GramOpti, KerEval }
 
 object CombineVarParam {
   /**
@@ -25,9 +25,9 @@ object CombineVarParam {
         acc.flatMap(l => linkParamToData(dict, e).map(k => k :: l)))
       .flatMap(KerEval.multivariateKerEval(_))
       .map(kerEvalFunc => cacheGram match {
-        case GramOptiDirect() => new KerEval.Direct(nObsLearn, nObsPredict, kerEvalFunc)
-        case GramOptiCache() => new KerEval.Cache(nObsLearn, nObsPredict, kerEvalFunc)
-        case GramOptiLowRank(m) => new KerEval.LowRank(nObsLearn, nObsPredict, kerEvalFunc, m)
+        case GramOpti.Direct() => new KerEval.Direct(nObsLearn, nObsPredict, kerEvalFunc)
+        case GramOpti.Cache() => new KerEval.Cache(nObsLearn, nObsPredict, kerEvalFunc)
+        case GramOpti.LowRank(m) => new KerEval.LowRank(nObsLearn, nObsPredict, kerEvalFunc, m)
       })
   }
 
