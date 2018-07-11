@@ -7,3 +7,4 @@ sudo dpkg -i scala-2.12.3.deb
 ```
 
 - In Eclipse, activate the option "Insert spaces for tabs"
+- To build the jar and transfer it to the R project, run the script [update assembly](updateAssembly.sh)
