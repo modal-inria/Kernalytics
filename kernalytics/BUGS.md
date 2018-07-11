@@ -1,1 +1,0 @@
-- In SVM algorithm, the SMO optimizer does not seem to optimize properly. Implementation must be check and the algorithm is not ready for use.

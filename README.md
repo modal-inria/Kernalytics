@@ -6,9 +6,10 @@ Kernel methods are versatile, Kernalytics provides a generic computational engin
 
 # Documentation
 
-- [Build instructions](./kernalytics/doc/build.md)
-- [Algorithm description](./kernalytics/doc/algoDesc.md)
+- [Build instructions](kernalytics/doc/build.md)
+- [Algorithm description](kernalytics/doc/algoDesc.md)
 - [Things to do](TODO.md)
+- [External links](kernalytics/doc/links.md)
 
 ## Hints for centralized implementation
 
