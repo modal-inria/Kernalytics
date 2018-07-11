@@ -1,6 +1,7 @@
 package rkhs
 
 import breeze.linalg._
+import java.io.File
 import scala.util.{ Try, Success, Failure }
 
 import linalg.IncompleteCholesky
@@ -26,7 +27,7 @@ object KerEval {
   /** Gram matrix is computed and cached. kernel evaluation is coefficient evaluation. */
   class Cache(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real) extends KerEval {
     val totalObs = nObsLearn + nObsPredict
-    val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)(k)
+    val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)(kerEvalFunc)
     def k(i: Index, j: Index): Real = cache(i, j)
   }
 

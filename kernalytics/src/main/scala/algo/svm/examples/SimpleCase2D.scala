@@ -11,6 +11,9 @@ import various.TypeDef._
 
 /**
  * A simple two dimensional case linear case, with a few vectors, and for which the analytical solution is known.
+ * Tgis is the case to generate data and config. The code to run are in:
+ * - exec.Examples.svmLearn
+ * - exec.Examples.svmPredict
  * See http://axon.cs.byu.edu/Dan/678/miscellaneous/SVM.example.pdf
  */
 object SimpleCase2D {
@@ -63,7 +66,8 @@ object SimpleCase2D {
     val algo = Array(
       Array("algo", "svm"),
       Array("C", "1000"),
-      Array("cacheGram", "true"))
+      Array("gramOpti", "LowRank(3)"))
+      //Array("gramOpti", "Cache()"))
 
     val algoStr = algo.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "algo.csv"), algoStr, "UTF-8")

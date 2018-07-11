@@ -33,8 +33,8 @@ object Learn {
 
     val readAll = for {
       algo <- ReadAlgo.readAndParseFile(algoFile)
-      cg <- cacheGram(algo)
       (data, nObs) <- ReadVar.readAndParseVars(dataFile)
+      cg <- cacheGram(algo, nObs)
       param <- ReadParam.readAndParseParam(descFile)
       kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param, cg) // the assumption here is that every algorithm need the complete Gram matrix
     } yield (AlgoParam(algo, kerEval, rootFolder))
@@ -80,7 +80,7 @@ object Learn {
     }
   }
 
-  def cacheGram(param: Map[String, String]): Try[GramOpti] = {
+  def cacheGram(param: Map[String, String], nObs: Index): Try[GramOpti] = {
     val paramPattern = raw"([a-zA-Z0-9]+)\((.*)\)".r
 
     if (param.contains(gramOptiName)) {
@@ -89,10 +89,10 @@ object Learn {
       t match {
         case Success(("Direct", "")) => Success(new GramOpti.Direct)
         case Success(("Cache", "")) => Success(new GramOpti.Cache)
-        case Success(("LowRank", m)) => Try(m.toIndex).map(mIndex => GramOpti.LowRank(mIndex))
+        case Success(("LowRank", m)) => Try(m.toIndex).flatMap(mIndex => if (0 < mIndex && mIndex <= nObs) Success(GramOpti.LowRank(mIndex)) else Failure(new Exception(s"rank for low rank must be comprised in [1, nObs]")))
         case _ => Failure(new Exception(s"Could not parse $gramOptiName entry: $rawStr"))
       }
     } else
-      Failure(new Exception(s"$algoFileName must define cacheGram"))
+      Failure(new Exception(s"$algoFileName must define $gramOptiName"))
   }
 }

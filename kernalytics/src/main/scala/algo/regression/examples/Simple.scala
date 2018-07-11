@@ -61,7 +61,9 @@ object Simple {
     val algo = Array(
       Array("algo", "regression"),
       Array("lambda", "1e-4"),
-      Array("cacheGram", "true"))
+      //      Array("gramOpti", "Direct()"))
+      //    Array("gramOpti", "Cache()"))
+      Array("gramOpti", "LowRank(100)"))
 
     val algoStr = algo.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "algo.csv"), algoStr, "UTF-8")
@@ -79,22 +81,22 @@ object Simple {
 
     val f = Figure()
     f.visible = false
-    
+
     val p = f.subplot(0)
-    
+
     p += plot(x, yComputed, style = '-')
     p += plot(x, yExpected, style = '.')
-    
+
     p.title = "Observed vs regressed"
     p.xlabel = "Time"
     p.ylabel = "Value"
-    
+
     f.saveas(rootFolder + Def.folderSep + "plot.png")
   }
 
   def getCsvData(file: String, headerSize: Index): DenseVector[Real] = {
     val data = Source.fromFile(file).getLines.drop(headerSize).map(_.toReal).toArray
-    
+
     return DenseVector[Real](data)
   }
 }

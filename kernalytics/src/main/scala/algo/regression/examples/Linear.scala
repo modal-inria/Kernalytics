@@ -51,7 +51,7 @@ object Linear {
     val algo = Array(
       Array("algo", "regression"),
       Array("lambda", "1e-4"),
-      Array("cacheGram", "true"))
+      Array("gramOpti", "Cache()"))
 
     val algoStr = algo.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "algo.csv"), algoStr, "UTF-8")
