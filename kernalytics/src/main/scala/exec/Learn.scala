@@ -89,7 +89,7 @@ object Learn {
       t match {
         case Success(("Direct", "")) => Success(new GramOpti.Direct)
         case Success(("Cache", "")) => Success(new GramOpti.Cache)
-        case Success(("LowRank", m)) => Try(m.toIndex).flatMap(mIndex => if (0 < mIndex && mIndex <= nObs) Success(GramOpti.LowRank(mIndex)) else Failure(new Exception(s"rank for low rank must be comprised in [1, nObs]")))
+        case Success(("LowRank", m)) => Try(m.toIndex).map(GramOpti.LowRank)
         case _ => Failure(new Exception(s"Could not parse $gramOptiName entry: $rawStr"))
       }
     } else

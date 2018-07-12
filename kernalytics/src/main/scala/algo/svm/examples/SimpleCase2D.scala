@@ -66,8 +66,8 @@ object SimpleCase2D {
     val algo = Array(
       Array("algo", "svm"),
       Array("C", "1000"),
-      Array("gramOpti", "LowRank(3)"))
-      //Array("gramOpti", "Cache()"))
+      //Array("gramOpti", "LowRank(10)"))
+      Array("gramOpti", "Cache()"))
 
     val algoStr = algo.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "algo.csv"), algoStr, "UTF-8")

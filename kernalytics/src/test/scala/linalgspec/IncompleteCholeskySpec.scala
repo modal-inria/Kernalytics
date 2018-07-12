@@ -7,6 +7,7 @@ import org.scalactic._
 import org.scalatest._
 import various.TypeDef._
 import org.scalactic.source.Position.apply
+import org.scalatest.TryValues._
 
 import linalg.IncompleteCholesky
 import offlinechangepoint.{ CostMatrix, Test }
@@ -24,11 +25,15 @@ class IncompleteCholeskySpec extends FlatSpec with Matchers {
     val A = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => i * nObs + j) // column vectors will be used to generate a Gram matrix
     val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
 
-    val res = IncompleteCholesky.icd(kMat, m)
-    val approxKMat = res * res.t
+    val maxRelativeError =
+      IncompleteCholesky
+        .icd(kMat, m)
+        .map(res => {
+          val approxKMat = res * res.t
+          max(abs(approxKMat - kMat))
+        })
 
-    val maxRelativeError = max(abs(approxKMat - kMat))
-    maxRelativeError should ===(0.0 +- 1e-8)
+    maxRelativeError.success.value === (0.0 +- 1e-8)
   }
 
   "icd" should "provide an exact decomposition even when a function is provided" in {
@@ -40,11 +45,16 @@ class IncompleteCholeskySpec extends FlatSpec with Matchers {
     val kMat = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => A(i, ::) dot A(j, ::)) + lambda * DenseMatrix.eye[Real](nObs)
 
     def kerEvalFunc(i: Index, j: Index): Real = kMat(i, j)
-    
-    val res = IncompleteCholesky.icd(nObs, kerEvalFunc, m)
-    val approxKMat = res * res.t
 
-    val maxRelativeError = max(abs(approxKMat - kMat))
-    maxRelativeError should ===(0.0 +- 1e-8)
+    val maxRelativeError =
+      IncompleteCholesky
+        .icd(nObs, kerEvalFunc, m)
+        .map(res => {
+          val approxKMat = res * res.t
+          max(abs(approxKMat - kMat))
+        })
+
+
+    maxRelativeError.success.value === (0.0 +- 1e-8)
   }
 }

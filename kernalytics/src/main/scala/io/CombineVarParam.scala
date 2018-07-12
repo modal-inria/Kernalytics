@@ -1,7 +1,10 @@
 package io
 
+import breeze.linalg._
+
 import scala.util.{ Try, Success, Failure }
 
+import linalg.IncompleteCholesky
 import various.TypeDef._
 import rkhs.{ DataRoot, GramOpti, KerEval }
 
@@ -24,11 +27,34 @@ object CombineVarParam {
       .foldLeft[Try[List[KerEval.KerEvalFuncDescription]]](Success(Nil))((acc, e) =>
         acc.flatMap(l => linkParamToData(dict, e).map(k => k :: l)))
       .flatMap(KerEval.multivariateKerEval(_))
-      .map(kerEvalFunc => cacheGram match {
-        case GramOpti.Direct() => new KerEval.Direct(nObsLearn, nObsPredict, kerEvalFunc)
-        case GramOpti.Cache() => new KerEval.Cache(nObsLearn, nObsPredict, kerEvalFunc)
-        case GramOpti.LowRank(m) => new KerEval.LowRank(nObsLearn, nObsPredict, kerEvalFunc, m)
+      .flatMap(kerEvalFunc => {
+        val nObs = nObsLearn + nObsPredict
+//        eigenValuesDebug(nObs, kerEvalFunc)
+        cacheGram match {
+          case GramOpti.Direct() => Success(new KerEval.Direct(nObsLearn, nObsPredict, kerEvalFunc))
+          case GramOpti.Cache() => Success(new KerEval.Cache(nObsLearn, nObsPredict, kerEvalFunc))
+          case GramOpti.LowRank(m) => {
+            for {
+              _ <- checkBoundary(m, nObs)
+              gt <- IncompleteCholesky.icd(nObs, kerEvalFunc, m).map(_.t) // will return Failure if eigenvalues are too low regarding the required rank
+            } yield (new KerEval.LowRank(nObsLearn, nObsPredict, kerEvalFunc, gt, m))
+          }
+        }
       })
+  }
+
+  def eigenValuesDebug(nObs: Index, kerEvalFunc: (Index, Index) => Real) {
+    val eps = 1.0e-4
+    val k = DenseMatrix.tabulate[Real](nObs, nObs)((i, j) => kerEvalFunc(i, j))
+    val ev = eigSym(k).eigenvalues
+    val nSignificant = ev.data.filter(eps < _).size
+    println(ev)
+    println(println(s"nSignificant: $nSignificant, nObs: $nObs"))
+  }
+
+  def checkBoundary(m: Index, nObs: Index): Try[Unit] = {
+    if (0 < m && m <= nObs) Success()
+    else Failure(new Exception(s"rank for low rank must be comprised in [1, nObs]"))
   }
 
   /**

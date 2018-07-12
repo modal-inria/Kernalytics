@@ -32,18 +32,8 @@ object KerEval {
   }
 
   /** Low rank approximation is G is cached. Computation is obtained from the product G * G^t. */
-  class LowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val m: Index) extends KerEval {
+  class LowRank(val nObsLearn: Index, val nObsPredict: Index, val kerEvalFunc: (Index, Index) => Real, val gt: DenseMatrix[Real], val m: Index) extends KerEval {
     val totalObs = nObsLearn + nObsPredict
-    val gt = (IncompleteCholesky.icd(totalObs, kerEvalFunc, m)).t
-
-    // DEBUG TODO: remove when code validated
-    val cache = DenseMatrix.tabulate[Real](totalObs, totalObs)(kerEvalFunc)
-    println(s"det(cache): ${det(cache)}")
-    csvwrite(new File("debug/cache.csv"), cache, separator=';')
-    val a = cholesky(cache)
-    csvwrite(new File("debug/a.csv"), a, separator=';')
-    // END OF DEBUG
-
     def k(i: Index, j: Index): Real = gt(::, i).dot(gt(::, j)) // column slices are more efficient in column major storage, that is why the transpose of g is stored
   }
 

@@ -63,7 +63,7 @@ object Simple {
       Array("lambda", "1e-4"),
       //      Array("gramOpti", "Direct()"))
       //    Array("gramOpti", "Cache()"))
-      Array("gramOpti", "LowRank(100)"))
+      Array("gramOpti", "LowRank(35)"))
 
     val algoStr = algo.transpose.map(_.mkString(Def.csvSep)).mkString(Def.eol)
     FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "algo.csv"), algoStr, "UTF-8")
