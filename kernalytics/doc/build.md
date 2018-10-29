@@ -1,11 +1,15 @@
 # Dependencies
 
-If you intend to develop / run from the Eclipse IDE, you only need sbt. However, if you want to run the code from R, you must have the same Scala version as the one used to generate the jar archive. sbt is not used in rscala. You might want to run:
+Kernalytics is cross-built for Scala 2.11 and Scala 2.12. It depends on sbt and scala, which can be obtained on Ubuntu via:
 
 ```bash
-sudo apt remove scala-library scala
-wget www.scala-lang.org/files/archive/scala-2.12.3.deb
-sudo dpkg -i scala-2.12.3.deb
+sudo apt install scala sbt
+```
+
+On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command to get scala and sbt simply is:
+
+```bash
+brew install scala sbt
 ```
 
 # Eclipse

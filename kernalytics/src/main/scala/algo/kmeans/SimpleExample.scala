@@ -44,7 +44,7 @@ object SimpleExample {
 
     val res = Iterate.iterate( // launch the real computation, which alternates E and M steps, updating the computation state
       initCompState,
-      Base.emIteration(_),
+      Base.emIteration(_: Base.ComputationState),
       (s: Base.ComputationState) => s.nIteration == nIteration)
 
     val ziComputed = DenseVector.tabulate[Int](nObs)(i => argmax(res.zik(i, ::)))
