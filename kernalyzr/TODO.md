@@ -1,4 +1,0 @@
-- Data and Desc are arrays of strings in R ?
-- Same format as the csv files ?
-- parsing on the Scala side
-- use data frame instead of files on disk

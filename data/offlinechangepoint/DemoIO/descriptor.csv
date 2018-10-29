@@ -1,0 +1,3 @@
+GaussA;GaussA;GaussB
+0.25;0.25;0.5
+Gaussian(1.0);Linear();Gaussian(0.7)

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg81"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="process.svg">
+  <defs
+     id="defs75" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="565.53288"
+     inkscape:cy="745.6726"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1265"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata78">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-43.297676"
+       y="41.490334"
+       id="text85"><tspan
+         sodipodi:role="line"
+         id="tspan83"
+         x="-43.297676"
+         y="41.490334"
+         style="stroke-width:0.26458332">Entrées / sorties</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="103.16604"
+       y="42.559406"
+       id="text89"><tspan
+         sodipodi:role="line"
+         id="tspan87"
+         x="103.16604"
+         y="42.559406"
+         style="stroke-width:0.26458332">Gram</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="142.9892"
+       y="42.559406"
+       id="text93"><tspan
+         sodipodi:role="line"
+         id="tspan91"
+         x="142.9892"
+         y="42.559406"
+         style="stroke-width:0.26458332">Algorithme</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="53.855473"
+       y="42.095367"
+       id="text85-3"><tspan
+         sodipodi:role="line"
+         id="tspan83-4"
+         x="53.855473"
+         y="42.095367"
+         style="stroke-width:0.26458332">Noyaux</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="144.59282"
+       y="58.86285"
+       id="text115"><tspan
+         sodipodi:role="line"
+         x="144.59282"
+         y="68.518349"
+         style="stroke-width:0.26458332"
+         id="tspan117" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="143.25298"
+       y="60.386902"
+       id="text131"><tspan
+         sodipodi:role="line"
+         id="tspan129"
+         x="143.25298"
+         y="60.386902"
+         style="stroke-width:0.26458332">- regression de crête</tspan><tspan
+         sodipodi:role="line"
+         x="143.25298"
+         y="73.616066"
+         style="stroke-width:0.26458332"
+         id="tspan133">- k-moyens</tspan><tspan
+         sodipodi:role="line"
+         x="143.25298"
+         y="86.845238"
+         style="stroke-width:0.26458332"
+         id="tspan135">- test égalité distribution</tspan><tspan
+         sodipodi:role="line"
+         x="143.25298"
+         y="100.0744"
+         style="stroke-width:0.26458332"
+         id="tspan137">- machines à vecteur de support</tspan></text>
+  </g>
+</svg>
