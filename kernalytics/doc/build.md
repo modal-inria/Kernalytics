@@ -12,6 +12,8 @@ On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command 
 brew install scala sbt
 ```
 
+It is recommended to run `rscala::scalaVersionJARs()` in R to get the version numbers supported by rscala, and crossbuild against them.
+
 # Eclipse
 
 - In Eclipse, activate the option "Insert spaces for tabs"

@@ -1,7 +1,7 @@
 .onLoad <- function(libname, pkgname) {
-  .rscalaPackage(pkgname,heap.maximum="512M")
+  assign("s", scala(pkgname), envir = parent.env(environment()))
 }
 
 .onUnload <- function(libpath) {
-  .rscalaPackageUnload()
+  .close(s)
 }
