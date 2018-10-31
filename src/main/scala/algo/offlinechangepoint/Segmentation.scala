@@ -25,19 +25,21 @@ object Segmentation {
    * @param tauP index of the last observation included in the last element of L (same notation as $L_{D, \tau' + 1}$ in the article).
    * @param currCol column of the cost matrix
    */
-  class Accumulator(val L: Array[List[SegCost]], val tauP: Index, val currCol: CostMatrix.ColumnCostMatrix)
+  class Accumulator(val L: Array[List[SegCost]], val tauP: Index, val tauPMax: Index, val currCol: CostMatrix.ColumnCostMatrix)
 
   /**
    * Outer loop in Algorithm 3, implemented using the recursive function iterate.
    */
   def loopOverTauP(nObs: Index, kerEval: (Index, Index) => Real, DMax: Index): Accumulator = {
     val initialAccumulator = new Accumulator(
-      Array.tabulate[List[SegCost]](DMax + 1)(D => D match {
-        case 0 => List(new SegCost(Real.PositiveInfinity, Nil), new SegCost(Real.PositiveInfinity, Nil)) // D = 0, every cost is infinite, and the list of segments is empty. Costs correspond to List([0, 0], []). Note that the head is always the LONGEST segment, as it is the last computed in the algorithm that follows.
-        case 1 => List(new SegCost(0.0, List(0))) // D = 1, cost of the segment [0, 0]
-        case _ => Nil // Since the bigger segment at the moment is [0, 0], it is impossible to have more than 1 segment
-      }),
+      Array.tabulate[List[SegCost]](DMax + 1)(D => // size is DMax + 1 because a list is created for every D, including 0
+        D match {
+          case 0 => List(new SegCost(Real.PositiveInfinity, Nil), new SegCost(Real.PositiveInfinity, Nil)) // D = 0, every cost is infinite, and the list of segments is empty. Costs correspond to List([0, 0], []). Note that the head is always the LONGEST segment, as it is the last computed in the algorithm that follows.
+          case 1 => List(new SegCost(0.0, List(0))) // D = 1, cost of the segment [0, 0]
+          case _ => Nil // Since the bigger segment at the moment is [0, 0], it is impossible to have more than 1 segment
+        }),
       0, // the max segment is [0, 0], hence with notation [0, tauP], tauP = 0
+      nObs - 1,
       CostMatrix.firstColumn(nObs, kerEval)) // first column corresponds to the cost of the segment [0, 0], internaly has tauP = 0, and corresponds to the column tauP + 1 in the Cost matrix
 
     various.Iterate.iterate(
@@ -46,7 +48,12 @@ object Segmentation {
         _: Accumulator,
         kerEval,
         DMax),
-      (acc: Accumulator) => acc.tauP == nObs - 1) // stop when the last element of L contains the computation for the complete segment
+      (acc: Accumulator) => {
+//        if (acc.tauP % (acc.tauPMax / 10) == 0) { // print current progress, every 10 %
+//          println(s"Computation progress: ${acc.tauP.toReal / acc.tauPMax.toReal * 100.0} %")
+//        }
+        acc.tauP == acc.tauPMax // stop when the last element of L contains the computation for the complete segment
+      })
   }
 
   /**
@@ -56,13 +63,14 @@ object Segmentation {
 
   def updateAccumulator(acc: Accumulator, kerEval: (Index, Index) => Real, DMax: Index): Accumulator = {
     val nextCol = CostMatrix.nextColumn(acc.currCol, kerEval)
-    val temporaryAcc = new Accumulator(acc.L, acc.tauP, nextCol) // update the column and create a new "temporary" accumulator that will be used in loopOverD
+    val temporaryAcc = new Accumulator(acc.L, acc.tauP, acc.tauPMax, nextCol) // update the column and create a new "temporary" accumulator that will be used in loopOverD
     val optimalSegCost = loopOverD(temporaryAcc, DMax) // Array with a List for each value of D in [0, DMax]
     val newL = (optimalSegCost, acc.L).zipped.map(_ ++ _)
 
     new Accumulator(
       newL, // new column is stored as the last element of the updated Vector
       acc.tauP + 1,
+      acc.tauPMax,
       nextCol) // add result as the last element of the accumulator
   }
 
