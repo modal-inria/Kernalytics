@@ -7,6 +7,11 @@
 
 # Long Term
 
+# Algorithm
+
+- Change point detection
+    - rewrite it using loops and mutable states ?
+
 # Architecture
 
 - Real and Index types are defined to avoid setting the types directly. However, .toInt and .toReal methods are used for conversion. Any mention to Int and Double should be removed.
@@ -18,9 +23,9 @@
 - rkhs.IO should be more automated, maybe by just maintaining lists of possibles combinations of kernels and datatypes ?
 - in p00, p01, p02, p03, p04, use TypeDef Index and Real, instead of the underlying types
 
-# Build
+# Computation
 
-- Use rscala::scalaSBT to build the jars for the R package
+- Regression and MMD are ignoring cache directives (alogo.csv/gramOpti). Algorithms should be written to take them into account.
 
 # Check
 
@@ -28,15 +33,17 @@
 
 # kernalyzr
 
-- Data and Desc are arrays of strings in R ?
-- Same format as the csv files ?
-- parsing on the Scala side
+- write basic documentation in R, so that R user can copy tests on current directory
 - use data frame instead of files on disk
+    - Data and Desc are arrays of strings in R ?
+    - Same format as the csv files ?
+- - rscala::scalaSBT does not build the assembly jar, even if assembly is called in the configure script
 
 # Mathematics
 
 - A normed space requires a vector space, not an inner product space. This should be reflected in the corresponding traits.
 - remove the deprecation warnings using -deprecation
+- Nystrom approximation pour faible rang: https://en.wikipedia.org/wiki/Low-rank_matrix_approximations
 
 # Performances
 
@@ -44,3 +51,4 @@
   - Will the gain outweight the overhead for thread spawning ?
   - That would depend on the value of DMax.
 - Gram matrix symmetry should be exploited to reduce computational times.
+- Perform tests to provide spectrum of Gram matrix and check that it decreases very quickly
