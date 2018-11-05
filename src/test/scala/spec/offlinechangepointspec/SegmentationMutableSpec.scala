@@ -69,7 +69,7 @@ class SegmentationMutableSpec extends FlatSpec with Matchers {
 
     val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
     val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.MatrixReal(data)).get
-    val seg = Test.segment(kerEval, dMax, nPoints, None)
+    val seg = SegmentationMutable.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }
@@ -100,7 +100,7 @@ class SegmentationMutableSpec extends FlatSpec with Matchers {
     val kerEval0 = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
     val kerEval1 = KerEvalGenerator.generateKernelFromParamData("Linear", "", DataRoot.RealVal(data)).get
     val kerEval = KerEval.linearCombKerEvalFunc(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
-    val seg = Test.segment(kerEval, dMax, nPoints, None)
+    val seg = SegmentationMutable.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }
@@ -138,7 +138,7 @@ class SegmentationMutableSpec extends FlatSpec with Matchers {
         new KerEval.KerEvalFuncDescription(0.5, DataRoot.RealVal(data0), "Gaussian", "0.5"),
         new KerEval.KerEvalFuncDescription(0.5, DataRoot.RealVal(data1), "Linear", ""))
     val kerEval = KerEval.multivariateKerEval(varDescription)
-    val seg = Test.segment(kerEval.get, dMax, nPoints, None)
+    val seg = SegmentationMutable.segment(kerEval.get, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }
