@@ -6,13 +6,14 @@ import org.scalactic._
 import org.scalatest._
 import rkhs.{ DataRoot, KerEvalGenerator, KerEval }
 import various.TypeDef._
+import algo.offlinechangepoint.SegmentationMutable
 import algo.offlinechangepoint.examples.Test
 import org.scalactic.source.Position.apply
 
 /**
  * This class contains functional tests. This means that those tests check entire segmentations.
  */
-class FunctionalSpec extends FlatSpec with Matchers {
+class SegmentationMutableSpec extends FlatSpec with Matchers {
   "normal" should "compute segmentation for a univariate float signal" in {
     val dMax = 8
     val nPoints = 1000

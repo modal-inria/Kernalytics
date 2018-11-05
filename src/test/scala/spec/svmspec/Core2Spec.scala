@@ -11,7 +11,6 @@ import scala.util.{ Try, Success, Failure }
 import rkhs.{ Algebra, DataRoot, KerEval, KerEvalGenerator, Kernel }
 import various.Def
 import various.TypeDef._
-import offlinechangepoint.{ CostMatrix, Test }
 import io.ReadVar
 import algo.svm.Core
 

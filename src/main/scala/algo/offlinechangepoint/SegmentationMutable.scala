@@ -3,7 +3,6 @@ package algo.offlinechangepoint
 import breeze.linalg.{ DenseVector, DenseMatrix }
 import scala.annotation.tailrec
 import various.TypeDef._
-import offlinechangepoint.CostMatrix
 
 /**
  * The index of the first observation is 0 and not 1 as in the article, because arrays in Scala are 0-based.
@@ -65,4 +64,17 @@ object SegmentationMutable {
     
     return L
   }
+
+    /**
+   * Take laws and segments description as arguments. Generate the data, perform the segmentation and export the best segmentation.
+   */
+  def segment(kerEval: (Index, Index) => Real, dMax: Index, nPoints: Index, visualOutput: Option[String]): Array[Index] = { // TODO: understand why ClassTag is needed
+    val res = loopOverTauP(nPoints, kerEval, dMax)
+    //    Segmentation.printAllPartitions(res)
+
+    val bestD = NumberSegmentSelectionMutable.optimalNumberSegments(res, nPoints)
+
+    return bestD.segPoints
+  }  
 }
+

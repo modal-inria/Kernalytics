@@ -7,7 +7,6 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 import various.Def
 import various.TypeDef._
-import offlinechangepoint.Test
 
 /**
  * Demo with data input / output from the hard drive.

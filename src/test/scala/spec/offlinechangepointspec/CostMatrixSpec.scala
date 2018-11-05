@@ -8,7 +8,8 @@ import org.scalatest._
 import various.TypeDef._
 import org.scalactic.source.Position.apply
 
-import offlinechangepoint.{ CostMatrix, Test }
+import algo.offlinechangepoint.CostMatrix
+import algo.offlinechangepoint.examples.Test
 import rkhs.{ Algebra, KerEval, Kernel }
 
 /**

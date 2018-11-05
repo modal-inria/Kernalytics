@@ -3,7 +3,6 @@ package algo.offlinechangepoint
 import breeze.linalg.{ DenseVector }
 import scala.annotation.tailrec
 import various.TypeDef._
-import offlinechangepoint.CostMatrix
 
 /**
  * The index of the first observation is 0 and not 1 as in the article.

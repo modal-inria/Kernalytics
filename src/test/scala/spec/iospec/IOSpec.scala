@@ -9,7 +9,8 @@ import scala.util.{ Try, Success, Failure }
 
 import rkhs.{ Algebra, DataRoot, KerEval, Kernel }
 import various.TypeDef._
-import offlinechangepoint.{ CostMatrix, Test }
+import algo.offlinechangepoint.CostMatrix
+import algo.offlinechangepoint.examples.Test
 import io.ReadVar
 
 /**

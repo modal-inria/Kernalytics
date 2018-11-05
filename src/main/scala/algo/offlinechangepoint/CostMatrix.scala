@@ -1,4 +1,4 @@
-package offlinechangepoint
+package algo.offlinechangepoint
 
 import breeze.linalg.{ DenseVector, DenseMatrix, sum, trace }
 import various.TypeDef._
