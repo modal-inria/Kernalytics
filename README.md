@@ -11,11 +11,11 @@ To get working examples in your current directory, simply type `copyTest()` from
 # Internal links
 
 - [License](LICENSE)
-- [Build instructions](kernalytics/doc/build.md)
-- [Use of Scala](kernalytics/doc/scala.md)
-- [Algorithm description](kernalytics/doc/algoDesc.md)
+- [Build instructions](doc/build.md)
+- [Use of Scala](doc/scala.md)
+- [Algorithm description](doc/algoDesc.md)
 - [Things to do](TODO.md)
-- [External links](kernalytics/doc/links.md)
+- [External links](doc/links.md)
 
 # External links
 
