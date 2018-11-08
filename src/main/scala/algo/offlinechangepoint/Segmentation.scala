@@ -37,7 +37,7 @@ object Segmentation {
   def loops(nObs: Index, kerEval: (Index, Index) => Real, DMax: Index, printProgress: Boolean): DenseMatrix[SegCost] = {
     if (printProgress) {
       println("Offline change point computation starts...")
-      println("Progres is expressed in terms of tauP, not in terms of remaining time. Each iteration takes longer than the preceding one.")
+      println("Progress is expressed in terms of tauP, not in terms of remaining time. Each iteration takes longer than the preceding one.")
     }
     
     val percents = (linspace(0.0, 1.0, 11) * 100.0).toArray.map(math.round(_))
