@@ -6,11 +6,15 @@ import various.TypeDef._
 import various.{ Math }
 
 object NumberSegmentSelection {
-  class optimalNumberSegmentsReturn(
-    val segPoints: Array[Index],
-    val rawCost: Array[Real],
-    val regCost: DenseVector[Real],
-    val penCost: DenseVector[Real])
+  /**
+   * Description of best segmentation.
+   *
+   * @param segPoints segmentation point of the best segmentation
+   * @param rawCost costs direclty computed using kernels
+   * @param regCost costs from regression on the segment [0.6 * DMax, DMax]
+   * @param penCost penalized costs
+   */
+  class optimalNumberSegmentsReturn(val segPoints: Array[Index], val rawCost: Array[Real], val regCost: DenseVector[Real], val penCost: DenseVector[Real])
 
   /**
    * Take the risk for every value of D, compute the penalized risk using a slope heuristic, then return an oracle
@@ -19,15 +23,13 @@ object NumberSegmentSelection {
    * @param cost the unpenalized cost of each segment
    * @param nObs number of observations
    */
-  def optimalNumberSegments(
-    resFromSegmentation: Segmentation.Accumulator,
-    nObs: Index): optimalNumberSegmentsReturn = {
-    val cost = resFromSegmentation.L.map(_.head.cost)
+  def optimalNumberSegments(resFromSegmentation: DenseMatrix[Segmentation.SegCost], nObs: Index): optimalNumberSegmentsReturn = {
+    val cost = resFromSegmentation(::, nObs - 1).map(_.cost) // cost of best segmentation, for every D
 
     val DMax = cost.size - 1
     val DMin: Index = (0.6 * DMax.toReal).toIndex
 
-    val funcs = // functions that will be evaluated for various values of D (from DMin to DMax)
+    val funcs = // functions that will be evaluated for various values of D (from DMin to DMax), used as terms for a regression
       Array[Index => Real](
         D => D.toReal / nObs.toReal,
         D => Math.logBinomial(nObs - 1, D - 1) / nObs.toReal,
@@ -61,16 +63,14 @@ object NumberSegmentSelection {
 
     val regCost = regressedCost(1 to DMax)
     val penCost = penalizedCost(1 to DMax)
-    val rawCost = cost.slice(1, DMax + 1)
+    val rawCost = cost.slice(1, DMax + 1).toArray
 
     val bestD = argmin(penalizedCost)
 
-    val segPoints = resFromSegmentation
-      .L
-      .map(_.head)
-      .apply(bestD)
+    val segPoints =
+      resFromSegmentation(bestD, nObs - 1)
       .seg
-      .reverse
+      .reverse // because each new segmentation point was prepended with :: List operator
       .toArray
 
     return new optimalNumberSegmentsReturn(segPoints, rawCost, regCost, penCost)

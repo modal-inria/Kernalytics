@@ -6,7 +6,7 @@ import org.scalactic._
 import org.scalatest._
 import rkhs.{ DataRoot, KerEvalGenerator, KerEval }
 import various.TypeDef._
-import algo.offlinechangepoint.SegmentationMutable
+import algo.offlinechangepoint.Segmentation
 import algo.offlinechangepoint.examples.Test
 import org.scalactic.source.Position.apply
 
@@ -34,7 +34,7 @@ object SimpleCase extends App {
 
   val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
   val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
-  val seg = SegmentationMutable.segment(kerEval, dMax, nPoints, None)
+  val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
   println(seg.mkString(" "))
 }
