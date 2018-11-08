@@ -1,4 +1,4 @@
-package algo.offlinechangepoint.examples
+package algo.offlinechangepoint
 
 import breeze.linalg._
 import breeze.numerics._
@@ -32,7 +32,7 @@ object DemoIO {
     }
 
     val x = linspace(0.0, 1.0, nPoints)
-    val data = Test.generateData(sampleLawsStochastic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawsStochastic, nPoints, segPoints)
 
     val f = Figure()
     val p = f.subplot(0)

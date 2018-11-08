@@ -7,13 +7,12 @@ import org.scalatest._
 import rkhs.{ DataRoot, KerEvalGenerator, KerEval }
 import various.TypeDef._
 import algo.offlinechangepoint.Segmentation
-import algo.offlinechangepoint.examples.Test
 import org.scalactic.source.Position.apply
 
 /**
  * This class contains functional tests. This means that those tests check entire segmentations.
  */
-class SegmentationMutableSpec extends FlatSpec with Matchers {
+class SegmentationSpec extends FlatSpec with Matchers {
   "normal" should "compute segmentation for a univariate float signal" in {
     val dMax = 8
     val nPoints = 1000
@@ -36,9 +35,9 @@ class SegmentationMutableSpec extends FlatSpec with Matchers {
         () => lawB.sample)
     }
 
-    val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
     val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
-    val seg = Test.segment(kerEval, dMax, nPoints, None)
+    val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }
@@ -67,7 +66,7 @@ class SegmentationMutableSpec extends FlatSpec with Matchers {
         .map(s => () => s.map(_.sample)) // for each segment, generate the function that sample every element of the corresponding matLaw
     }
 
-    val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
     val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.MatrixReal(data)).get
     val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
@@ -96,7 +95,7 @@ class SegmentationMutableSpec extends FlatSpec with Matchers {
         () => lawB.sample)
     }
 
-    val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
     val kerEval0 = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
     val kerEval1 = KerEvalGenerator.generateKernelFromParamData("Linear", "", DataRoot.RealVal(data)).get
     val kerEval = KerEval.linearCombKerEvalFunc(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
@@ -130,8 +129,8 @@ class SegmentationMutableSpec extends FlatSpec with Matchers {
         () => lawB.sample)
     }
 
-    val data0 = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val data1 = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data0 = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data1 = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
 
     val varDescription =
       List(

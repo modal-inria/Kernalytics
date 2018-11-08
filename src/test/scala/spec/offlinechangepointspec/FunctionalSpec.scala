@@ -6,7 +6,7 @@ import org.scalactic._
 import org.scalatest._
 import rkhs.{ DataRoot, KerEvalGenerator, KerEval }
 import various.TypeDef._
-import algo.offlinechangepoint.examples.Test
+import algo.offlinechangepoint.{Segmentation}
 import org.scalactic.source.Position.apply
 
 /**
@@ -35,9 +35,9 @@ class FunctionalSpec extends FlatSpec with Matchers {
         () => lawB.sample)
     }
 
-    val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
     val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
-    val seg = Test.segment(kerEval, dMax, nPoints, None)
+    val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }
@@ -66,9 +66,9 @@ class FunctionalSpec extends FlatSpec with Matchers {
         .map(s => () => s.map(_.sample)) // for each segment, generate the function that sample every element of the corresponding matLaw
     }
 
-    val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
     val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.MatrixReal(data)).get
-    val seg = Test.segment(kerEval, dMax, nPoints, None)
+    val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }
@@ -95,11 +95,11 @@ class FunctionalSpec extends FlatSpec with Matchers {
         () => lawB.sample)
     }
 
-    val data = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
     val kerEval0 = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
     val kerEval1 = KerEvalGenerator.generateKernelFromParamData("Linear", "", DataRoot.RealVal(data)).get
     val kerEval = KerEval.linearCombKerEvalFunc(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
-    val seg = Test.segment(kerEval, dMax, nPoints, None)
+    val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }
@@ -129,15 +129,15 @@ class FunctionalSpec extends FlatSpec with Matchers {
         () => lawB.sample)
     }
 
-    val data0 = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val data1 = Test.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data0 = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
+    val data1 = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
 
     val varDescription =
       List(
         new KerEval.KerEvalFuncDescription(0.5, DataRoot.RealVal(data0), "Gaussian", "0.5"),
         new KerEval.KerEvalFuncDescription(0.5, DataRoot.RealVal(data1), "Linear", ""))
     val kerEval = KerEval.multivariateKerEval(varDescription)
-    val seg = Test.segment(kerEval.get, dMax, nPoints, None)
+    val seg = Segmentation.segment(kerEval.get, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
   }

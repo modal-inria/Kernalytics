@@ -10,8 +10,6 @@ import org.scalactic.source.Position.apply
 import org.scalatest.TryValues._
 
 import linalg.IncompleteCholesky
-import algo.offlinechangepoint.CostMatrix
-import algo.offlinechangepoint.examples.Test
 import rkhs.{ Algebra, KerEval, Kernel }
 
 /**

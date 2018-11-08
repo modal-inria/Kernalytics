@@ -8,8 +8,7 @@ import org.scalatest._
 import various.TypeDef._
 import org.scalactic.source.Position.apply
 
-import algo.offlinechangepoint.CostMatrix
-import algo.offlinechangepoint.examples.Test
+import algo.offlinechangepoint.{CostMatrix, Segmentation}
 import rkhs.{ Algebra, KerEval, Kernel }
 
 /**
@@ -32,7 +31,7 @@ class CostMatrixSpec extends FlatSpec with Matchers {
         () => lawB.sample)
     }
 
-    val data = Test.generateData(sampleLawsStochastic, nPoints, segPoints)
+    val data = Segmentation.generateData(sampleLawsStochastic, nPoints, segPoints)
 
     val kernel =
       Kernel.InnerProduct.gaussian(

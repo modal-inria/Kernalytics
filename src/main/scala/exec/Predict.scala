@@ -1,6 +1,9 @@
 package exec
 
+import java.io.File
 import scala.util.{ Try, Success, Failure }
+import org.apache.commons.io.FileUtils
+
 import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
 import rkhs.KerEval
 import various.Def
@@ -27,7 +30,7 @@ object Predict {
    * 
    * @return string that is empty on success, or that contains a description of the problems.
    */
-  def main(rootFolder: String): String = {
+  def main(rootFolder: String) = {
     val algoFile = rootFolder + Def.folderSep + algoFileName
     val dataLearnFile = rootFolder + Def.folderSep + dataFileLearnName // the data used in the KerEval is always the data from the learning phase
     val dataPredictFile = rootFolder + Def.folderSep + dataFilePredictName // the data used in the KerEval is always the data from the learning phase
@@ -42,9 +45,9 @@ object Predict {
 
     val res = readAll.flatMap(callAlgo)
 
-    return res match {
-      case Success(_) => ""
-      case Failure(m) => m.toString
+    res match {
+      case Success(_) => {}
+      case Failure(m) => FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "error.txt"), m.toString, "UTF-8")
     }
   }
 

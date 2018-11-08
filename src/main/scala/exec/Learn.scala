@@ -1,6 +1,9 @@
 package exec
 
+import java.io.File
 import scala.util.{ Try, Success, Failure }
+import org.apache.commons.io.FileUtils
+
 import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
 import rkhs.{ GramOpti, KerEval }
 import various.Def
@@ -26,7 +29,7 @@ object Learn {
   /**
    * @return string that is empty on success, or that contains a description of the problems.
    */
-  def main(rootFolder: String): String = {
+  def main(rootFolder: String) = {
     val algoFile = rootFolder + Def.folderSep + algoFileName
     val dataFile = rootFolder + Def.folderSep + dataFileName // the data used in the KerEval is always the data from the learning phase
     val descFile = rootFolder + Def.folderSep + descFileName
@@ -41,9 +44,9 @@ object Learn {
 
     val res = readAll.flatMap(callAlgo)
 
-    return res match {
-      case Success(_) => ""
-      case Failure(m) => m.toString
+    res match {
+      case Success(_) => {}
+      case Failure(m) => FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "error.txt"), m.toString, "UTF-8")
     }
   }
 
@@ -90,7 +93,7 @@ object Learn {
         case Success(("Direct", "")) => Success(new GramOpti.Direct)
         case Success(("Cache", "")) => Success(new GramOpti.Cache)
         case Success(("LowRank", m)) => Try(m.toIndex).map(GramOpti.LowRank)
-        case _ => Failure(new Exception(s"Could not parse $gramOptiName entry: $rawStr"))
+        case _ => Failure(new Exception(s"Could not parse $gramOptiName entry: $rawStr. If there are no parameters, do not forget the trailing empty parenthesis, as in Direct(), for example."))
       }
     } else
       Failure(new Exception(s"$algoFileName must define $gramOptiName"))

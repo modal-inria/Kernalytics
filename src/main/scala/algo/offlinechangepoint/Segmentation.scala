@@ -1,7 +1,8 @@
 package algo.offlinechangepoint
 
-import breeze.linalg.{ DenseVector, DenseMatrix }
-import scala.annotation.tailrec
+import breeze.linalg.{ linspace, DenseVector, DenseMatrix }
+import scala.reflect._
+import scala.util.{ Try, Success, Failure }
 import various.TypeDef._
 
 /**
@@ -23,10 +24,27 @@ object Segmentation {
    */
   val ignoredCost = new SegCost(Real.PositiveInfinity, Nil)
 
+  def inputCheck(nObs: Index, DMax: Index): Try[Unit] =
+    if (DMax <= nObs) {
+      Success()
+    } else {
+      Failure(new Exception(s"Number of observations ($nObs) must be inferior or equal to DMax ($DMax)"))
+    }
+
   /**
    * Loops as presented in Algorithm 3.
    */
-  def loopOverTauP(nObs: Index, kerEval: (Index, Index) => Real, DMax: Index): DenseMatrix[SegCost] = {
+  def loops(nObs: Index, kerEval: (Index, Index) => Real, DMax: Index, printProgress: Boolean): DenseMatrix[SegCost] = {
+    if (printProgress) {
+      println("Offline change point computation starts...")
+      println("Progres is expressed in terms of tauP, not in terms of remaining time. Each iteration takes longer than the preceding one.")
+    }
+    
+    val percents = (linspace(0.0, 1.0, 11) * 100.0).toArray.map(math.round(_))
+    val steps = (linspace(0.0, 1.0, 11) * (nObs - 1).toReal).toArray.map(math.round(_))
+    val all = steps.zip(percents)
+    var nextStep = 1
+
     val L = DenseMatrix.fill[SegCost](DMax + 1, nObs)(ignoredCost) // same notation as in article, DenseMatrix is a mutable array hence the val
 
     L(1, 0) = new SegCost(0.0, List(0)) // initialization of first column, D = 1, one element partition, cost of the segment [0, 0]
@@ -56,6 +74,11 @@ object Segmentation {
           new SegCost(bestCost, bestDPartition :: L(D - 1, bestDPartition).seg)
         }
       }
+
+      if (printProgress && tauP == all(nextStep)._1) {
+        println(s"Progress: ${all(nextStep)._2}%")
+        nextStep += 1
+      }
     }
 
     return L
@@ -65,12 +88,17 @@ object Segmentation {
    * Take laws and segments description as arguments. Generate the data, perform the segmentation and export the best segmentation.
    */
   def segment(kerEval: (Index, Index) => Real, dMax: Index, nPoints: Index, visualOutput: Option[String]): Array[Index] = { // TODO: understand why ClassTag is needed
-    val res = loopOverTauP(nPoints, kerEval, dMax)
+    val res = loops(nPoints, kerEval, dMax, false)
     //    Segmentation.printAllPartitions(res)
 
     val bestD = NumberSegmentSelection.optimalNumberSegments(res, nPoints)
 
     return bestD.segPoints
   }
-}
 
+  def generateData[A: ClassTag](sampleLaws: Array[() => A], nPoints: Index, segPoints: Array[Index]): DenseVector[A] = DenseVector.tabulate[A](nPoints)(i => {
+    val seg = (segPoints.size - 1 to 0 by -1).find(segPoints(_) <= i).get
+    sampleLaws(seg)()
+  })
+
+}

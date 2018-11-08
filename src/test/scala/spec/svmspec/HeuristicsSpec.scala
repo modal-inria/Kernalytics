@@ -11,7 +11,6 @@ import rkhs.{ Algebra, DataRoot, KerEval, KerEvalGenerator, Kernel }
 import various.Def
 import various.TypeDef._
 import algo.offlinechangepoint.CostMatrix
-import algo.offlinechangepoint.examples.Test
 import io.ReadVar
 import algo.svm.{ Core, Heuristics }
 

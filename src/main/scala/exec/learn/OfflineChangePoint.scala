@@ -18,7 +18,8 @@ object OfflineChangePoint {
   def main(param: Learn.AlgoParam): Try[Unit] = {
     val res = for {
       DMax <- getDMax(param)
-      resSegmentation <- Success(Segmentation.loopOverTauP(param.kerEval.nObs, param.kerEval.k, DMax))
+      _ <- Segmentation.inputCheck(param.kerEval.nObs, DMax)
+      resSegmentation <- Success(Segmentation.loops(param.kerEval.nObs, param.kerEval.k, DMax, true))
       resSelection <- Success(NumberSegmentSelection.optimalNumberSegments(resSegmentation, param.kerEval.nObs))
       resWrite <- writeResults(param.rootFolder, resSelection)
     } yield resWrite
