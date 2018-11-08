@@ -1,3 +1,5 @@
+#!/bin/sh
+
 git pull
 sbt +assembly
 mkdir -p kernalyzr/inst/java/scala-2.11
