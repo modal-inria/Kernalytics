@@ -1,1 +1,0 @@
-Rscript -e 'library("rscala");scalaSBT(args = c("+assembly", "packageSrc", "+publishLocal"), copy.to.package = TRUE)'
