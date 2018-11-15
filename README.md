@@ -1,12 +1,18 @@
 Kernel-powered analytics.
 
-Kernel methods are versatile, Kernalytics provides a generic computational engine to take advantage of those properties.
+Kernel methods are versatile, Kernalytics provides a generic computational engine to take advantage of those properties. kernalyzr is a small R wrapper around Kernalytics.
 
-# Quick start for Kernalyzr
+# Quick start for kernalyzr
 
-Install Scala and sbt on your machine (see links for build instructions below). Launch the [updateAssembly.sh](updateAssembly.sh) script which will build Kernalytics, copy the jar to the proper location, and install the Kernalizr (R interface to Kernalytics) on your machine. You can then load Kernalizr using `library(kernalyzr)`.  Note that there currently the wrapper is pretty thin. One has to generate the proper csv on disk, and the results are exported as csv too.
+Install sbt on your machine (see [Build instructions](doc/build.md)). Open the kernalyzr directory in RStudio, then press `CRTL + SHIFT + B`.
 
-To get working examples in your current directory, simply type `copyTest()` from the R prompt. To run them, type `runTest()`.
+To create and run some working examples in the (preferably empty) current directory, type the following commands in the R console:
+
+```R
+library(kernalyzr) # load kernalyz
+copyTest() # generate the test cases
+runTest() # run kernalyz algorithms on each test case
+```
 
 # Internal links
 
