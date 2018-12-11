@@ -1,6 +1,6 @@
 Kernel-powered analytics.
 
-Kernel methods are versatile, and Kernalytics exploits this property as a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every modules. Heterogeneous data sets are supported through linear combination of kernels.
+Kernel methods are versatile, and Kernalytics exploits this property as a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
 
 Current implementations cover:
 - algorithms: k-means, offline change point detection, regression, support vector machine, two sample test
