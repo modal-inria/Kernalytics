@@ -1,6 +1,14 @@
 Kernel-powered analytics.
 
-Kernel methods are versatile, Kernalytics provides a generic computational engine to take advantage of those properties. kernalyzr is a small R wrapper around Kernalytics.
+Kernel methods are versatile, and Kernalytics exploits this property as a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every modules. Heterogeneous data sets are supported through linear combination of kernels.
+
+Current implementations cover:
+- algorithms: k-means, offline change point detection, regression, support vector machine, two sample test
+- data types: real, vector, matrix
+- kernel families: linear, polynomial, gaussian, laplacian
+- Gram matrix optimization: direct computation, cached computation, low rank approximation
+
+For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
 
 # Quick start for kernalyzr
 
