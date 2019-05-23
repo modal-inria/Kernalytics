@@ -1,5 +1,8 @@
 # Short Term
 
+- export both best
+- create a document with the current capabilities and limitations
+    - for example matrix model implemented, but not its IO
 - implement string kernel, see Gartner
 - implement graph kernel
   - first the one based on laplacian by Celisse
@@ -38,7 +41,7 @@
 - use data frame instead of files on disk
     - Data and Desc are arrays of strings in R ?
     - Same format as the csv files ?
-- rscala::scalaSBT does not build the assembly jar, even if assembly is called in the configure script
+- rscala::scalaSBT will support sbt assembly in the future. when that is the case, remove the updateAssembly.sh script at the root, and simplify the configure script.
 
 # Mathematics
 

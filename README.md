@@ -1,4 +1,4 @@
-Kernel-powered analytics.
+# Kernel-powered analytics.
 
 Kernel methods are versatile, and Kernalytics exploits this property as a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
 
@@ -35,5 +35,5 @@ runTest() # run kernalyz algorithms on each test case
 
 - [RScala](https://github.com/dbdahl/rscala)
     - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
-https://github.com/dbdahl/bamboo
-https://github.com/dbdahl/shallot
+    - https://github.com/dbdahl/bamboo
+    - https://github.com/dbdahl/shallot
