@@ -19,7 +19,7 @@ sudo apt install git sbt
 
 ## macOS
 
-On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command to getsbt simply is:
+On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command to get sbt simply is:
 
 ```bash
 brew install git sbt
@@ -27,5 +27,10 @@ brew install git sbt
 
 # Eclipse
 
+- run `sbt eclipse` to generate the project with the correct classpath
 - In Eclipse, activate the option "Insert spaces for tabs"
 - To build the jar and transfer it to the R project, run the script [update assembly](updateAssembly.sh)
+
+# Other methods
+
+Kernalytics is built through sbt. `sbt update` is the most basic way to setup / build it.
