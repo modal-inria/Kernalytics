@@ -1,0 +1,1 @@
+Empty project folder, so data for debug can be placed here and debug.Main method can be called directly.
