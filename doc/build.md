@@ -1,3 +1,13 @@
+# How to build from command line
+
+Check that sbt is intalled on your computer. Follow the *Dependencies* instructions in this document if that is not the case.
+
+At the root directory, execute
+
+```bash
+sbt eclipse
+```
+
 # Dependencies
 
 ## Ubuntu
@@ -19,7 +29,7 @@ sudo apt install sbt
 
 ## macOS
 
-On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command to getsbt simply is:
+On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command to get sbtis:
 
 ```bash
 brew install git sbt

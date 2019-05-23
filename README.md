@@ -1,4 +1,4 @@
-Kernel-powered analytics.
+# Kernel-powered analytics.
 
 Kernel methods are versatile, Kernalytics provides a generic computational engine to take advantage of those properties. kernalyzr is a small R wrapper around Kernalytics.
 
@@ -27,5 +27,5 @@ runTest() # run kernalyz algorithms on each test case
 
 - [RScala](https://github.com/dbdahl/rscala)
     - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
-https://github.com/dbdahl/bamboo
-https://github.com/dbdahl/shallot
+    - https://github.com/dbdahl/bamboo
+    - https://github.com/dbdahl/shallot
