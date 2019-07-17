@@ -93,9 +93,9 @@ object Segmentation {
     val res = loops(nPoints, kerEval, dMax, false)
     //    Segmentation.printAllPartitions(res)
 
-    val bestD = NumberSegmentSelection.optimalNumberSegments(res, nPoints)
+    val penCost = NumberSegmentSelection.penalizedCostComputation(res, nPoints)
 
-    return bestD.segPoints
+    return NumberSegmentSelection.bestSegment(penCost)
   }
 
   def generateData[A: ClassTag](sampleLaws: Array[() => A], nPoints: Index, segPoints: Array[Index]): DenseVector[A] = DenseVector.tabulate[A](nPoints)(i => {

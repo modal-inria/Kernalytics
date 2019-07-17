@@ -9,22 +9,22 @@ object NumberSegmentSelection {
   /**
    * Description of best segmentation.
    *
-   * @param segPoints segmentation point of the best segmentation
-   * @param rawCost costs direclty computed using kernels
+   * @param segPoints segmentation points of each segmentation
+   * @param rawCost costs directly computed using kernels
    * @param regCost costs from regression on the segment [0.6 * DMax, DMax]
    * @param penCost penalized costs
    */
-  class optimalNumberSegmentsReturn(val segPoints: Array[Index], val rawCost: Array[Real], val regCost: DenseVector[Real], val penCost: DenseVector[Real])
+  class penalizedCosts(val segPoints: Array[Array[Index]], val rawCost: Array[Real], val regCost: DenseVector[Real], val penCost: DenseVector[Real])
 
   /**
    * Take the risk for every value of D, compute the penalized risk using a slope heuristic, then return an oracle
-   * estimate of the optimal number of segments.
+   * estimator of the optimal number of segments.
    *
    * @param cost the unpenalized cost of each segment
    * @param nObs number of observations
    */
-  def optimalNumberSegments(resFromSegmentation: DenseMatrix[Segmentation.SegCost], nObs: Index): optimalNumberSegmentsReturn = {
-    val cost = resFromSegmentation(::, nObs - 1).map(_.cost) // cost of best segmentation, for every D
+  def penalizedCostComputation(resFromSegmentation: DenseMatrix[Segmentation.SegCost], nObs: Index): penalizedCosts = {
+    val cost = resFromSegmentation(::, nObs - 1).map(_.cost) // cost of best segmentation, for every D, nObs - 1 means taking cost over the entire data segment
 
     val DMax = cost.size - 1
     val DMin: Index = (0.6 * DMax.toReal).toIndex
@@ -61,18 +61,21 @@ object NumberSegmentSelection {
         DenseVector(funcs.map(_(D))).dot(beta)
       })
 
-    val regCost = regressedCost(1 to DMax)
+    val regCost = regressedCost(1 to DMax) // ignore the trivial D = 0 case
     val penCost = penalizedCost(1 to DMax)
-    val rawCost = cost.slice(1, DMax + 1).toArray
-
-    val bestD = argmin(penalizedCost)
+    val rawCost = cost.slice(1, DMax + 1).toArray // TODO is + 1 necessary ?
 
     val segPoints =
-      resFromSegmentation(bestD, nObs - 1)
-      .seg
-      .reverse // because each new segmentation point was prepended with :: List operator
-      .toArray
+      resFromSegmentation( :: , nObs - 1)
+        .map(_.seg.reverse.toArray)
+        .toArray
+        .drop(1) // ignore the trivial D = 0 case
 
-    return new optimalNumberSegmentsReturn(segPoints, rawCost, regCost, penCost)
+    return new penalizedCosts(segPoints, rawCost, regCost, penCost)
+  }
+  
+  def bestSegment(penCost: penalizedCosts): Array[Index] = {
+    val iLowerCost = argmin(penCost.penCost)
+    return penCost.segPoints(iLowerCost)
   }
 }
