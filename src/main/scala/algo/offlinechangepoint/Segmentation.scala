@@ -33,6 +33,8 @@ object Segmentation {
 
   /**
    * Loops as presented in Algorithm 3.
+   * 
+   * @return A matrix (D, tauP) -> The segcost corresponding to the best segmentation for D segments, over the [0, tauP] segment 
    */
   def loops(nObs: Index, kerEval: (Index, Index) => Real, DMax: Index, printProgress: Boolean): DenseMatrix[SegCost] = {
     if (printProgress) {

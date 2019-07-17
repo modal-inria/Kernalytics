@@ -3,6 +3,7 @@
 Kernel methods are versatile, and Kernalytics exploits this property as a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
 
 Current implementations cover:
+
 - algorithms: k-means, offline change point detection, regression, support vector machine, two sample test
 - data types: real, vector, matrix
 - kernel families: linear, polynomial, gaussian, laplacian
@@ -10,7 +11,7 @@ Current implementations cover:
 
 For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
 
-# Quick start for kernalyzr
+## Quick start for kernalyzr
 
 Install sbt on your machine (see [Build instructions](doc/build.md)). Open the kernalyzr directory in RStudio, then press `CRTL + SHIFT + B`.
 
@@ -22,7 +23,7 @@ copyTest() # generate the test cases
 runTest() # run kernalyz algorithms on each test case
 ```
 
-# Internal links
+## Internal links
 
 - [License](LICENSE)
 - [Build instructions](doc/build.md)
@@ -31,9 +32,9 @@ runTest() # run kernalyz algorithms on each test case
 - [Things to do](TODO.md)
 - [External links](doc/links.md)
 
-# External links
+## External links
 
 - [RScala](https://github.com/dbdahl/rscala)
-    - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
-    - https://github.com/dbdahl/bamboo
-    - https://github.com/dbdahl/shallot
+  - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
+  - https://github.com/dbdahl/bamboo
+  - https://github.com/dbdahl/shallot
