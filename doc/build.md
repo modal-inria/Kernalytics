@@ -14,6 +14,10 @@ Kernalytics is built through sbt. `sbt update` is the most basic way to setup / 
 
 # Dependencies
 
+## Java JDK
+
+The version 1.8 of the jdk is required. More recent versions will not be compatible with the Scala compiler. You can get a build of OpenJDK for most platforms at [AdoptOpenJDK](https://adoptopenjdk.net).
+
 ## Ubuntu
 
 Kernalytics is built for Scala 2.12. It depends on sbt and git is called from the configure script. They can be obtained on Ubuntu via:
@@ -33,7 +37,14 @@ sudo apt install git sbt
 
 ## macOS
 
-On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command to get sbt is:
+On macOS, [Homebrew](https://brew.sh/) is required. Once installed, the command to get AdoptOpenJDK is:
+
+```bash
+brew tap AdoptOpenJDK/openjdk
+brew cask install adoptopenjdk8
+```
+
+and the command to get sbt is:
 
 ```bash
 brew install git sbt
