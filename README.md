@@ -27,6 +27,7 @@ runTest() # run kernalyz algorithms on each test case
 
 - [License](LICENSE)
 - [Build instructions](doc/build.md)
+- [Edit instructions](doc/ide.md)
 - [Use of Scala](doc/scala.md)
 - [Algorithm description](doc/algoDesc.md)
 - [Things to do](TODO.md)

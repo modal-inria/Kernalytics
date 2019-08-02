@@ -1,9 +1,8 @@
 package algo.offlinechangepoint
 
 import breeze.linalg._
-import breeze.plot._
+import various.Math
 import various.TypeDef._
-import various.{ Math }
 
 object NumberSegmentSelection {
   /**

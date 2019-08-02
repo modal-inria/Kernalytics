@@ -1,25 +1,16 @@
-# How to build from command line
+# How to build Kernalytics
 
-Check that sbt is installed on your computer. Follow the *Dependencies* instructions in this document if that is not the case.
-
-The current development environment used is Scala-IDE, hence all the instructions provided here target that platform. However, Lightbend is pulling support for Scala-IDE, and other alternatives are available. IntelliJ IDEA with the scala plugin enabled seems easier to setup. For example there is no need to run sbt in a separate terminal to generate an IDE configuration.
-
-## For Eclipse (recommended)
-
-- run `sbt eclipse` to generate the project with the correct classpath
-- Get Scala-IDE, which is a customization of Eclipse, either a a stand-alone IDE, or as an update site for a current installation of Eclipse
-- In Eclipse, activate the option "Insert spaces for tabs"
-- To build the jar and transfer it to the R project, run the script [update assembly](/updateAssembly.sh)
-
-## Other methods
-
-Kernalytics is built through sbt. `sbt update` is the most basic way to setup / build it.
-
-# Dependencies
+Check that sbt is installed on your computer. Follow the *Dependencies* instructions in this document if that is not the case. sbt can take care of most tasks when developing the scala library.
 
 ## Java JDK
 
 The version 1.8 of the jdk is required. More recent versions will not be compatible with the Scala compiler. You can get a build of OpenJDK for most platforms at [AdoptOpenJDK](https://adoptopenjdk.net).
+
+## Windows
+
+Simply get the tools from their main site:
+- [AdoptOpenJDK](https://adoptopenjdk.net)
+- [sbt](https://www.scala-sbt.org/)
 
 ## Ubuntu
 
@@ -47,8 +38,9 @@ brew tap AdoptOpenJDK/openjdk
 brew cask install adoptopenjdk8
 ```
 
-and the command to get sbt is:
+and the command to get sbt and git is:
 
 ```bash
 brew install git sbt
 ```
+

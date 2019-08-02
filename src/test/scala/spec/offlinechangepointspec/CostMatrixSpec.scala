@@ -1,15 +1,11 @@
 package spec.offlinechangepointspec
 
+import algo.offlinechangepoint.{CostMatrix, Segmentation}
 import breeze.linalg._
 import breeze.numerics._
-import breeze.stats.distributions._
-import org.scalactic._
 import org.scalatest._
+import rkhs.{Algebra, KerEval, Kernel}
 import various.TypeDef._
-import org.scalactic.source.Position.apply
-
-import algo.offlinechangepoint.{CostMatrix, Segmentation}
-import rkhs.{ Algebra, KerEval, Kernel }
 
 /**
  * A mix of various unit tests put here until a better place is found.

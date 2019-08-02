@@ -1,3 +1,5 @@
+# Algorithm description
+
 This file contains a description of the algorithm, in particular the initialization.
 
 Running an algorithm implies a few steps.
@@ -14,7 +16,7 @@ Running an algorithm implies a few steps.
 - *Exporting the results*
     - write everything in the form of csv files in the root folder of the analysis case.
 
-You can find examples for various algorithms in [Examples.scala](./kernalytics/src/main/scala/exec/Examples.scala). They all follow the same structure, a root folder is defined, and either Learn.main or Predict.main is called. Kernalytics only works with structured data in the form of a collection of csv files. Even the rscala packages is just a thin wrapper to transmit the root folder location. The root folder is the place where they should be found. What will follow then is a description of Learn.main, and the differences with Predict.main will then be highlighted.
+You can find examples for various algorithms in [Examples.scala](/src/main/scala/exec/Examples.scala). They all follow the same structure, a root folder is defined, and either Learn.main or Predict.main is called. Kernalytics only works with structured data in the form of a collection of csv files. Even the rscala packages is just a thin wrapper to transmit the root folder location. The root folder is the place where they should be found. What will follow then is a description of Learn.main, and the differences with Predict.main will then be highlighted.
 
 # exec.Learn.main
 

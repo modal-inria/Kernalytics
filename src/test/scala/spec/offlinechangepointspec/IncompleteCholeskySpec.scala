@@ -2,15 +2,10 @@ package spec.offlinechangepointspec
 
 import breeze.linalg._
 import breeze.numerics._
-import breeze.stats.distributions._
-import org.scalactic._
+import linalg.IncompleteCholesky
+import org.scalatest.TryValues._
 import org.scalatest._
 import various.TypeDef._
-import org.scalactic.source.Position.apply
-import org.scalatest.TryValues._
-
-import linalg.IncompleteCholesky
-import rkhs.{ Algebra, KerEval, Kernel }
 
 /**
  * A mix of various unit tests put here until a better place is found.

@@ -1,20 +1,22 @@
+# Why Scala and functional programming for Kernalytics ?
+
 Here is an overview of the features of Scala that are used, and what should be expected of a programmer.
 
-# Why not use R ?
+## Why not R ?
 
 - scala is statically typed and compiled, which helps a lot when writing code. A lot of validation is performed before anything is run.
 - it is faster
 - language is much more coherent
 
-# Why not use C++ ?
+## Why not C++ ?
 
-## External opinions
+### External opinions
 
 - https://www.slant.co/versus/116/127/~scala_vs_c
 - https://www.quora.com/What-are-the-advantages-of-Scala-over-C++-and-Haskell
 - https://stackshare.io/stackups/cplusplus-vs-rust-vs-scala
 
-## Specific arguments
+### Specific arguments
 
 - automatic object management
 - use of immutable collections
@@ -24,19 +26,19 @@ Here is an overview of the features of Scala that are used, and what should be e
 - pattern matching in Scala is very useful
 - learning functional construct will be useful to parallelize code or move it to Spark for example
 
-# Functional vs imperative programming
+## Functional vs imperative programming
 
 Most of the code is written in a functional style, using immutable collections. However, the pseudo code algorithms in the articles are usually written in an imperative style. Translating them to functional style will make the code difficult to read, and might reduce performances. Hence, the original author recommendations on those matters is to use functional programming for overall architecture, and use imperative programming, mutable collections and var for local computations, inside a specialized method.
 
-An example of misuse of functional programming would be [Segmentation.scala](kernalytics/src/main/scala/algo/offlinechangepoint/Segmentation.scala). The loops present in the pseudo code in the article are absent here, replaced by various folds. While it benefits from purity, this code is less readable for someone who expects the same syntax than in the article.
+An example of misuse of functional programming would be [Segmentation.scala](/src/main/scala/algo/offlinechangepoint/Segmentation.scala). The loops present in the pseudo code in the article are absent here, replaced by various folds. While it benefits from purity, this code is less readable for someone who expects the same syntax than in the article.
 
-Compare this with the implementation of the Incomplete Cholesky Decomposition in [IncompleteCholesky.scala](kernalytics/src/main/scala/linalg/IncompleteCholesky.scala). Here an imperative style is used and the code is much closer to the article pseudocode.
+Compare this with the implementation of the Incomplete Cholesky Decomposition in [IncompleteCholesky.scala](/src/main/scala/linalg/IncompleteCholesky.scala). Here an imperative style is used and the code is much closer to the article pseudocode.
 
 Functional programming allows code to be more predictable, but its formulation differs from imperative programming and performances can be affected. For example, there is no way to implement Quick Sort in a functional language and get the same performances than with imperative programming and mutable states. Hence the general advice would be to use functional programming to structure the code globally, and imperative programming for local computations.
 
 The main advantage of using functional programming and immutable data structure, is that the code is predictable. It removes all errors that can be found in codes where data is not initialized, where global states are abused and the program is in invalid states.
 
-# Basic to learn to understand the Kernalytics code:
+## Basics to learn to understand the Kernalytics code:
 
 Of course a beginner should grasp the basics of Scala from the introduction on the Scala website: https://docs.scala-lang.org/
 
@@ -53,7 +55,7 @@ Construct you should understand:
 - monads (described below)
 - for / yield (described below)
 
-# The Try Monad
+## The Try Monad
 
 The use of this monad is the base of the error management code. It allows to write the code in a very sparse and concise manner, by providing mechanisms for the composition of computations. Understanding the concepts might not be immediate for a new programmer.
 
@@ -87,7 +89,7 @@ The for / yield syntax is syntaxic sugar, when multi-level composition of flatMa
 
 http://debasishg.blogspot.com/2008/03/monads-another-way-to-abstract.html
 
-# Additional ressources
+## Additional resources
 
 - https://www.manning.com/books/functional-programming-in-scala
 - https://underscore.io/books/scala-with-cats/
