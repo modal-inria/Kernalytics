@@ -5,6 +5,7 @@ Check that sbt is intalled on your computer. Follow the *Dependencies* instructi
 ## For Eclipse (recommended)
 
 - run `sbt eclipse` to generate the project with the correct classpath
+- Get Scala-IDE, which is a customization of Eclipse, either a a stand-alone IDE, or as an update site for a current installation of Eclipse
 - In Eclipse, activate the option "Insert spaces for tabs"
 - To build the jar and transfer it to the R project, run the script [update assembly](updateAssembly.sh)
 
