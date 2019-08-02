@@ -1,5 +1,6 @@
 /bin/
 /.metadata/
+.idea
 .Rproj.user
 target
 .recommenders/*

@@ -1,13 +1,15 @@
 # How to build from command line
 
-Check that sbt is intalled on your computer. Follow the *Dependencies* instructions in this document if that is not the case.
+Check that sbt is installed on your computer. Follow the *Dependencies* instructions in this document if that is not the case.
+
+The current development environment used is Scala-IDE, hence all the instructions provided here target that platform. However, Lightbend is pulling support for Scala-IDE, and other alternatives are available. IntelliJ IDEA with the scala plugin enabled seems easier to setup. For example there is no need to run sbt in a separate terminal to generate an IDE configuration.
 
 ## For Eclipse (recommended)
 
 - run `sbt eclipse` to generate the project with the correct classpath
 - Get Scala-IDE, which is a customization of Eclipse, either a a stand-alone IDE, or as an update site for a current installation of Eclipse
 - In Eclipse, activate the option "Insert spaces for tabs"
-- To build the jar and transfer it to the R project, run the script [update assembly](updateAssembly.sh)
+- To build the jar and transfer it to the R project, run the script [update assembly](/updateAssembly.sh)
 
 ## Other methods
 
