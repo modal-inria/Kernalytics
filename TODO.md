@@ -7,9 +7,10 @@
 ## Short Term
 
 - provide test cases for all algorithms, in Scala and R
-- export both best
-- Some data`types are coded and, but can not be used in a csv file for lack of an implemented parser:
+- some data types are coded but can not be used in a csv file for lack of an implemented parser:
   - matrices
+- only a small fraction of the possible combinations of data and numerical methods are available in [generateKernelFromParamData](/src/main/scala/rkhs/KernelGenerator.scala)
+- arrays should be used instead of DenseVector for all [DataRoot](/src/main/scala/rkhs/DataRoot.scala) subclasses. No linear algebra are performed directly on the data, making the Breeze container useless.
 
 ## Generic Long Term
 
