@@ -74,7 +74,7 @@ object KerEval {
     data
       .reverse
       .foldLeft[Try[List[(Index, Index) => Real]]](Success(Nil))((acc, e) =>
-        acc.flatMap(l => KerEvalGenerator.generateKernelFromParamData(e.kernel, e.param, e.data).map(k => k :: l)))
+        acc.flatMap(l => KernelGenerator.generateKernelFromParamData(e.kernel, e.param, e.data).map(k => k :: l)))
       .map(kList => linearCombKerEvalFunc(kList.toArray, weights))
   }
 }

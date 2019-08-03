@@ -4,7 +4,7 @@ import org.scalatest._
 import scala.util.{ Try, Success, Failure }
 
 import io.ReadParam
-import rkhs.KerEvalGenerator
+import rkhs.KernelGenerator
 
 object IOSpec {
   class IOSpec extends FlatSpec with Matchers {

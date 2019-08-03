@@ -4,7 +4,7 @@ import breeze.linalg._
 import breeze.stats.distributions._
 import org.scalactic._
 import org.scalatest._
-import rkhs.{ DataRoot, KerEvalGenerator, KerEval }
+import rkhs.{ DataRoot, KernelGenerator, KerEval }
 import various.TypeDef._
 import algo.offlinechangepoint.Segmentation
 import org.scalactic.source.Position.apply
@@ -36,7 +36,7 @@ class SegmentationSpec extends FlatSpec with Matchers {
     }
 
     val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
+    val kerEval = KernelGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
     val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
@@ -67,7 +67,7 @@ class SegmentationSpec extends FlatSpec with Matchers {
     }
 
     val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val kerEval = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.MatrixReal(data)).get
+    val kerEval = KernelGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.MatrixReal(data)).get
     val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 
     (segPoints) should ===(seg)
@@ -96,8 +96,8 @@ class SegmentationSpec extends FlatSpec with Matchers {
     }
 
     val data = Segmentation.generateData(sampleLawDeterministic, nPoints, segPoints)
-    val kerEval0 = KerEvalGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
-    val kerEval1 = KerEvalGenerator.generateKernelFromParamData("Linear", "", DataRoot.RealVal(data)).get
+    val kerEval0 = KernelGenerator.generateKernelFromParamData("Gaussian", "0.5", DataRoot.RealVal(data)).get
+    val kerEval1 = KernelGenerator.generateKernelFromParamData("Linear", "", DataRoot.RealVal(data)).get
     val kerEval = KerEval.linearCombKerEvalFunc(Array(kerEval0, kerEval1), DenseVector[Real](0.5, 0.5))
     val seg = Segmentation.segment(kerEval, dMax, nPoints, None)
 

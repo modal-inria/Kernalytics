@@ -12,7 +12,7 @@ import various.TypeDef._
  * TODO: A more automated solution would have to be implemented later. This next solution could use the same interface with nameStr, paramStr and the data, though.
  * TODO: This implementation could use dictionaries for example.
  */
-object KerEvalGenerator {
+object KernelGenerator {
   /**
    * Generate a single var KerEval from a combination of parameter string and data.
    */

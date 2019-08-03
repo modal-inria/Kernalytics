@@ -32,19 +32,23 @@ There are two ways to implement this function:
 1. Directly as a (X, X) => Real function directly in [Kernel](/src/main/scala/rkhs/Kernel.scala). See the `dummyLinearKernel` for example.
 2. Indirectly as an algebraic object, to be used as an argument for another function in [Kernel](/src/main/scala/rkhs/Kernel.scala) , like `InnerProduct.linear` or `Metric.gaussian`. The algebraic system is discussed in more details in the [overview](overview.md).
 
-You must then add the corresponding kernel and its data type as a case in [generateKernelFromParamData](/src/main/scala/rkhs/KerEvalGenerator.scala)
+You must then add the corresponding kernel and its data type as a case in [generateKernelFromParamData](/src/main/scala/rkhs/KernelGenerator.scala)
 
 ## How to add a new numerical method
 
-First, the new numerical method must be detected in the input files, so the right code is called.
+First, the new numerical method must be detected in the input files, so the right code is called. This is done in [callAlgo for Learn](/src/main/scala/exec/Learn.scala) and [callAlgo for Predict](/src/main/scala/exec/Predict.scala).
+
+Then, the parameter parsing and launch code must be written in the [learn](/src/main/scala/exec/learn) and [predict](/src/main/scala/exec/predict) directories.
+
+Finally, the code algorithm must be written in the [algo](/src/main/scala/algo) directory. This part must use the data and parameters that have been parsed in the preceding steps. It is the code of the numerical method.
 
 ## Notes
 
 ### Architecture
 
-The current way to handle mixing data types and kernels is to use local pattern-matching in [KerEvalGenerator](/src/main/scala/rkhs/KerEvalGenerator.scala).
+The current way to handle mixing data types and kernels is to use local pattern-matching in [KernelGenerator](/rkhs/KernelGenerator.scala).
 
-The current implementation in [KerEvalGenerator](/src/main/scala/rkhs/KerEvalGenerator.scala) is not satisfying, as it relies on pattern-matching against a set of predefined combination of data types and kernel names. This is not optimal, as adding a new type or kernel implies modifying code scattered all over Kernalytics. Ideally, everything should be centralized so that all the logic could be contained in a single object for each type.
+The current implementation in [KerEvalGenerator](/rkhs/KernelGenerator.scala) is not satisfying, as it relies on pattern-matching against a set of predefined combination of data types and kernel names. This is not optimal, as adding a new type or kernel implies modifying code scattered all over Kernalytics. Ideally, everything should be centralized so that all the logic could be contained in a single object for each type.
 
 Note that there is a `typeName: String` here, which is similar to the string in [parseIndividualVar](/src/main/scala/io/ReadVar.scala). This could be leveraged when reworking the data types management.
 

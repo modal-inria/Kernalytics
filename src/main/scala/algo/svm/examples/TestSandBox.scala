@@ -3,7 +3,7 @@ package algo.svm.examples
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions._
-import rkhs.{ DataRoot, KerEval, KerEvalGenerator}
+import rkhs.{ DataRoot, KerEval, KernelGenerator}
 import various.TypeDef._
 import algo.svm.Core
 import algo.svm.Heuristics
@@ -26,7 +26,7 @@ object TestSandBox {
 
   val y = DenseVector[Real](1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0)
 
-  val kerEvalFunc = KerEvalGenerator.generateKernelFromParamData("Linear", "", new DataRoot.VectorReal(x)).get
+  val kerEvalFunc = KernelGenerator.generateKernelFromParamData("Linear", "", new DataRoot.VectorReal(x)).get
 
   val kerEval = new KerEval.Direct(x.length, 0, kerEvalFunc)
 

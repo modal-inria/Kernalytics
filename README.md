@@ -35,17 +35,18 @@ For more details on the data format, see the [documentation on input / output fo
 
 - [License](LICENCE.md)
 - [Build instructions](doc/build.md)
-- [Code overview](doc/overview.md)
-- [Edit instructions](doc/ide.md)
-- [Extend instructions](doc/extend.md)
-- [Use of Scala](doc/scala.md)
-- [Algorithm description](doc/algoDesc.md)
+- [Numerical methods overview](doc/overview.md)
+- [Complete run description](doc/algoDesc.md)
+- [I/O file formats](doc/io.md)
+- [General code edition](doc/ide.md)
+- [Extension of the code](doc/extend.md)
+- [Coding concepts used](doc/scala.md)
 - [Things to do](TODO.md)
 
 ## External links
 
-- [kernlab](https://cran.r-project.org/web/packages/kernlab/vignettes/kernlab.pdf): a package with similar goals, written in R.
-- [RScala](https://github.com/dbdahl/rscala): the gateway between Scala and R, used in kernalyr.
+- [kernlab](https://cran.r-project.org/web/packages/kernlab/vignettes/kernlab.pdf): a package with similar goals, written in R
+- [RScala](https://github.com/dbdahl/rscala): the gateway between Scala and R, used in kernalyr
   - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
-  - [Bamboo](https://github.com/dbdahl/bamboo), an example package using Rscala.
-  - [Shallot](https://github.com/dbdahl/shallot), another example package.
+  - [Bamboo](https://github.com/dbdahl/bamboo), an example package using Rscala
+  - [Shallot](https://github.com/dbdahl/shallot), another example package
