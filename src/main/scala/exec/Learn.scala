@@ -21,15 +21,12 @@ object Learn {
 
   val gramOptiName = "gramOpti"
 
-  case class AlgoParam(
-    val algo: Map[String, String],
-    val kerEval: KerEval,
-    val rootFolder: String)
+  case class AlgoParam(algo: Map[String, String],  kerEval: KerEval, rootFolder: String)
 
   /**
    * @return string that is empty on success, or that contains a description of the problems.
    */
-  def main(rootFolder: String) = {
+  def main(rootFolder: String): Unit = {
     val algoFile = rootFolder + Def.folderSep + algoFileName
     val dataFile = rootFolder + Def.folderSep + dataFileName // the data used in the KerEval is always the data from the learning phase
     val descFile = rootFolder + Def.folderSep + descFileName
@@ -40,12 +37,12 @@ object Learn {
       cg <- cacheGram(algo, nObs)
       param <- ReadParam.readAndParseParam(descFile)
       kerEval <- CombineVarParam.generateGlobalKerEval(nObs, 0, data, param, cg) // the assumption here is that every algorithm need the complete Gram matrix
-    } yield (AlgoParam(algo, kerEval, rootFolder))
+    } yield AlgoParam(algo, kerEval, rootFolder)
 
     val res = readAll.flatMap(callAlgo)
 
     res match {
-      case Success(_) => {}
+      case Success(_) =>
       case Failure(m) => FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "error.txt"), m.toString, "UTF-8")
     }
   }

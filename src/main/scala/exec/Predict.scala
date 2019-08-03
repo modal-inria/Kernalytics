@@ -1,15 +1,14 @@
 package exec
 
 import java.io.File
-import scala.util.{ Try, Success, Failure }
-import org.apache.commons.io.FileUtils
 
-import io.{ CombineVarParam, ReadAlgo, ReadParam, ReadVar }
-import rkhs.KerEval
+import exec.predict.{Regression, SVM}
+import io.{CombineVarParam, ReadAlgo, ReadParam, ReadVar}
+import org.apache.commons.io.FileUtils
+import rkhs.{GramOpti, KerEval}
 import various.Def
-import various.TypeDef._
-import exec.predict.{ Regression, SVM }
-import rkhs.GramOpti
+
+import scala.util.{Failure, Success, Try}
 
 /**
  * TODO: merge learn and predict observations in a bigger KerEval.
@@ -20,17 +19,14 @@ object Predict {
   val dataFilePredictName = "predictData.csv"
   val descFileName = "desc.csv"
   
-  case class AlgoParam(
-    val algo: Map[String, String],
-    val kerEval: KerEval,
-    val rootFolder: String)
+  case class AlgoParam(algo: Map[String, String], kerEval: KerEval, rootFolder: String)
     
   /**
    * Note that cacheGram is not parsed at all in prediction.
    * 
    * @return string that is empty on success, or that contains a description of the problems.
    */
-  def main(rootFolder: String) = {
+  def main(rootFolder: String): Unit = {
     val algoFile = rootFolder + Def.folderSep + algoFileName
     val dataLearnFile = rootFolder + Def.folderSep + dataFileLearnName // the data used in the KerEval is always the data from the learning phase
     val dataPredictFile = rootFolder + Def.folderSep + dataFilePredictName // the data used in the KerEval is always the data from the learning phase
@@ -41,12 +37,12 @@ object Predict {
       (data, nObsLearn, nObsPredict) <- ReadVar.readAndParseVars2Files(dataLearnFile, dataPredictFile)
       param <- ReadParam.readAndParseParam(descFile)
       kerEval <- CombineVarParam.generateGlobalKerEval(nObsLearn, nObsPredict, data, param, GramOpti.Direct()) // the assumption here is that every algorithm need the complete Gram matrix
-    } yield (AlgoParam(algo, kerEval, rootFolder))
+    } yield AlgoParam(algo, kerEval, rootFolder)
 
     val res = readAll.flatMap(callAlgo)
 
     res match {
-      case Success(_) => {}
+      case Success(_) =>
       case Failure(m) => FileUtils.writeStringToFile(new File(rootFolder + Def.folderSep + "error.txt"), m.toString, "UTF-8")
     }
   }
