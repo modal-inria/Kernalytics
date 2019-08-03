@@ -11,6 +11,10 @@ Current implementations cover:
 
 For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
 
+## Licence
+
+Kernalytics is distributed under the AGPL 3.0 licence.
+
 ## Credits
 
 The following people contributed to the development of Kernalytics: Vincent Kubicki, Alain Celisse.
