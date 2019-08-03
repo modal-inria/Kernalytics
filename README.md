@@ -28,7 +28,7 @@ Install sbt on your machine (see [Build instructions](doc/build.md)). Open the k
 To create and run some working examples in the (preferably empty) current directory, type the following commands in the R console:
 
 ```R
-library(kernalyzr) # load kernalyz
+library(kernalyzr) # load kernalyzr
 copyTest() # generate the test cases
 runTest() # run kernalyz algorithms on each test case
 ```
