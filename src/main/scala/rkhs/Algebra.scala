@@ -23,18 +23,18 @@ object Algebra {
       object NormedSpace extends NormedSpace[T] {
         def -(x: T, y: T): T = v.-(x, y)
         def ip(x: T, y: T): Real = v.ip(x, y)
-        def norm(x: T) = math.sqrt(v.ip(x, x))
+        def norm(x: T): Real = math.sqrt(v.ip(x, x))
       }
 
-      return NormedSpace
+      NormedSpace
     }
 
     def MetricSpaceFromNormedSpace[T](n: NormedSpace[T]): MetricSpace[T] = {
       object MetricSpace extends MetricSpace[T] {
-        def distance(x: T, y: T) = n.norm(n.-(x, y))
+        def distance(x: T, y: T): Real = n.norm(n.-(x, y))
       }
 
-      return MetricSpace
+      MetricSpace
     }
 
     def MetricSpaceFromInnerProductSpace[T](v: InnerProductSpace[T]): MetricSpace[T] =
@@ -53,7 +53,7 @@ object Algebra {
         math.pow(x(i) - y(i), 2.0) / (x(i) + y(i))
       })
 
-      return sum(elements)
+      sum(elements)
     }
   }
 
@@ -63,9 +63,9 @@ object Algebra {
       def ip(x: Real, y: Real): Real = x * y
     }
 
-    val NormedSpace = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
+    val NormedSpace: Traits.NormedSpace[Real] = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
 
-    val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
+    val MetricSpace: Traits.MetricSpace[Real] = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
   }
 
   object DenseVectorReal {
@@ -74,9 +74,9 @@ object Algebra {
       def ip(x: DenseVector[Real], y: DenseVector[Real]): Real = x.dot(y)
     }
 
-    val NormedSpace = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
+    val NormedSpace: Traits.NormedSpace[DenseVector[Real]] = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
 
-    val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
+    val MetricSpace: Traits.MetricSpace[DenseVector[Real]] = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
   }
 
   object DenseMatrixReal {
@@ -85,8 +85,8 @@ object Algebra {
       def ip(x: DenseMatrix[Real], y: DenseMatrix[Real]): Real = Math.frobeniusInnerProduct(x, y) // because trace(x.t * y) computes a lot of useless coefficients (every non-diagonal terms)
     }
 
-    val NormedSpace = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
+    val NormedSpace: Traits.NormedSpace[DenseMatrix[Real]] = Traits.NormedSpaceFromInnerProductSpace(InnerProductSpace)
 
-    val MetricSpace = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
+    val MetricSpace: Traits.MetricSpace[DenseMatrix[Real]] = Traits.MetricSpaceFromInnerProductSpace(InnerProductSpace)
   }
 }

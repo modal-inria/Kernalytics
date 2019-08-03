@@ -11,6 +11,12 @@ Current implementations cover:
 
 For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
 
+## Credits
+
+The following people contributed to the development of Kernalytics: Vincent Kubicki, Alain Célisse.
+
+Copyrigth Inria - Université de Lille - CNRS
+
 ## Quick start for kernalyzr
 
 Install sbt on your machine (see [Build instructions](doc/build.md)). Open the kernalyzr directory in RStudio, then press `CRTL + SHIFT + B`.
@@ -23,9 +29,11 @@ copyTest() # generate the test cases
 runTest() # run kernalyz algorithms on each test case
 ```
 
+For more details, see the [documentation on input / output format](doc/io.md).
+
 ## Internal links
 
-- [License](LICENSE)
+- [License](LICENCE.md)
 - [Build instructions](doc/build.md)
 - [Code overview](doc/overview.md)
 - [Edit instructions](doc/ide.md)
@@ -38,5 +46,5 @@ runTest() # run kernalyz algorithms on each test case
 
 - [RScala](https://github.com/dbdahl/rscala)
   - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
-  - https://github.com/dbdahl/bamboo
-  - https://github.com/dbdahl/shallot
+  - [Bamboo](https://github.com/dbdahl/bamboo), an example package using Rscala.
+  - [Shallot](https://github.com/dbdahl/shallot), another example package.
