@@ -6,6 +6,7 @@
 
 ## Short Term
 
+- provide test cases for all algorithms, in Scala and R
 - export both best
 - Some data`types are coded and, but can not be used in a csv file for lack of an implemented parser:
   - matrices
