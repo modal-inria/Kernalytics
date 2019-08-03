@@ -1,4 +1,4 @@
-# Kernel methods for data analysis
+# Kernalytics: kernel methods for data analysis
 
 Kernel methods are versatile, and Kernalytics exploits this property through a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are easily compatible with each other. This is possible through the Gram matrix computation which acts as an abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
 
