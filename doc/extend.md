@@ -34,6 +34,10 @@ There are two ways to implement this function:
 
 You must then add the corresponding kernel and its data type as a case in [generateKernelFromParamData](/src/main/scala/rkhs/KerEvalGenerator.scala)
 
+## How to add a new numerical method
+
+First, the new numerical method must be detected in the input files, so the right code is called.
+
 ## Notes
 
 ### Architecture

@@ -1,24 +1,38 @@
 # Algorithm description
 
-This file contains a description of the algorithms, in particular the initialization which can look convoluted as a lot of steps and verifications are needed before an actual computation can be run.
+This file contains a description of the learn and predict algorithms, in particular the initialization which can look convoluted. A lot of steps and verifications are needed before an actual computation can be run.
 
-Running an algorithm implies a few steps.
-- *Reading the parameters and data.**
-    - a part of the code is shared among several algorithms
-    - each algo can also run its specific code for its peculiar data.
-- *Generating the kernel.*
-    - Generate the KerEval object, that is essentially the kernel evaluator object.
-    - Transform the data to an nObs x nObs Gram matrix that contains everything needed to run the algorithm.
-- *Running the algorithm*
-    - The actual implementation of the algorithm.
-    - This is the less constrained part of the code.
-    - As long as it takes a KerEval object as argument, it can be coded anyway the coder wants.
-- *Exporting the results*
-    - write everything in the form of csv files in the root folder of the analysis case.
+## General overview
 
-You can find examples for various algorithms in [Examples.scala](/src/main/scala/exec/Examples.scala). They all follow the same structure, a root folder is defined, and either Learn.main or Predict.main is called. Kernalytics only works with structured data in the form of a collection of csv files. Even the rscala packages is just a thin wrapper to transmit the root folder location. The root folder is the place where they should be found. What will follow then is a description of Learn.main, and the differences with Predict.main will then be highlighted.
+A run of Kernalytics is composed of the following steps.
 
-# exec.Learn.main
+### Reading the data
+
+This is not method specific. Every numerical method read the data the same way, the objective is to generate the Gram matrix. There are only two files to describe this, [Learn](/src/main/scala/exec/Learn.scala) and [Predict](/src/main/scala/exec/Predict.scala). Upon parsing the method name, a specific method is called that will read the parameters and run the numerical method on the data;
+
+### Reading the parameters and running the method
+
+This is similar but different across numerical methods. What differs is the parameters description. Each method (regression, segmentation,...) has its own set of parameters. This is described in the [learn](/src/main/scala/exec/learn) and [predict](/src/main/scala/exec/predict) directories. Once the parameters have been parsed, the numerical method main function is called with the data and parameters. The result of the analysis is returned.
+
+### Running the numerical method
+
+See [overview](overview.md).
+    
+### Exporting the results
+
+Write everything in the form of csv files in the root folder of the analysis case. This is done in the [learn](/src/main/scala/exec/learn) and [predict](/src/main/scala/exec/predict) directories.
+
+## Examples
+
+You can find examples for various algorithms in [Examples.scala](/src/main/scala/exec/Examples.scala). They all follow the same structure, a root folder is defined (located in [exec](/data/exec)), and either [Learn](/src/main/scala/exec/Learn.scala) or [Predict](/src/main/scala/exec/Predict.scala) is called.
+ 
+Kernalytics only works with structured data in the form of a collection of csv files. Even the rscala packages is just a thin wrapper to transmit the root folder location. The root folder is the place where they should be found. 
+
+## Detailed call sequence
+
+A description of [Learn](/src/main/scala/exec/Learn.scala), and the differences with [Predict](/src/main/scala/exec/Predict.scala) will then be highlighted.
+
+### exec.Learn.main
 
 - io.ReadAlgo.readAndParseFile: read the algo.csv file, check the content and generate a map key => value for each row.
 - io.ReadVar.readAndParseVars: read the learnData.csv or learnPredict.csv file, and generate a tuple (Array[ParsedVar], Index). First element contains the parsed variable, the second the number of observations.
@@ -37,7 +51,7 @@ You can find examples for various algorithms in [Examples.scala](/src/main/scala
         - algo.kmeans.IO.runKMeans: code of the main algorithm. It assumes that all the data provided have been read and validated.
         - writeResults: write the results on the disk.
 
-# exec.Predict.main
+### exec.Predict.main
 
 Essentially similar to `exec.Learn.main`. The main differences are:
 
