@@ -17,16 +17,15 @@ object KerEvalGenerator {
    * Generate a single var KerEval from a combination of parameter string and data.
    */
   def generateKernelFromParamData(kernelNameStr: String, paramStr: String, data: DataRoot): Try[(Index, Index) => Real] = data match {
-    case DataRoot.RealVal(data) if kernelNameStr == "Linear" => {
+    case DataRoot.RealVal(data) if kernelNameStr == "Linear" =>
       Success(KerEval.generateKerEvalFunc(
         data,
         Kernel.InnerProduct.linear(
           _: Real,
           _: Real,
           Algebra.R.InnerProductSpace)))
-    }
 
-    case DataRoot.RealVal(data) if kernelNameStr == "Gaussian" => {
+    case DataRoot.RealVal(data) if kernelNameStr == "Gaussian" =>
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be striclty superior to 0."))
         .map(sd => {
@@ -38,18 +37,16 @@ object KerEvalGenerator {
               Algebra.R.InnerProductSpace,
               sd))
         })
-    }
 
-    case DataRoot.VectorReal(data) if kernelNameStr == "Linear" => {
+    case DataRoot.VectorReal(data) if kernelNameStr == "Linear" =>
       Success(KerEval.generateKerEvalFunc(
         data,
         Kernel.InnerProduct.linear(
           _: DenseVector[Real],
           _: DenseVector[Real],
           Algebra.DenseVectorReal.InnerProductSpace)))
-    }
 
-    case DataRoot.VectorReal(data) if kernelNameStr == "Gaussian" => {
+    case DataRoot.VectorReal(data) if kernelNameStr == "Gaussian" =>
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
@@ -61,9 +58,8 @@ object KerEvalGenerator {
               Algebra.DenseVectorReal.MetricSpace,
               sd))
         })
-    }
 
-    case DataRoot.MatrixReal(data) if kernelNameStr == "Gaussian" => {
+    case DataRoot.MatrixReal(data) if kernelNameStr == "Gaussian" =>
       Try(paramStr.toReal)
         .flatMap(sd => Error.validate(sd, 0.0 < sd, s"A $kernelNameStr model has a sd parameter value $paramStr. sd should be be striclty superior to 0."))
         .map(sd => {
@@ -75,7 +71,6 @@ object KerEvalGenerator {
               Algebra.DenseMatrixReal.MetricSpace,
               sd))
         })
-    }
 
     case _ => Failure(new Exception(s"$kernelNameStr kernel is not available for ${data.typeName}"))
   }

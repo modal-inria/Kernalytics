@@ -26,7 +26,7 @@ object CombineVarParam {
       .reverse
       .foldLeft[Try[List[KerEval.KerEvalFuncDescription]]](Success(Nil))((acc, e) =>
         acc.flatMap(l => linkParamToData(dict, e).map(k => k :: l)))
-      .flatMap(KerEval.multivariateKerEval(_))
+      .flatMap(KerEval.multivariateKerEval)
       .flatMap(kerEvalFunc => {
         val nObs = nObsLearn + nObsPredict
 //        eigenValuesDebug(nObs, kerEvalFunc)
