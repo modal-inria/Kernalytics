@@ -8,16 +8,20 @@ import various.TypeDef._
  * Second implementation of Core, more modular, for easier unit testing.
  */
 object Core {
+
+  val eps: Real = 1e-8
+
   /**
    * Equivalent to takeStep in the article.
    * Optimize the problem for two given values of alpha.
+   *
+   * The SMO method description can be found at: https://en.wikipedia.org/wiki/Sequential_minimal_optimization . It helps
+   * to solve the optimization problem without using a generic quadratic optimizer.
+   *
    * Lots of sources point so initialization with alpha_i = 0 and b = 0, for example: http://www.cs.utsa.edu/~bylander/cs4793/smo.pdf
    *
    * @return If optimization takes place, return (alpha1, alpha2, b), otherwise return None
    */
-
-  val eps: Real = 1e-8
-
   def binaryOptimization(i1: Index, i2: Index, alpha: DenseVector[Real], b: Real, y: DenseVector[Real], cache: DenseVector[Real], kerEval: KerEval, C: Real): Option[(Real, Real, Real)] = {
     if (i1 == i2) {
 //      println("i1 == i2")
@@ -91,7 +95,7 @@ object Core {
       else if (0.0 < a2 && a2 < C) b2
       else (b1 + b2) / 2.0
 
-    return Some((a1, a2, ub))
+    Some((a1, a2, ub))
   }
 
   /**
@@ -104,14 +108,14 @@ object Core {
     val nObs = alpha.length
     val u = DenseVector.zeros[Real](nObs)
 
-    for (i <- 0 to nObs - 1) {
+    for (i <- 0 until nObs) {
       u(i) = -b
-      for (j <- 0 to nObs - 1) {
+      for (j <- 0 until nObs) {
         u(i) = u(i) + y(j) * alpha(j) * kerEval.k(j, i)
       }
     }
 
-    return u - y
+    u - y
   }
 
   /**
@@ -122,8 +126,8 @@ object Core {
     val nObs = alpha.length
     var psi = 0.0 // objective function
 
-    for (i <- 0 to nObs - 1) {
-      for (j <- 0 to nObs - 1) {
+    for (i <- 0 until nObs) {
+      for (j <- 0 until nObs) {
         psi += y(i) * y(j) * kerEval.k(i, j) * alpha(i) * alpha(j)
       }
     }
@@ -131,13 +135,13 @@ object Core {
     psi /= 2.0
     psi -= sum(alpha)
 
-    for (i <- 0 to nObs - 1) {
+    for (i <- 0 until nObs) {
       if (alpha(i) < 0.0) println(s"checkSolution, alpha($i) < 0.0")
       if (C < alpha(i)) println(s"checkSolution, C < alpha($i)")
     }
 
     val dotCond = y.dot(alpha)
 
-    return (psi, dotCond)
+    (psi, dotCond)
   }
 }

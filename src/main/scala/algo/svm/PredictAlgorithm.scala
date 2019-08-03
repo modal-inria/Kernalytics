@@ -18,6 +18,6 @@ object PredictAlgorithm {
       math.signum(sum(components) - b)
     })
     
-    return res
+    res
   }
 }

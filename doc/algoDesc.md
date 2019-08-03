@@ -1,14 +1,14 @@
 # Algorithm description
 
-This file contains a description of the algorithm, in particular the initialization.
+This file contains a description of the algorithms, in particular the initialization which can look convoluted as a lot of steps and verifications are needed before an actual computation can be run.
 
 Running an algorithm implies a few steps.
-- *Reading the parameters and data.*
+- *Reading the parameters and data.**
     - a part of the code is shared among several algorithms
     - each algo can also run its specific code for its peculiar data.
 - *Generating the kernel.*
-    - Generate the KerEval object, that is essential the kernel.
-    - Transform the data in an nObs x nObs Gram matrix that contains everything needed to run the algorithm.
+    - Generate the KerEval object, that is essentially the kernel evaluator object.
+    - Transform the data to an nObs x nObs Gram matrix that contains everything needed to run the algorithm.
 - *Running the algorithm*
     - The actual implementation of the algorithm.
     - This is the less constrained part of the code.
@@ -39,7 +39,7 @@ You can find examples for various algorithms in [Examples.scala](/src/main/scala
 
 # exec.Predict.main
 
-Essentially similar to exec.Learn.main. The main differences are:
+Essentially similar to `exec.Learn.main`. The main differences are:
 
 - the gramOpti parameter in algo.csv is ignored. Direct() is always used instead.
     - in prediction, the gram matrix has dimension (nObsLearn + nObsPredict) x (nObsLearn + nObsPredict), and usually each coefficient is used only once

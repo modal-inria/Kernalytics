@@ -20,20 +20,20 @@ object Heuristics {
     var b: Real = 0
     var cache = Core.computeCache(alpha, b, y, kerEval) // will be reassigned by future cache computation
 
-    for (n <- 0 to nLoop - 1) {
-      for (i1 <- 0 to kerEval.nObsLearn - 1) {
-        for (i2 <- 0 to kerEval.nObsLearn - 1) {
+    for (n <- 0 until nLoop) {
+      for (i1 <- 0 until kerEval.nObsLearn) {
+        for (i2 <- 0 until kerEval.nObsLearn) {
+
           val res = Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C)
 
           res match {
-            case Some((a1, a2, bNew)) => {
+            case Some((a1, a2, bNew)) =>
               alpha(i1) = a1
               alpha(i2) = a2
               b = bNew
 
               cache = Core.computeCache(alpha, b, y, kerEval)
-            }
-            case None => {}
+            case None =>
           }
         }
       }
@@ -59,19 +59,18 @@ object Heuristics {
 
       for (i2 <- indices) {
         selectI1(i2, alpha, b, kerEval, y, C, cache) match {
-          case Some((i1, (a1, a2, newB))) => {
+          case Some((i1, (a1, a2, newB))) =>
             alpha(i1) = a1
             alpha(i2) = a2
             b = newB
             numChanged += 1
 
             cache = Core.computeCache(alpha, b, y, kerEval)
-          }
-          case None => {}
+          case None =>
         }
       }
 
-      if (examineAll == true) {
+      if (examineAll) {
         examineAll = false
       } else if (numChanged == 0) {
         examineAll = true
@@ -136,7 +135,7 @@ object Heuristics {
   def bothRandomIndices(alpha: DenseVector[Real], C: Real): (IndexedSeq[Index], IndexedSeq[Index]) = {
     val nObs = alpha.length
     val all = util.Random.shuffle(0 to nObs - 1)
-    return (all.filter(i => 0.0 < alpha(i) || alpha(i) < C), all.filter(i => 0.0 == alpha(i) || alpha(i) == C))
+    (all.filter(i => 0.0 < alpha(i) || alpha(i) < C), all.filter(i => 0.0 == alpha(i) || alpha(i) == C))
   }
 
   /**
@@ -145,7 +144,7 @@ object Heuristics {
   def secondChoiceHeuristic(E2: Real, cached: DenseVector[Real]): Index = {
     val nObs = cached.length
     val dis = cached.map(E1 => math.abs(E1 - E2))
-    return argmax(dis)
+    argmax(dis)
   }
 
 }

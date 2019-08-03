@@ -29,7 +29,7 @@ copyTest() # generate the test cases
 runTest() # run kernalyz algorithms on each test case
 ```
 
-For more details, see the [documentation on input / output format](doc/io.md).
+For more details on the data format, see the [documentation on input / output format](doc/io.md).
 
 ## Internal links
 
@@ -40,11 +40,11 @@ For more details, see the [documentation on input / output format](doc/io.md).
 - [Use of Scala](doc/scala.md)
 - [Algorithm description](doc/algoDesc.md)
 - [Things to do](TODO.md)
-- [External links](doc/links.md)
 
 ## External links
 
-- [RScala](https://github.com/dbdahl/rscala)
+- [kernlab](https://cran.r-project.org/web/packages/kernlab/vignettes/kernlab.pdf): a package with similar goals, written in R.
+- [RScala](https://github.com/dbdahl/rscala): the gateway between Scala and R, used in kernalyr.
   - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
   - [Bamboo](https://github.com/dbdahl/bamboo), an example package using Rscala.
   - [Shallot](https://github.com/dbdahl/shallot), another example package.

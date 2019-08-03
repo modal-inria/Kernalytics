@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# This script is called by kernalyzr to build a fat assembly jar of Kernalytics and all its dependencies.
+
 git pull
 sbt assembly
 
