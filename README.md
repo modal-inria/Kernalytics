@@ -13,7 +13,7 @@ For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
 
 ## Credits
 
-The following people contributed to the development of Kernalytics: Vincent Kubicki, Alain Célisse.
+The following people contributed to the development of Kernalytics: Vincent Kubicki, Alain Celisse.
 
 Copyrigth Inria - Université de Lille - CNRS
 

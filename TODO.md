@@ -1,11 +1,12 @@
 # To do
 
+## Documentation
+
+- in [io](/doc/io.md), provide a description of the parameters and output specific to each method.
+
 ## Short Term
 
 - export both best
-- create a document with the current capabilities and limitations- for example matrix model implemented, but not its IO
-- in `offlinechangepoint`, export all segmentations, regardless of the heuristic decision
-- write a map with the overall logic of the code
 - Some data`types are coded and, but can not be used in a csv file for lack of an implemented parser:
   - matrices
 
