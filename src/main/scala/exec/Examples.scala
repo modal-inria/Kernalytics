@@ -1,35 +1,31 @@
 package exec
 
 object Examples {
-  def svm {
+  def svm() {
     algo.svm.examples.SimpleCase2D.writeAll
     val rootFolder = "data/exec/svm"
 
-    val resLearn = Learn.main(rootFolder)
-    println(resLearn)
-
-    val resPredict = Predict.main(rootFolder)
-    println(resPredict)
+    Learn.main(rootFolder)
+    Predict.main(rootFolder)
 
     algo.svm.examples.SimpleCase2D.checkPrediction
   }
 
-  def regression {
+  def regression() {
     algo.regression.examples.Simple.writeAll
     val rootFolder = "data/exec/regression"
     
-    val resLearn = Learn.main(rootFolder)
+    val resLearn: Unit = Learn.main(rootFolder)
     println(resLearn)
     
-    val resPredict = Predict.main(rootFolder)
+    val resPredict: Unit = Predict.main(rootFolder)
     println(resPredict)
     
     algo.regression.examples.Simple.compareExpectedPredicted
   }
 
-  def offlinechangepoint {
+  def offlinechangepoint() {
     val rootFolder = "data/exec/offlinechangepoint"
-    val res = Learn.main(rootFolder)
-    println(res)
+    Learn.main(rootFolder)
   }
 }
