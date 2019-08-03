@@ -1,6 +1,6 @@
 # Kernel-powered analytics.
 
-Kernel methods are versatile, and Kernalytics exploits this property as a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
+Kernel methods are versatile, and Kernalytics exploits this property in a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
 
 Current implementations cover:
 
@@ -15,7 +15,7 @@ For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
 
 The following people contributed to the development of Kernalytics: Vincent Kubicki, Alain Celisse.
 
-Copyrigth Inria - Université de Lille - CNRS
+Copyright Inria - Université de Lille - CNRS
 
 ## Quick start for kernalyzr
 
@@ -33,7 +33,7 @@ For more details on the data format, see the [documentation on input / output fo
 
 ## Internal links
 
-- [License](LICENCE.md)
+- [Licence](LICENCE.md)
 - [Build instructions](doc/build.md)
 - [Numerical methods overview](doc/overview.md)
 - [Complete run description](doc/algoDesc.md)
