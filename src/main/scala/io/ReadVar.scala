@@ -55,17 +55,17 @@ object ReadVar {
    */
   def readNoParse(fileName: String): Array[Array[String]] =
     Source
-    .fromFile(fileName)
-    .getLines
-    .toArray
-    .map(_.split(Def.csvSep))
-    .transpose
+      .fromFile(fileName)
+      .getLines
+      .toArray
+      .map(_.split(Def.csvSep))
+      .transpose
      
   /**
    * Check that all the variables have the same number of observations.
    */
   def checkObservationNumber(data: Array[Array[String]]): Try[Index] = {
-    val length = data.map(_.size)
+    val length = data.map(_.length)
     if (length.forall(_ == length(0)))
       Success(length(0) - headerSize)
     else
@@ -76,17 +76,17 @@ object ReadVar {
    * Generates the ParsedVar object.
    */
   def parseIndividualVar(v: Array[String]): Try[ParsedVar] = {
-    if (v.size < 3) return Failure(new Exception("In data file, all variables must have at least three lines: name, type, and at least one observation. This is not the case in current data."))
+    if (v.length < 3) return Failure(new Exception("In data file, all variables must have at least three lines: name, type, and at least one observation. This is not the case in current data."))
     
-    val varName = v(0)
-    val varType = v(1).split(Def.optionSep)
-    val data = v.drop(2)
+    val varName: String = v(0)
+    val varType: Array[String] = v(1).split(Def.optionSep)
+    val data: Array[String] = v.drop(2)
     
     val typeName = varType(0)
     val typeParam = varType.drop(1) // if no options have been provided, the length will be 0
     
     typeName match {
-      case "Real" => Try(new ParsedVar(varName, DataRoot.RealVal(DenseVector.tabulate(data.size)(i => data(i).toReal))))
+      case "Real" => Try(new ParsedVar(varName, DataRoot.RealVal(DenseVector.tabulate(data.length)(i => data(i).toReal))))
       case "VectorReal" => ParseVectorReal.parse(varName, typeParam, data)
     }
   }
@@ -113,7 +113,7 @@ object ReadVar {
     val learnHeader = learnSorted.map(_.take(headerSize).mkString(Def.eol))
     val predictHeader = predictSorted.map(_.take(headerSize).mkString(Def.eol))
     
-    return if (learnHeader.deep == predictHeader.deep) { // check equality of headers using deep comparison
+    if (learnHeader.deep == predictHeader.deep) { // check equality of headers using deep comparison
       Success(mergeContent(learnSorted, predictSorted))
     } else {
       Failure(new Exception("Data files in learn and predict do not contain the same variables."))

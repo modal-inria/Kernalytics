@@ -77,7 +77,7 @@ object Heuristics {
       }
     }
 
-    return (alpha, b)
+    (alpha, b)
   }
 
   /**
@@ -86,7 +86,8 @@ object Heuristics {
   def randomIndices(alpha: DenseVector[Real], C: Real, examineAll: Boolean): IndexedSeq[Index] = {
     val nObs = alpha.length
     val all = util.Random.shuffle(0 to nObs - 1)
-    return if (examineAll) all else all.filter(i => 0.0 < alpha(i) || alpha(i) < C)
+
+    if (examineAll) all else all.filter(i => 0.0 < alpha(i) || alpha(i) < C)
   }
 
   /**
@@ -107,26 +108,26 @@ object Heuristics {
         val i1 = secondChoiceHeuristic(e2, cache)
         Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C) match {
           case Some((a1, a2, b)) => return Some((i1, (a1, a2, b)))
-          case None => {}
+          case None =>
         }
       }
 
       for (i1 <- indices._1) { // loop over all non-zero and non-C alpha, starting at random point
         Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C) match {
           case Some((a1, a2, b)) => return Some((i1, (a1, a2, b)))
-          case None => {}
+          case None =>
         }
       }
 
       for (i1 <- indices._2) { // loop over all bound alpha
         Core.binaryOptimization(i1, i2, alpha, b, y, cache, kerEval, C) match {
           case Some((a1, a2, b)) => return Some((i1, (a1, a2, b)))
-          case None => {}
+          case None =>
         }
       }
     }
 
-    return None // no second Lagrange multiplier was a good enough candidate for the heuristic
+    None // no second Lagrange multiplier was a good enough candidate for the heuristic
   }
 
   /**

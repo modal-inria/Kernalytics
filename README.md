@@ -37,6 +37,7 @@ For more details on the data format, see the [documentation on input / output fo
 - [Build instructions](doc/build.md)
 - [Code overview](doc/overview.md)
 - [Edit instructions](doc/ide.md)
+- [Extension guide](doc/extend.md)
 - [Use of Scala](doc/scala.md)
 - [Algorithm description](doc/algoDesc.md)
 - [Things to do](TODO.md)
