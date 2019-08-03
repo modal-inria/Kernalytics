@@ -31,7 +31,7 @@ runTest() # run kernalyz algorithms on each test case
 
 For more details on the data format, see the [documentation on input / output format](doc/io.md).
 
-## Technology readiness level
+## Technology Readiness Level
 
 Kernalytics is at the moment a proof of concept which has been used on a few real data sets. A lot of things are missing, as indicated in the list of [things to do](TODO.md). However, the modular architecture can be considered stable and functional.
 
