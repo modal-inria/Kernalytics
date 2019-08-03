@@ -1,6 +1,6 @@
-# Kernel-powered analytics.
+# Kernel methods for data analysis
 
-Kernel methods are versatile, and Kernalytics exploits this property in a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
+Kernel methods are versatile, and Kernalytics exploits this property through a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are easily compatible with each other. This is possible through the Gram matrix computation which acts as an abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
 
 Current implementations cover:
 
@@ -9,7 +9,7 @@ Current implementations cover:
 - kernel families: linear, polynomial, gaussian, laplacian
 - Gram matrix optimization: direct computation, cached computation, low rank approximation
 
-For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
+For easier use, Kernalytics is provided with kernalyzr, a (very shallow) R wrapper.
 
 ## Licence
 
