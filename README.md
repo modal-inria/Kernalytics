@@ -45,6 +45,7 @@ For more details on the data format, see the [documentation on input / output fo
 
 ## External links
 
+- [Sernel](https://github.com/vkubicki/Sernel): initial project on which Kernalytics is based
 - [kernlab](https://cran.r-project.org/web/packages/kernlab/vignettes/kernlab.pdf): a package with similar goals, written in R
 - [RScala](https://github.com/dbdahl/rscala): the gateway between Scala and R, used in kernalyr
   - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)
