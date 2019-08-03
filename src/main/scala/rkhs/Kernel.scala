@@ -11,6 +11,10 @@ import various.TypeDef._
  * - https://en.wikipedia.org/wiki/Positive-definite_kernel , for the notations used in the kernels
  */
 object Kernel {
+
+  /** A linear kernel which does not use the algebraic system, to demonstrate the most direct way to define a kernel. */
+  def dummyLinearKernel(x: Real, y: Real): Real = x * y
+
   object InnerProduct {
     /**
      * A useless example because the inner product could be called directly instead.

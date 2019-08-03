@@ -12,25 +12,27 @@ Add its name as a case in the pattern matching of [parseIndividualVar](/src/main
 
 ### Parser
 
-Add the implementation of the parsing in a specific function in io.ReadVar, or in an external file, like [ParseVectorReal](/src/main/scala/io/ParseVectorReal.scala)
+Add the implementation of the parsing in a specific function in io.ReadVar, or in an external file, like [ParseVectorReal](/src/main/scala/io/ParseVectorReal.scala).
 
 The parser must transform an `Array[String]` to a [DataRoot](/src/main/scala/rkhs/DataRoot.scala).
 
 ### DataRoot subtyping
 
-Since the data is new, it might be necessary to store it in a new type of container. The usual containers used are Breeze container, but anything could be used. Each variable is contained in an instance of class which inherits from [DataRoot](/src/main/scala/rkhs/DataRoot.scala).
+Since the data type is new, it might be necessary to store it in a new type of container. The current containers used are Breeze container (such as `DenseMatrix[Real]`s), but anything could be used. Each variable is contained in an instance of a subclass of [DataRoot](/src/main/scala/rkhs/DataRoot.scala). The modification is to subtype [DataRoot](/src/main/scala/rkhs/DataRoot.scala). 
 
-The first modification is to subtype [DataRoot](/src/main/scala/rkhs/DataRoot.scala).
-	- Note that there is a String here, which is similar to the string in ReadVar.parseIndividualVar. This could be leveraged when refactoring the data types.
-- If the data type has inner product / norm / distance, implement them in Algebra.
-	- This allows families of kernels to be immediately accessible for this kernel.
+### Algebraic system
+
+If the data type has inner product / norm / distance, implement them in [Algebra](/src/main/scala/rkhs/Algebra.scala), as this will allow families of kernels to be quickly generated for this kernel.
 
 ## How to add a new kernel on an existing data type
 
-- Implement the (X, X) => R function directly in a suitable file, for example [Kernel.scala](/src/main/scala/rkhs/Kernel.scala).
-- Or, alternatively, use the algebraic system, see .
-- Add a corresponding case in `rkhs.IO.generateKernel`.
-- Easy, right :) ?
+A kernel simply is a two arguments function from a couple of the X data type to Real. Its integration in Kernalytics in not very hard.
+
+There are two ways to implement this function:
+1. Directly as a (X, X) => Real function directly in [Kernel](/src/main/scala/rkhs/Kernel.scala). See the `dummyLinearKernel` for example.
+2. Indirectly as an algebraic object, to be used as an argument for another function in [Kernel](/src/main/scala/rkhs/Kernel.scala) , like `InnerProduct.linear` or `Metric.gaussian`. The algebraic system is discussed in more details in the [overview](overview.md).
+
+You must then add the corresponding kernel and its data type as a case in [generateKernelFromParamData](/src/main/scala/rkhs/KerEvalGenerator.scala)
 
 ## Notes
 
@@ -39,6 +41,8 @@ The first modification is to subtype [DataRoot](/src/main/scala/rkhs/DataRoot.sc
 The current way to handle mixing data types and kernels is to use local pattern-matching in [KerEvalGenerator](/src/main/scala/rkhs/KerEvalGenerator.scala).
 
 The current implementation in [KerEvalGenerator](/src/main/scala/rkhs/KerEvalGenerator.scala) is not satisfying, as it relies on pattern-matching against a set of predefined combination of data types and kernel names. This is not optimal, as adding a new type or kernel implies modifying code scattered all over Kernalytics. Ideally, everything should be centralized so that all the logic could be contained in a single object for each type.
+
+Note that there is a `typeName: String` here, which is similar to the string in [parseIndividualVar](/src/main/scala/io/ReadVar.scala). This could be leveraged when reworking the data types management.
 
 ### Unit testing
 
