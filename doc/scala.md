@@ -2,9 +2,9 @@
 
 ## Why not R ?
 
-- scala is statically typed and compiled, which helps a lot when writing code. A lot of validation is performed before anything is run.
-- it is faster
-- language is much more coherent
+- Scala is statically typed and compiled, which helps when writing code. A lot of validation is performed before anything is run
+- Scala is faster, it is compiled and run on the JVM
+- Scala is much more coherent and functional programming is more developed
 
 ## Why not C++ ?
 
@@ -26,16 +26,16 @@
 
 ## Functional vs imperative programming
 
-Most of the code is written in a functional style, using immutable collections. It removes all errors that can be found in codes where data is not initialized, where global states are abused and the program is in invalid states. However, the pseudo code algorithms in the articles are usually written in an imperative style. Translating them to functional style will make the code difficult to read, and might reduce performances. Hence, the current recommendation is:
+Most of the code is written in a functional style, using immutable collections. This removes all errors that can be found in codes where data is not initialized, where global states are abused and the program can go through invalid states. However, the pseudo code algorithms in the articles are usually written in an imperative style. Translating them to functional style will make the code difficult to read, and might reduce performances.
 
-Compare this with the implementation of the Incomplete Cholesky Decomposition in [IncompleteCholesky.scala](/src/main/scala/linalg/IncompleteCholesky.scala). Here an imperative style is used and the code is much closer to the article pseudocode.
+The current balance recommendation between the two paradigms is:
 
-- To use functional programming for the overall architecture. See for example the [KernelGenerator](/src/main/scala/rkhs/KernelGenerator.scala) where functions are passed as arguments, or [Learn](/src/main/scala/exec/Learn.scala), where the Try monad helps manage the erros.eeee
+- To use functional programming for the overall architecture. See for example the [KernelGenerator](/src/main/scala/rkhs/KernelGenerator.scala) where functions are passed as arguments, or [Learn](/src/main/scala/exec/Learn.scala), where the Try monad helps manage the errors.
 - To use imperative programming, mutable collections and var for local computations. For example the Incomplete Cholesky Decomposition in [IncompleteCholesky.scala](/src/main/scala/linalg/IncompleteCholesky.scala). Here an imperative style is used and the code is much closer to the article pseudocode.
 
 ## Basics to learn to understand the Kernalytics code:
 
-A beginner should grasp the basics of Scala from the introduction on the Scala website: https://docs.scala-lang.org/
+A beginner should grasp the basics of Scala from the introduction on the [Scala website](https://docs.scala-lang.org/).
 
 The following methods for basic collections should be understood:
 
@@ -48,7 +48,7 @@ The following methods for basic collections should be understood:
 
 As well as those constructs:
 
-- patten matching using case classes, similar to the end of this tutorial: https://www.tutorialspoint.com/scala/scala_pattern_matching.htm
+- patten matching using case classes, similar to the end of [this tutorial](https://www.tutorialspoint.com/scala/scala_pattern_matching.htm)
 - monads (described below)
 - for / yield (described below)
 
@@ -58,7 +58,7 @@ The use of this monad is the base of the error management code. It allows to wri
 
 There are formal introductions available online, such as [Demystifying the Monad in Scala](https://medium.com/@sinisalouc/demystifying-the-monad-in-scala-cc716bb6f534)
 
-In this section the minimum requirerments to understand the Kernalytics code wil be described.
+In this section the minimum requirements to understand the Kernalytics code wil be described.
 
 The `Try[A]` class (A being a parameter class) has two children classes, Success and Failure. Success[A] is a wrapper around an A object, while Failure is a wrapper around a throwable object. The main idea is that every function during initialization returns a `Try[_]` of some sort. When an error occurs, it will become the general result.
 
