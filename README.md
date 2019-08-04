@@ -1,6 +1,6 @@
-# Kernel-powered analytics.
+# Kernalytics: kernel methods for data analysis
 
-Kernel methods are versatile, and Kernalytics exploits this property in a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are immediately compatible with each other. This is possible through the Gram matrix computation used as a powerful abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
+Kernel methods are versatile, and Kernalytics exploits this property through a generic data analysis framework. It allows for easy extension: new algorithms, data types, kernels and optimizations are easily compatible with each other. This is possible through the Gram matrix computation which acts as an abstraction linking every module. Heterogeneous data sets are supported through linear combination of kernels.
 
 Current implementations cover:
 
@@ -9,7 +9,11 @@ Current implementations cover:
 - kernel families: linear, polynomial, gaussian, laplacian
 - Gram matrix optimization: direct computation, cached computation, low rank approximation
 
-For easier use, Kernalytics is provided with kernalyzr, a light R wrapper.
+For easier use, Kernalytics is provided with kernalyzr, a (very shallow) R wrapper.
+
+## Licence
+
+Kernalytics is distributed under the AGPL 3.0 licence.
 
 ## Credits
 
@@ -24,12 +28,18 @@ Install sbt on your machine (see [Build instructions](doc/build.md)). Open the k
 To create and run some working examples in the (preferably empty) current directory, type the following commands in the R console:
 
 ```R
-library(kernalyzr) # load kernalyz
+library(kernalyzr) # load kernalyzr
 copyTest() # generate the test cases
 runTest() # run kernalyz algorithms on each test case
 ```
 
 For more details on the data format, see the [documentation on input / output format](doc/io.md).
+
+## Technology Readiness Level
+
+Kernalytics is at the moment a proof of concept which has been used on a few real data sets. A lot of things are missing, as indicated in the list of [things to do](TODO.md). However, the modular architecture can be considered stable and functional.
+
+The [Technology Readiness Level](https://en.wikipedia.org/wiki/Technology_readiness_level) could be considered 4 or 5: feasibility has been proven, and demonstration must be carried out.
 
 ## Internal links
 
@@ -45,6 +55,7 @@ For more details on the data format, see the [documentation on input / output fo
 
 ## External links
 
+- [Sernel](https://github.com/vkubicki/Sernel): initial project on which Kernalytics is based
 - [kernlab](https://cran.r-project.org/web/packages/kernlab/vignettes/kernlab.pdf): a package with similar goals, written in R
 - [RScala](https://github.com/dbdahl/rscala): the gateway between Scala and R, used in kernalyr
   - [RScala vignette](https://dahl.byu.edu/public/rscala/rscala.pdf)

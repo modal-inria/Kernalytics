@@ -1,7 +1,5 @@
 # Why Scala and functional programming for Kernalytics ?
 
-Here is an overview of the features of Scala that are used, and what should be expected of a programmer.
-
 ## Why not R ?
 
 - scala is statically typed and compiled, which helps a lot when writing code. A lot of validation is performed before anything is run.
@@ -28,17 +26,19 @@ Here is an overview of the features of Scala that are used, and what should be e
 
 ## Functional vs imperative programming
 
-Most of the code is written in a functional style, using immutable collections. However, the pseudo code algorithms in the articles are usually written in an imperative style. Translating them to functional style will make the code difficult to read, and might reduce performances. Hence, the original author recommendations on those matters is to use functional programming for overall architecture, and use imperative programming, mutable collections and var for local computations, inside a specialized method.
-
-An example of misuse of functional programming would be [Segmentation.scala](/src/main/scala/algo/offlinechangepoint/Segmentation.scala). The loops present in the pseudo code in the article are absent here, replaced by various folds. While it benefits from purity, this code is less readable for someone who expects the same syntax than in the article.
+Most of the code is written in a functional style, using immutable collections. It removes all errors that can be found in codes where data is not initialized, where global states are abused and the program is in invalid states. However, the pseudo code algorithms in the articles are usually written in an imperative style. Translating them to functional style will make the code difficult to read, and might reduce performances. Hence, the current recommendation is:
 
 Compare this with the implementation of the Incomplete Cholesky Decomposition in [IncompleteCholesky.scala](/src/main/scala/linalg/IncompleteCholesky.scala). Here an imperative style is used and the code is much closer to the article pseudocode.
 
+- To use functional programming for the overall architecture. See for example the [KernelGenerator](/src/main/scala/rkhs/KernelGenerator.scala) where functions are passed as arguments, or [Learn](/src/main/scala/exec/Learn.scala), where the Try monad helps manage the erros.eeee
+- To use imperative programming, mutable collections and var for local computations. For example the Incomplete Cholesky Decomposition in [IncompleteCholesky.scala](/src/main/scala/linalg/IncompleteCholesky.scala). Here an imperative style is used and the code is much closer to the article pseudocode.
+
 ## Basics to learn to understand the Kernalytics code:
 
-Of course a beginner should grasp the basics of Scala from the introduction on the Scala website: https://docs.scala-lang.org/
+A beginner should grasp the basics of Scala from the introduction on the Scala website: https://docs.scala-lang.org/
 
-You should understand the following methods for basic collections:
+The following methods for basic collections should be understood:
+
 - map
 - filter
 - flatMap
@@ -46,18 +46,19 @@ You should understand the following methods for basic collections:
 - reduce
 - fold, foldLeft
 
-Construct you should understand:
+As well as those constructs:
+
 - patten matching using case classes, similar to the end of this tutorial: https://www.tutorialspoint.com/scala/scala_pattern_matching.htm
 - monads (described below)
 - for / yield (described below)
 
 ## The Try Monad
 
-The use of this monad is the base of the error management code. It allows to write the code in a very sparse and concise manner, by providing mechanisms for the composition of computations. Understanding the concepts might not be immediate for a new programmer.
+The use of this monad is the base of the error management code. It allows to write the code in a very sparse and concise manner, by providing mechanisms for the composition of error-prone computations.
 
-There are formal introductions available online: https://medium.com/@sinisalouc/demystifying-the-monad-in-scala-cc716bb6f534
+There are formal introductions available online, such as [Demystifying the Monad in Scala](https://medium.com/@sinisalouc/demystifying-the-monad-in-scala-cc716bb6f534)
 
-In this section we will describe the minimum required to understand the Kernalytics code.
+In this section the minimum requirerments to understand the Kernalytics code wil be described.
 
 The `Try[A]` class (A being a parameter class) has two children classes, Success and Failure. Success[A] is a wrapper around an A object, while Failure is a wrapper around a throwable object. The main idea is that every function during initialization returns a `Try[_]` of some sort. When an error occurs, it will become the general result.
 
