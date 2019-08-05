@@ -17,7 +17,7 @@ Simply get the tools from their main site:
 Kernalytics is built for Scala 2.12. It depends on sbt and git is called from the configure script. They can be obtained on Ubuntu via:
 
 ```bash
-sudo apt install git sbt
+sudo apt install git sbt openjdk-8-jdk
 ```
 
 For Ubuntu 16.04, sbt is not provided in the main repositories. It is possible to follow the instructions provided at https://www.scala-sbt.org/download.html. The command to install the missing dependencies then become:

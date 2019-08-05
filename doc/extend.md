@@ -46,9 +46,9 @@ Finally, the code algorithm must be written in the [algo](/src/main/scala/algo) 
 
 ### Architecture
 
-The current way to handle mixing data types and kernels is to use local pattern-matching in [KernelGenerator](/rkhs/KernelGenerator.scala).
+The current way to handle mixing data types and kernels is to use local pattern-matching in [KernelGenerator](/src/main/scala/rkhs/KernelGenerator.scala).
 
-The current implementation in [KerEvalGenerator](/rkhs/KernelGenerator.scala) is not satisfying, as it relies on pattern-matching against a set of predefined combination of data types and kernel names. This is not optimal, as adding a new type or kernel implies modifying code scattered all over Kernalytics. Ideally, everything should be centralized so that all the logic could be contained in a single object for each type.
+The current implementation in [KernelGenerator](/src/main/scala/rkhs/KernelGenerator.scala) is not satisfying, as it relies on pattern-matching against a set of predefined combination of data types and kernel names. This is not optimal, as adding a new type or kernel implies modifying code scattered all over Kernalytics. Ideally, everything should be centralized so that all the logic could be contained in a single object for each type.
 
 Note that there is a `typeName: String` here, which is similar to the string in [parseIndividualVar](/src/main/scala/io/ReadVar.scala). This could be leveraged when reworking the data types management.
 
