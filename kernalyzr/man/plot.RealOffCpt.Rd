@@ -4,10 +4,10 @@
 \alias{plot.RealOffCpt}
 \title{Plot signal with cpt}
 \usage{
-\method{plot}{RealOffCpt}(res, D = NULL, ...)
+\method{plot}{RealOffCpt}(x, D = NULL, ...)
 }
 \arguments{
-\item{res}{output of \link{realOfflineCpt} function}
+\item{x}{output of \link{realOfflineCpt} function}
 
 \item{D}{number of segments. By default, use the optimal number from slope heuristic}
 

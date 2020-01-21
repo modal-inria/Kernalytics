@@ -3,8 +3,8 @@
 #' @param data data.frame or matrix (do not contain the second line with Real, ...)
 #' @param desc named matrix containing the kernel to apply
 #' @param Dmax maximal number of segments
-#' @param gramOpti méthode LowRank() pas gérée pour le moment
-#' @param folder folder to save data and output
+#' @param gramOpti "Direct()" = on-the-fly computation of the elements of the matrix or "Cache()" = keep the Gram matrix in cache
+#' @param folder folder where data and output vwill be saved
 #' @param rmCreatedFiles if TRUE, remove generated files
 #'
 #' @return a list containing:
@@ -95,7 +95,7 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
 
 #' Plot signal with cpt
 #'
-#' @param res output of \link{realOfflineCpt} function
+#' @param x output of \link{realOfflineCpt} function
 #' @param D number of segments. By default, use the optimal number from slope heuristic
 #' @param ... not used
 #'
@@ -116,19 +116,19 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
 #' @author Quentin Grimonprez
 #'
 #' @export
-plot.RealOffCpt <- function(res, D = NULL, ...)
+plot.RealOffCpt <- function(x, D = NULL, ...)
 {
   if(is.null(D))
-    D = which.min(res$penalized.cost)
+    D = which.min(x$penalized.cost)
 
-  nSignal <- ncol(res$data)
+  nSignal <- ncol(x$data)
 
   oldPar <- par(mfrow = n2mfrow(nSignal))
   on.exit(par(oldPar))
   for(i in 1:nSignal)
   {
-    plot(res$data[,i], type = "l", xlab = "Time", ylab = colnames(data)[i])
-    abline(v = res$tau[D, ], lty = "dashed", col = "red")
+    plot(x$data[,i], type = "l", xlab = "Time", ylab = colnames(data)[i])
+    abline(v = x$tau[D, ], lty = "dashed", col = "red")
   }
 }
 

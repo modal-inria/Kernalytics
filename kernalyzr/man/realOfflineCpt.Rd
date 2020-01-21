@@ -20,9 +20,9 @@ realOfflineCpt(
 
 \item{Dmax}{maximal number of segments}
 
-\item{gramOpti}{méthode LowRank() pas gérée pour le moment}
+\item{gramOpti}{"Direct()" = on-the-fly computation of the elements of the matrix or "Cache()" = keep the Gram matrix in cache}
 
-\item{folder}{folder to save data and output}
+\item{folder}{folder where data and output vwill be saved}
 
 \item{rmCreatedFiles}{if TRUE, remove generated files}
 }
