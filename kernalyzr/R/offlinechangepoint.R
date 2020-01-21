@@ -1,4 +1,4 @@
-# Ofline changepoint segmentation for real data
+# Offline changepoint segmentation for real data
 #
 # @param data data.frame or matrix (do not contain the second line with Real, ...)
 # @param desc named matrix containing the kernel to apply
@@ -14,7 +14,10 @@
 #   \item raw.cost
 #   \item regressed.cost penalty
 #   \item penalized.cost slope heuristic
-#}
+#   \item data input data
+#   \item desc kernel description
+#   \item algo algo description
+# }
 #
 # @details
 # create the following files in folder: c("/algo.csv", "/learnData.csv", "/desc.csv", "/paramTau.csv", "/error.txt")
@@ -25,7 +28,7 @@
 #
 # data <- data.frame(GaussA = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)), GaussB = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)))
 #
-# res = realOfflineCpt(data, desc, Dmax = 6)
+# res <- realOfflineCpt(data, desc, Dmax = 6)
 #
 # @author Quentin Grimonprez
 #
@@ -54,8 +57,8 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
   ## get results
   out <- read.table(paste0(folder, "/paramTau.csv"), sep = ";", header = TRUE)
 
-  res = list(tau = convertTau(out), D = as.numeric(out$D), raw.cost = as.numeric(out$raw.cost),
-             regressed.cost = as.numeric(out$regressed.cost), penalized.cost = as.numeric(out$penalized.cost))
+  res = c(list(tau = convertTau(out), D = as.numeric(out$D), raw.cost = as.numeric(out$raw.cost),
+               regressed.cost = as.numeric(out$regressed.cost), penalized.cost = as.numeric(out$penalized.cost)), res)
   class(res) = "RealOffCpt"
 
   ## delete created files
@@ -71,7 +74,7 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
 }
 
 
-# plot signal with cpt
+# Plot signal with cpt
 #
 # @param res output of \link{realOfflineCpt} function
 #
@@ -89,17 +92,20 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
 # @author Quentin Grimonprez
 #
 # @export
-plot.RealOffCpt <- function(res)
+plot.RealOffCpt <- function(res, D = NULL)
 {
+  if(is.null(D))
+    D = which.min(res$penalized.cost)
+
   nSignal <- ncol(res$data)
 
-  par(mfrow = n2mfrow(nSignal))
+  oldPar <- par(mfrow = n2mfrow(nSignal))
+  on.exit(par(oldPar))
   for(i in 1:nSignal)
   {
     plot(res$data[,i], type = "l", xlab = "Time", ylab = colnames(data)[i])
-    abline(v = res$tau, lty = "dashed", col = "red")
+    abline(v = res$tau[D, ], lty = "dashed", col = "red")
   }
-  par(mfrow = c(1, 1))
 }
 
 # Plot slope heuristic criterion
