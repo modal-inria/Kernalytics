@@ -38,7 +38,7 @@ a list containing:
   \item desc kernel description
   \item algo algo description
 }
-If an error occures, return a list with an error element.
+If an error occurs, return a list with an error element.
 }
 \description{
 Offline changepoint segmentation for real data

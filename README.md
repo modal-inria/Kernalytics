@@ -11,7 +11,7 @@ Current implementations cover:
 
 For easier use, Kernalytics is provided with kernalyzr, a (very shallow) R wrapper.
 
-Kernalytics as been built and run on Windows, macOS and Linux.
+Kernalytics has been built and run on Windows, macOS and Linux.
 
 ## Licence
 
