@@ -6,9 +6,12 @@
 
 ## Short Term
 
-- export both best
-- Some data`types are coded and, but can not be used in a csv file for lack of an implemented parser:
+- provide test cases for all algorithms, in Scala and R
+- provide detailed instructions for kernalizr, at least in a markdown format
+- some data types are coded but can not be used in a csv file for lack of an implemented parser:
   - matrices
+- only a small fraction of the possible combinations of data and numerical methods are available in [generateKernelFromParamData](/src/main/scala/rkhs/KernelGenerator.scala)
+- arrays should be used instead of DenseVector for all [DataRoot](/src/main/scala/rkhs/DataRoot.scala) subclasses. No linear algebra are performed directly on the data, making the Breeze container useless.
 
 ## Generic Long Term
 
@@ -45,23 +48,19 @@
 
 ### kernalyzr
 
-- write basic documentation in R, so that R user can copy tests on current directory
-- use data frame instead of files on disk
-  - Data and Desc are arrays of strings in R ?
-  - Same format as the csv files ?
 - rscala::scalaSBT will support sbt assembly in the future. when that is the case, remove the updateAssembly.sh script at the root, and simplify the configure script.
 
 ### Mathematics
 
 - A normed space requires a vector space, not an inner product space. This should be reflected in the corresponding traits.
 - remove the deprecation warnings using -deprecation
-- Nystrom approximation pour faible rang: [Low-rank matrix approximations](https://en.wikipedia.org/wiki/Low-rank_matrix_approximations)
+- Nystrom low rank approximation: [Low-rank matrix approximations](https://en.wikipedia.org/wiki/Low-rank_matrix_approximations)
 
 ### Performances
 
-- the loop over D for a given tauP can be parallelized.
+- the loop over D in offline change point detection for a given tauP can be parallelized.
   - Will the gain outweight the overhead for thread spawning ?
   - That would depend on the value of DMax.
   - is it possible to do it for the mutable state version ?
-- Gram matrix symmetry should be exploited to reduce computational times.
+- Gram matrix symmetry should be exploited to reduce computation time
 - Perform tests to provide spectrum of Gram matrix and check that it decreases very quickly
