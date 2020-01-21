@@ -7,11 +7,11 @@ copyTest <- function() {
     file.copy(system.file("extdata", "svm", package = "kernalyzr"), ".", recursive = TRUE)
 }
 
-# Run examples
-#
-# @author Vincent Kubicki
-#
-# @export
+#' Run examples
+#'
+#' @author Vincent Kubicki
+#'
+#' @export
 runTest <- function() {
   copyTest()
 

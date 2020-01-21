@@ -1,0 +1,28 @@
+#' @import rscala
+#' @importFrom grDevices n2mfrow
+#' @importFrom graphics abline legend matplot par plot
+#' @importFrom utils data read.table write.table
+#'
+#' @title R interface to Kernalytics
+#' @docType package
+#' @aliases kernalyzr-package
+#' @name kernalyzr-package
+#' @description
+#' R interface to Kernalytics
+#'
+#' Kernel methods are versatile, and Kernalytics exploits this property through a generic data analysis framework.
+#' It allows for easy extension: new algorithms, data types, kernels and optimizations are easily compatible with each other.
+#' This is possible through the Gram matrix computation which acts as an abstraction linking every module.
+#' Heterogeneous data sets are supported through linear combination of kernels.
+#'
+#' Current implementations cover:
+#' \itemize{
+#'  \item algorithms: k-means, offline change point detection, regression, support vector machine, two sample test
+#'  \item data types: real, vector, matrix
+#'  \item kernel families: linear, polynomial, gaussian, laplacian
+#'  \item Gram matrix optimization: direct computation, cached computation, low rank approximation
+#' }
+#'
+#'
+#' @keywords package
+NULL

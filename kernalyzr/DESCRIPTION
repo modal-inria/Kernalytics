@@ -2,10 +2,12 @@ Package: kernalyzr
 Type: Package
 Title: kernalyzr
 Version: 0.1.0
-Author: Vincent KUBICKI <vincent.kubicki@inria.fr>
-Maintainer: Vincent KUBICKI <vincent.kubicki@inria.fr>
-Description: R interface to Kernalytics
+Date: 2020-01-21
+Authors@R: c(person("Vincent", "Kubicki", role = c("aut", "cre"), email = "vincent.kubicki@inria.fr"),
+             person("Quentin", "Grimonprez", role = "ctb", email = "quentin.grimonprez@inria.fr"))
+Description: R interface to Kernalytics. Kernel-based algorithms.
 License: Inria internal licence. Do not distribute.
 Encoding: UTF-8
 LazyData: true
 Imports: rscala
+RoxygenNote: 7.0.2
