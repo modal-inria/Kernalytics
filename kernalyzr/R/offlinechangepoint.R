@@ -1,11 +1,23 @@
-# only for real
+# Ofline changepoint segmentation for real data
 #
-# data data.frame or matrix (do not contain the second line with Real, ...)
-# desc matrix
+# @param data data.frame or matrix (do not contain the second line with Real, ...)
+# @param desc named matrix containing the kernel to apply
+# @param Dmax maximal number of segments
+# @param gramOpti méthode LowRank() pas gérée pour le moment
+# @param folder folder to save data and output
+# @param rmCreatedFiles if TRUE, remove generated files
 #
-# gramOpti méthode LowRank() pas gérée pour le moment
+# @return a list containing:
+# \itemize{
+#   \item D number of segments
+#   \item tau changepoints (end of segments/ start of segment (-1))
+#   \item raw.cost
+#   \item regressed.cost penalty
+#   \item penalized.cost slope heuristic
+#}
 #
-# create the following files in folder: c("/algo.csv", "/learnData.csv", "/desc.csv", "/learnCost.csv", "/paramTau.csv", "/error.txt")
+# @details
+# create the following files in folder: c("/algo.csv", "/learnData.csv", "/desc.csv", "/paramTau.csv", "/error.txt")
 #
 # @examples
 # desc <- matrix(c(c(0.25, "Gaussian(1.0)"), c(0.25, "Linear()"), c(0.5, "Gaussian(0.7)")), nrow = 2)
@@ -14,6 +26,10 @@
 # data <- data.frame(GaussA = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)), GaussB = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)))
 #
 # res = realOfflineCpt(data, desc, Dmax = 6)
+#
+# @author Quentin Grimonprez
+#
+# @export
 realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()"), folder = "./offlinechangepoint/", rmCreatedFiles = TRUE)
 {
   ## data preparation
@@ -36,10 +52,10 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
   kernelLearn(folder)
 
   ## get results
-  learnCost <- read.table(paste0(folder, "/learnCost.csv"), sep = ";", header = TRUE)
-  tau <- drop(as.matrix(read.table(paste0(folder, "/paramTau.csv"), sep = ";", header = TRUE)))
+  out <- read.table(paste0(folder, "/paramTau.csv"), sep = ";", header = TRUE)
 
-  res = c(list(learnCost = learnCost, tau = tau), res)
+  res = list(tau = convertTau(out), D = as.numeric(out$D), raw.cost = as.numeric(out$raw.cost),
+             regressed.cost = as.numeric(out$regressed.cost), penalized.cost = as.numeric(out$penalized.cost))
   class(res) = "RealOffCpt"
 
   ## delete created files
@@ -54,7 +70,25 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
   return(res)
 }
 
+
 # plot signal with cpt
+#
+# @param res output of \link{realOfflineCpt} function
+#
+# @examples
+# desc <- matrix(c(c(0.25, "Gaussian(1.0)"), c(0.25, "Linear()"), c(0.5, "Gaussian(0.7)")), nrow = 2)
+# colnames(desc) = c("GaussA", "GaussA", "GaussB")
+#
+# data <- data.frame(GaussA = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)), GaussB = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)))
+#
+# res = realOfflineCpt(data, desc, Dmax = 6)
+#
+# plot(res)
+#
+#
+# @author Quentin Grimonprez
+#
+# @export
 plot.RealOffCpt <- function(res)
 {
   nSignal <- ncol(res$data)
@@ -68,10 +102,47 @@ plot.RealOffCpt <- function(res)
   par(mfrow = c(1, 1))
 }
 
-# plot slope heuristic criterion
+# Plot slope heuristic criterion
+#
+# @param res output of \link{realOfflineCpt} function
+#
+# @examples
+# desc <- matrix(c(c(0.25, "Gaussian(1.0)"), c(0.25, "Linear()"), c(0.5, "Gaussian(0.7)")), nrow = 2)
+# colnames(desc) = c("GaussA", "GaussA", "GaussB")
+#
+# data <- data.frame(GaussA = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)), GaussB = c(rnorm(100, 1, 0.8), rnorm(200, 2, 0.8), rnorm(20, 1, 0.5)))
+#
+# res = realOfflineCpt(data, desc, Dmax = 6)
+#
+# plotSlopeHeuristic(res)
+#
+#
+# @author Quentin Grimonprez
+#
+# @export
 plotSlopeHeuristic <- function(res)
 {
-  matplot(res$learnCost, type = "l", xlab = "Number of segments", ylab = "Cost", col = c(4, 2, 1), lty = c(1, 2, 1), lwd = c(1, 1, 2), main = "Slope heuristic")
-  abline(v = length(res$tau) + 1, lty = "dashed")
+  matplot(cbind(res$raw.cost, res$regressed.cost, res$penalized.cost), type = "l", xlab = "Number of segments",
+          ylab = "Cost", col = c(4, 2, 1), lty = c(1, 2, 1), lwd = c(1, 1, 2), main = "Slope heuristic")
+  abline(v = which.min(res$penalized.cost), lty = "dashed")
   legend("topright", c("Criterion", "Slope", "Penalized criterion"), col = c(4, 2, 1), lty = c(1, 2, 1), lwd = c(1, 1, 2))
+}
+
+
+# Extract the changepoint
+#
+# @param res data.frame containing the content of "paramTau.csv" file
+#
+# @return matrix tau containing the changepoint (end of segment/ start of segment(-1))
+convertTau <- function(res)
+{
+  out <- matrix(nrow = nrow(res), ncol = nrow(res))
+  tau <- lapply(strsplit(as.character(res$tau), split = ","), as.numeric)
+
+  for(i in seq_along(tau))
+  {
+    out[i, seq_along(tau[[i]])] = tau[[i]]
+  }
+
+  return(out)
 }
