@@ -38,12 +38,21 @@ a list containing:
   \item desc kernel description
   \item algo algo description
 }
+If an error occures, return a list with an error element.
 }
 \description{
 Offline changepoint segmentation for real data
 }
 \details{
 create the following files in folder: c("/algo.csv", "/learnData.csv", "/desc.csv", "/paramTau.csv", "/error.txt")
+
+desc format : matrix with 2 rows. First row: weight of the kernel. Second row: kernel used. Column names must be names of variables from data.
+Example:
+\code{desc <- matrix(c(0.25, "Gaussian(1.0)", 0.25, "Linear()", 0.5, "Gaussian(0.7)"), nrow = 2, dimnames = c(NULL, c("GaussA", "GaussA", "GaussB")))}
+The kernel used is the linear combination a gaussian kernel with hyperparameter 1 on the gaussA variable, a linear kernel on gaussA and a gaussian kernel with hyperparameters 0.7 on gaussB.
+
+
+Avalaibles kernels: Gaussian(h), Linear()
 }
 \examples{
 desc <- matrix(c(0.25, "Gaussian(1.0)", 0.25, "Linear()", 0.5, "Gaussian(0.7)"), nrow = 2)

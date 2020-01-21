@@ -18,6 +18,7 @@
 #'   \item desc kernel description
 #'   \item algo algo description
 #' }
+#' If an error occures, return a list with an error element.
 #'
 #' @details
 #' create the following files in folder: c("/algo.csv", "/learnData.csv", "/desc.csv", "/paramTau.csv", "/error.txt")
@@ -28,7 +29,7 @@
 #' The kernel used is the linear combination a gaussian kernel with hyperparameter 1 on the gaussA variable, a linear kernel on gaussA and a gaussian kernel with hyperparameters 0.7 on gaussB.
 #'
 #'
-#' Avalaibles kernels: Gaussian(h), Linear(), Polynomial(h), Laplacian()
+#' Avalaibles kernels: Gaussian(h), Linear()
 #'
 #'
 #' @examples
@@ -66,18 +67,24 @@ realOfflineCpt <- function(data, desc, Dmax, gramOpti = c("Direct()", "Cache()")
   ## run
   kernelLearn(folder)
 
-  ## get results
-  out <- read.table(paste0(folder, "/paramTau.csv"), sep = ";", header = TRUE)
+  if(file.exists(paste0(folder, "/error.txt")))
+  {
+    res <- list(error = readLines(paste0(folder, "/error.txt"), warn = FALSE))
+  }else{
+    ## get results
+    out <- read.table(paste0(folder, "/paramTau.csv"), sep = ";", header = TRUE)
 
-  res = c(list(tau = convertTau(out), D = as.numeric(out$D), raw.cost = as.numeric(out$raw.cost),
-               regressed.cost = as.numeric(out$regressed.cost), penalized.cost = as.numeric(out$penalized.cost)), res)
-  class(res) = "RealOffCpt"
+    res = c(list(tau = convertTau(out), D = as.numeric(out$D), raw.cost = as.numeric(out$raw.cost),
+                 regressed.cost = as.numeric(out$regressed.cost), penalized.cost = as.numeric(out$penalized.cost)), res)
+    class(res) = "RealOffCpt"
+  }
+
 
   ## delete created files
   if(rmCreatedFiles)
   {
     if(existingFolder)
-      suppressWarnings(file.remove(paste0(folder, c("/algo.csv", "/learnData.csv", "/desc.csv", "/learnCost.csv", "/paramTau.csv", "/error.txt"))))
+      suppressWarnings(file.remove(paste0(folder, c("/algo.csv", "/learnData.csv", "/desc.csv", "/paramTau.csv", "/error.txt"))))
     else
       unlink(folder, recursive = TRUE)
   }
